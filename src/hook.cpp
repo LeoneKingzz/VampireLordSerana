@@ -34,10 +34,22 @@ namespace hooks
             auto var = hit_causer->GetGraphVariableInt("XXX", intvalue);
 			int  iState = 0;
 			hit_causer->GetGraphVariableInt("iState", iState);
-			if (iState == 10) {  // using staff
-				return;
-				//hit_causer->SetGraphVariableInt("iStep", 0);
+			switch (iState) {
+			case 1:
+                /* code */
+                break;
+
+			case 5:
+				/* code */
+				break;
+
+			default:
+                break;
 			}
+			// if (iState == 10) {  // using staff
+			// 	return;
+			// 	//hit_causer->SetGraphVariableInt("iStep", 0);
+			// }
         }
 
 		// bool bMaxsuWeaponParry_InWeaponParry = false;
