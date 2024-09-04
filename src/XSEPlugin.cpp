@@ -9,7 +9,7 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 {
 	switch (a_msg->type) {
 	case SKSE::MessagingInterface::kDataLoaded:
-		hooks::animEventHandler::Register(false, true);
+		//hooks::animEventHandler::Register(false, true);
 
 		break;
 	default:
