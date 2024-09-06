@@ -10,6 +10,7 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 	switch (a_msg->type) {
 	case SKSE::MessagingInterface::kDataLoaded:
 		//hooks::animEventHandler::Register(false, true);
+		hooks::OnMeleeHitHook::install();
 
 		break;
 	default:
@@ -26,7 +27,8 @@ void Init()
 
 void onSKSEInit()
 {
-	hooks::OnMeleeHitHook::InstallHook();
+	const auto papyrus = SKSE::GetPapyrusInterface();
+	papyrus->Register(hooks::OnMeleeHitHook::BindPapyrusFunctions);
 }
 
 void InitializeLog()
@@ -71,9 +73,11 @@ EXTERN_C [[maybe_unused]] __declspec(dllexport) bool SKSEAPI SKSEPlugin_Load(con
 
 	SKSE::Init(a_skse);
 
+	onSKSEInit();
+
 	Init();
 
-	onSKSEInit();
+	//hooks::OnMeleeHitHook::InstallHook();
 
 	return true;
 }

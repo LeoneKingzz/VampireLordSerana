@@ -4,6 +4,11 @@
 
 namespace hooks
 {
+	using VM = RE::BSScript::Internal::VirtualMachine;
+	using StackID = RE::VMStackID;
+#define STATIC_ARGS [[maybe_unused]] VM *a_vm, [[maybe_unused]] StackID a_stackID, RE::StaticFunctionTag *
+     
+	void remove_item(RE::TESObjectREFR* a_ref, RE::TESBoundObject* a_item, std::uint32_t a_count, bool a_silent, RE::TESObjectREFR* a_otherContainer);
 
 	class __declspec(dllexport) OnMeleeHitHook
 	{
@@ -11,6 +16,15 @@ namespace hooks
 		[[nodiscard]] static OnMeleeHitHook& GetSingleton() noexcept;
 
 		static void InstallHook();
+		static void install();
+		static void VLS_SendVampireLordTransformation(RE::Actor* a_actor);
+		static void VLS_RevertVampireLordform(RE::Actor* a_actor);
+		static void UnequipAll(RE::Actor* a_actor);
+		static bool BindPapyrusFunctions(VM* vm);
+		static void Set_iFrames(RE::Actor* actor);
+		static void Reset_iFrames(RE::Actor* actor);
+		static void dispelEffect(RE::MagicItem *spellForm, RE::Actor *a_target);
+		static void RemoveVLDrain(RE::Actor *a_actor);
 
 	private:
 		OnMeleeHitHook() = default;
