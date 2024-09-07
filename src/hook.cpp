@@ -145,7 +145,7 @@ namespace hooks
 		auto data = RE::TESDataHandler::GetSingleton();
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x10F564, "Skyrim.esm")));
 		a_actor->NotifyAnimationGraph("IdleVampireLordTransformation");
-		a_actor->NotifyAnimationGraph("SetRace");
+		//a_actor->NotifyAnimationGraph("SetRace");
 		Set_iFrames(a_actor);
 	}
 
@@ -353,7 +353,7 @@ namespace hooks
 
 		RE::Actor* actor = const_cast<RE::TESObjectREFR*>(a_event.holder)->As<RE::Actor>();
 		switch (hash(a_event.tag.c_str(), a_event.tag.size())) {
-		case "SetRace"_h:
+		case "IdleVampireLordTransformation"_h:
 			logger::info("Set Race Detected");
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
 				OnMeleeHitHook::VLS_CompleteTransformation(actor);
