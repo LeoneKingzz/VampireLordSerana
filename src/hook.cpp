@@ -184,12 +184,12 @@ namespace hooks
 	// 	_parryTimer.erase(a_actor);
 	// }
 
-	void OnMeleeHitHook::VLS_SendVampireLordTransformation(STATIC_ARGS, RE::Actor* a_actor)
+	bool OnMeleeHitHook::VLS_SendVampireLordTransformation(STATIC_ARGS, RE::Actor* a_actor)
 	{
 		const auto race = a_actor->GetRace();
 		const auto raceEDID = race->formEditorID;
 		if (raceEDID == "DLC1VampireBeastRace") {
-			return;
+			return false;
 		}
 		a_actor->SetGraphVariableBool("IUBusy", true);
 		logger::info("Began Transformation");
@@ -198,70 +198,56 @@ namespace hooks
 		const auto FXchange = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaChangeFX");
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		caster->CastSpellImmediate(FXchange, true, a_actor, 1, false, 0.0, a_actor);
-		//a_actor->NotifyAnimationGraph("IdleVampireLordTransformation");
+		a_actor->NotifyAnimationGraph("IdleVampireLordTransformation");
 		Set_iFrames(a_actor);
-		VLS_CompleteTransformation(a_actor);
+		return true;
 	}
 
 	void OnMeleeHitHook::VLS_CompleteTransformation(RE::Actor* a_actor){
-		//firstpart//
 		logger::info("completing Transformation");
 		const auto FXExpl = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToVLExplosionSPELL");
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
-		a_actor->SwitchRace(RE::TESForm::LookupByEditorID<RE::TESRace>("DLC1VampireBeastRace"), false);
+		//a_actor->SwitchRace(RE::TESForm::LookupByEditorID<RE::TESRace>("DLC1VampireBeastRace"), false);
 		logger::info("Vampire lord form succesful");
 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDLC1AbVampireFloatBodyFX"));
 		caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
-		// a_actor->SetGraphVariableFloat("staggerDirection", 0.0);
-		// a_actor->SetGraphVariableFloat("StaggerMagnitude", 1.0);
-		// a_actor->NotifyAnimationGraph("staggerStart");
 		VLDrain(a_actor);
-		//a_actor->SetGraphVariableBool("bIsSynced", false);
 		a_actor->SetGraphVariableBool("IUBusy", false);
 	}
 
 
 
-	void OnMeleeHitHook::VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor)
+	bool OnMeleeHitHook::VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor)
 	{
 		const auto race = a_actor->GetRace();
 		const auto raceEDID = race->formEditorID;
 		if (!(raceEDID == "DLC1VampireBeastRace")) {
-			return;
+			return false;
 		}
 		a_actor->SetGraphVariableBool("IUBusy", true);
 		logger::info("Reverting Form");
 		auto data = RE::TESDataHandler::GetSingleton();
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x10F564, "Skyrim.esm")));
 		const auto FXchange = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToNormal");
-		const auto FXchange2 = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToNormal2");
-		const auto Gargoyle = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaConjureGargoyle");
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		caster->CastSpellImmediate(FXchange, true, a_actor, 1, false, 0.0, a_actor);
 		a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDLC1AbVampireFloatBodyFX"));
-		// auto curhealth = a_actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kHealth);
-		// if (curhealth <= 70.0f) {
-		// 	if (curhealth <= 5.0f) {
-		// 		if (a_actor->HasKeywordString("VLS_Serana_Key")) {
-		// 			bShouldBleedOut_Serana = true;
-		// 		} else {
-		// 			bShouldBleedOut_Valerica = true;
-		// 		}
-		// 	}
-		// 	a_actor->AsActorValueOwner()->RestoreActorValue(RE::ACTOR_VALUE_MODIFIER::kDamage, RE::ActorValue::kHealth, (70.f - curhealth));
-		// }
 		auto vamp_armour = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("VLSeranaDLC1ClothesVampireLordRoyalArmor");
 		RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, vamp_armour);
 		remove_item(a_actor, vamp_armour, 1, true, nullptr);
-		//a_actor->RemoveItem(a_actor->GetWornArmor(RE::BGSBipedObjectForm::BipedObjectSlot::kBody), 2, RE::ITEM_REMOVE_REASON::kRemove, nullptr, nullptr);
-		a_actor->SwitchRace(RE::TESForm::LookupByEditorID<RE::TESRace>("NordRace"), false);
+		return true;
+	}
+
+	void OnMeleeHitHook::VLS_CompleteReversion(RE::Actor* a_actor)
+	{
+		const auto FXchange = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToNormal");
+		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
+		const auto FXchange2 = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToNormal2");
+		const auto Gargoyle = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaConjureGargoyle");
 		dispelEffect(FXchange, a_actor);
 		caster->CastSpellImmediate(FXchange2, true, a_actor, 1, false, 0.0, a_actor);
 		VLDrain(a_actor, true);
 		dispelEffect(Gargoyle, a_actor);
-		// a_actor->SetGraphVariableFloat("staggerDirection", 0.0);
-		// a_actor->SetGraphVariableFloat("StaggerMagnitude", 1.0);
-		// a_actor->NotifyAnimationGraph("staggerStart");
 		a_actor->SetGraphVariableBool("IUBusy", false);
 	}
 
@@ -298,29 +284,18 @@ namespace hooks
 			if (!(raceEDID == "DLC1VampireBeastRace")) {
 				//Not vamp form//
 				OnMeleeHitHook::Reset_iFrames(a_actor);
-				if (&bElderScrollEquipped){
+				OnMeleeHitHook::VLS_CompleteReversion(a_actor);
+				if (bElderScrollEquipped){
 					bElderScrollEquipped = false;
 					OnMeleeHitHook::EquipfromInvent(a_actor, ElderScroll->formID);
 				}
-				// if (a_actor->HasKeywordString("VLS_Serana_Key")) {
-				// 	if (&bShouldBleedOut_Serana){
-				// 		bShouldBleedOut_Serana = false;
-				// 		auto curhealth = a_actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kHealth);
-				// 		a_actor->AsActorValueOwner()->RestoreActorValue(RE::ACTOR_VALUE_MODIFIER::kDamage, RE::ActorValue::kHealth, -(curhealth + 1.0f));
-				// 	}
-				// } else {
-				// 	if (&bShouldBleedOut_Valerica){
-				// 		bShouldBleedOut_Valerica = false;
-				// 		auto curhealth = a_actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kHealth);
-				// 		a_actor->AsActorValueOwner()->RestoreActorValue(RE::ACTOR_VALUE_MODIFIER::kDamage, RE::ActorValue::kHealth, -(curhealth + 1.0f));
-				// 	}
-				// }
 
 			}else {//vamp form//
 				OnMeleeHitHook::Reset_iFrames(a_actor);
 				OnMeleeHitHook::UnequipAll(a_actor);
 				a_actor->AddWornItem(vamp_armour, 1, false, 0, 0);
 				RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, vamp_armour);
+				OnMeleeHitHook::VLS_CompleteTransformation(a_actor);
 			}
 
 			return RE::BSEventNotifyControl::kContinue;
@@ -366,7 +341,9 @@ namespace hooks
 				const auto race = a_actor->GetRace();
 				const auto raceEDID = race->formEditorID;
 				if (raceEDID == "DLC1VampireBeastRace") {
-					OnMeleeHitHook::VLS_RevertVampireLordform(nullptr, 0, nullptr, a_actor);
+					const auto Revert = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaValericaRevertFormSpell");
+					const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
+				    caster->CastSpellImmediate(Revert, true, a_actor, 1, false, 0.0, a_actor);
 				}
 			}
 
@@ -388,7 +365,9 @@ namespace hooks
 			auto Playerhandle = RE::PlayerCharacter::GetSingleton();
 
 			if (Playerhandle->IsSneaking() || event->newLoc && event->newLoc->HasKeyword(RE::TESForm::LookupByEditorID<RE::BGSKeyword>("LocTypeHabitation"))){
-				OnMeleeHitHook::VLS_RevertVampireLordform(nullptr, 0, nullptr, a_actor);
+				const auto Revert = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaValericaRevertFormSpell");
+				const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
+				caster->CastSpellImmediate(Revert, true, a_actor, 1, false, 0.0, a_actor);
 			}
 
 			return RE::BSEventNotifyControl::kContinue;
@@ -471,3 +450,6 @@ namespace hooks
 
 }
 
+// a_actor->SetGraphVariableFloat("staggerDirection", 0.0);
+// a_actor->SetGraphVariableFloat("StaggerMagnitude", 1.0);
+// a_actor->NotifyAnimationGraph("staggerStart");

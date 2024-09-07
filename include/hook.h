@@ -90,8 +90,8 @@ namespace hooks
 		// static void install_protected(){
 		// 	Install_Update();
 		// }
-		static void VLS_SendVampireLordTransformation(STATIC_ARGS, RE::Actor* a_actor);
-		static void VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor);
+		static bool VLS_SendVampireLordTransformation(STATIC_ARGS, RE::Actor* a_actor);
+		static bool VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor);
 		static void UnequipAll(RE::Actor* a_actor);
 		static bool BindPapyrusFunctions(VM* vm);
 		static void Set_iFrames(RE::Actor* actor);
@@ -100,6 +100,7 @@ namespace hooks
 		static void VLDrain(RE::Actor* a_actor, bool remove = false);
 		static void EquipfromInvent(RE::Actor* a_actor, RE::FormID a_formID);
 		static void VLS_CompleteTransformation(RE::Actor *a_actor);
+		static void VLS_CompleteReversion(RE::Actor* a_actor);
 		// void update(RE::Actor* a_actor, float a_delta);
 		// void startTiming(RE::Actor *a_actor, float a_delta);
 	    // void finishTiming(RE::Actor *a_actor);
