@@ -356,7 +356,6 @@ namespace hooks
 		}
 
 		RE::Actor* actor = const_cast<RE::TESObjectREFR*>(a_event.holder)->As<RE::Actor>();
-		auto DS = GetSingleton();
 		switch (hash(a_event.tag.c_str(), a_event.tag.size())) {
 		case "SoundPlay.NPCVampireLordTransformation012D"_h:
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
