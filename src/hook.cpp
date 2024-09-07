@@ -133,56 +133,56 @@ namespace hooks
 		}
 	}
 
-	void OnMeleeHitHook::update(RE::Actor* a_actor, float a_delta)
-	{
-		if (!_bUpdate) {
-			return;
-		}
-		if (!(a_actor->GetActorRuntimeData().currentProcess && a_actor->GetActorRuntimeData().currentProcess->InHighProcess() && a_actor->Is3DLoaded())){
-			return;
-		}
-		if (!(a_actor->HasKeywordString("VLS_Serana_Key") || a_actor->HasKeywordString("VLS_Valerica_Key"))) {
-			return;
-		}
-		bool IUBusy = false;
-		if ((a_actor)->GetGraphVariableBool("IUBusy", IUBusy) && !IUBusy) {
-			return;
-		}
-		uniqueLocker lock(mtx_parryTimer);
-		auto it = _parryTimer.begin();
-		if (!it->first) {
-			it = _parryTimer.erase(it);
-			return;
-		}
-		if (it->second > 0.6f) {
-			it = _parryTimer.erase(it);
-			_bUpdate = false;
-			VLS_CompleteTransformation(a_actor);
-			return;
-		}else{
-			it->second += a_delta;
-		}
-		//*static float* g_deltaTime = (float*)RELOCATION_ID(523660, 410199).address();*/          // 2F6B948
-	}
+	// void OnMeleeHitHook::update(RE::Actor* a_actor, float a_delta)
+	// {
+	// 	if (!_bUpdate) {
+	// 		return;
+	// 	}
+	// 	if (!(a_actor->GetActorRuntimeData().currentProcess && a_actor->GetActorRuntimeData().currentProcess->InHighProcess() && a_actor->Is3DLoaded())){
+	// 		return;
+	// 	}
+	// 	if (!(a_actor->HasKeywordString("VLS_Serana_Key") || a_actor->HasKeywordString("VLS_Valerica_Key"))) {
+	// 		return;
+	// 	}
+	// 	bool IUBusy = false;
+	// 	if ((a_actor)->GetGraphVariableBool("IUBusy", IUBusy) && !IUBusy) {
+	// 		return;
+	// 	}
+	// 	uniqueLocker lock(mtx_parryTimer);
+	// 	auto it = _parryTimer.begin();
+	// 	if (!it->first) {
+	// 		it = _parryTimer.erase(it);
+	// 		return;
+	// 	}
+	// 	if (it->second > 0.6f) {
+	// 		it = _parryTimer.erase(it);
+	// 		_bUpdate = false;
+	// 		VLS_CompleteTransformation(a_actor);
+	// 		return;
+	// 	}else{
+	// 		it->second += a_delta;
+	// 	}
+	// 	//*static float* g_deltaTime = (float*)RELOCATION_ID(523660, 410199).address();*/          // 2F6B948
+	// }
 
-	void OnMeleeHitHook::startTiming(RE::Actor* a_actor, float a_time)
-	{
-		uniqueLocker lock(mtx_parryTimer);
-		auto it = _parryTimer.find(a_actor);
-		if (it != _parryTimer.end()) {
-			it->second = 0;
-		} else {
-			_parryTimer.insert({ a_actor, a_time });
-		}
+	// void OnMeleeHitHook::startTiming(RE::Actor* a_actor, float a_time)
+	// {
+	// 	uniqueLocker lock(mtx_parryTimer);
+	// 	auto it = _parryTimer.find(a_actor);
+	// 	if (it != _parryTimer.end()) {
+	// 		it->second = 0;
+	// 	} else {
+	// 		_parryTimer.insert({ a_actor, a_time });
+	// 	}
 
-		_bUpdate = true;
-	}
+	// 	_bUpdate = true;
+	// }
 
-	void OnMeleeHitHook::finishTiming(RE::Actor* a_actor)
-	{
-		uniqueLocker lock(mtx_parryTimer);
-		_parryTimer.erase(a_actor);
-	}
+	// void OnMeleeHitHook::finishTiming(RE::Actor* a_actor)
+	// {
+	// 	uniqueLocker lock(mtx_parryTimer);
+	// 	_parryTimer.erase(a_actor);
+	// }
 
 	void OnMeleeHitHook::VLS_SendVampireLordTransformation(STATIC_ARGS, RE::Actor* a_actor)
 	{
@@ -199,9 +199,8 @@ namespace hooks
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		caster->CastSpellImmediate(FXchange, true, a_actor, 1, false, 0.0, a_actor);
 		a_actor->NotifyAnimationGraph("IdleVampireLordTransformation");
-		//a_actor->SetGraphVariableBool("bIsSynced", true);
-		GetSingleton().startTiming(a_actor, 0.0f);
 		Set_iFrames(a_actor);
+		VLS_CompleteTransformation(a_actor);
 	}
 
 	void OnMeleeHitHook::VLS_CompleteTransformation(RE::Actor* a_actor){
@@ -209,7 +208,7 @@ namespace hooks
 		logger::info("completing Transformation");
 		const auto FXExpl = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToVLExplosionSPELL");
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
-		a_actor->SwitchRace(RE::TESForm::LookupByEditorID<RE::TESRace>("DLC1VampireBeastRace"), false);
+		a_actor->SwitchRace(RE::TESForm::LookupByEditorID<RE::TESRace>("DLC1VampireBeastRace"), true);
 		logger::info("Vampire lord form succesful");
 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDLC1AbVampireFloatBodyFX"));
 		caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
@@ -255,7 +254,7 @@ namespace hooks
 		RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, vamp_armour);
 		remove_item(a_actor, vamp_armour, 1, true, nullptr);
 		//a_actor->RemoveItem(a_actor->GetWornArmor(RE::BGSBipedObjectForm::BipedObjectSlot::kBody), 2, RE::ITEM_REMOVE_REASON::kRemove, nullptr, nullptr);
-		a_actor->SwitchRace(RE::TESForm::LookupByEditorID<RE::TESRace>("NordRace"), false);
+		a_actor->SwitchRace(RE::TESForm::LookupByEditorID<RE::TESRace>("NordRace"), true);
 		dispelEffect(FXchange, a_actor);
 		caster->CastSpellImmediate(FXchange2, true, a_actor, 1, false, 0.0, a_actor);
 		VLDrain(a_actor, true);

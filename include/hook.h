@@ -7,7 +7,7 @@
 
 namespace hooks
 {
-	static float& g_deltaTime = (*(float*)RELOCATION_ID(523660, 410199).address());
+	// static float& g_deltaTime = (*(float*)RELOCATION_ID(523660, 410199).address());
 	using uniqueLocker = std::unique_lock<std::shared_mutex>;
 	using sharedLocker = std::shared_lock<std::shared_mutex>;
 	using VM = RE::BSScript::Internal::VirtualMachine;
@@ -87,9 +87,9 @@ namespace hooks
 
 		static void InstallHook();
 		static void install();
-		static void install_protected(){
-			Install_Update();
-		}
+		// static void install_protected(){
+		// 	Install_Update();
+		// }
 		static void VLS_SendVampireLordTransformation(STATIC_ARGS, RE::Actor* a_actor);
 		static void VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor);
 		static void UnequipAll(RE::Actor* a_actor);
@@ -100,9 +100,9 @@ namespace hooks
 		static void VLDrain(RE::Actor* a_actor, bool remove = false);
 		static void EquipfromInvent(RE::Actor* a_actor, RE::FormID a_formID);
 		static void VLS_CompleteTransformation(RE::Actor *a_actor);
-		void update(RE::Actor* a_actor, float a_delta);
-		void startTiming(RE::Actor *a_actor, float a_delta);
-	    void finishTiming(RE::Actor *a_actor);
+		// void update(RE::Actor* a_actor, float a_delta);
+		// void startTiming(RE::Actor *a_actor, float a_delta);
+	    // void finishTiming(RE::Actor *a_actor);
 
 	private:
 		OnMeleeHitHook() = default;
@@ -126,19 +126,19 @@ namespace hooks
 
 	protected:
 
-		struct Actor_Update
-		{
-			static void thunk(RE::Actor* a_actor, float a_delta)
-			{
-				func(a_actor, a_delta);
-				GetSingleton().update(a_actor, g_deltaTime);
-			}
-			static inline REL::Relocation<decltype(thunk)> func;
-		};
+		// struct Actor_Update
+		// {
+		// 	static void thunk(RE::Actor* a_actor, float a_delta)
+		// 	{
+		// 		func(a_actor, a_delta);
+		// 		GetSingleton().update(a_actor, g_deltaTime);
+		// 	}
+		// 	static inline REL::Relocation<decltype(thunk)> func;
+		// };
 
-		static void Install_Update(){
-			stl::write_vfunc<RE::Character, 0xAD, Actor_Update>();
-		}
+		// static void Install_Update(){
+		// 	stl::write_vfunc<RE::Character, 0xAD, Actor_Update>();
+		// }
 
 	};
 
