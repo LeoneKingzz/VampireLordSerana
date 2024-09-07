@@ -148,11 +148,12 @@ namespace hooks
 		const auto FXExpl = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToVLExplosionSPELL");
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		caster->CastSpellImmediate(FXchange, true, a_actor, 1, false, 0.0, a_actor);
+		a_actor->SetGraphVariableBool("bVoiceReady", false);
 		a_actor->NotifyAnimationGraph("IdleVampireLordTransformation");
 		Set_iFrames(a_actor);
-		auto bIsSynced = false;
+		auto bVoiceReady = false;
 		int  psuedotime = 0;
-		while (a_actor->GetGraphVariableBool("bIsSynced", bIsSynced) && bIsSynced) {
+		while (a_actor->GetGraphVariableBool("bVoiceReady", bVoiceReady) && !bVoiceReady) {
 			psuedotime += 1;
 		}
 		logger::info("bIsSynchedTime {}"sv, psuedotime);
@@ -345,6 +346,29 @@ namespace hooks
 		}
 		
 	};
+
+	RE::BSEventNotifyControl animEventHandler::HookedProcessEvent(RE::BSAnimationGraphEvent& a_event, RE::BSTEventSource<RE::BSAnimationGraphEvent>* src)
+	{
+		FnProcessEvent fn = fnHash.at(*(uint64_t*)this);
+
+		if (!a_event.holder) {
+			return fn ? (this->*fn)(a_event, src) : RE::BSEventNotifyControl::kContinue;
+		}
+
+		RE::Actor* actor = const_cast<RE::TESObjectREFR*>(a_event.holder)->As<RE::Actor>();
+		auto DS = GetSingleton();
+		switch (hash(a_event.tag.c_str(), a_event.tag.size())) {
+		case "SoundPlay.NPCVampireLordTransformation012D"_h:
+			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
+				actor->SetGraphVariableBool("bVoiceReady", true);
+			}
+			break;
+		}
+
+		return fn ? (this->*fn)(a_event, src) : RE::BSEventNotifyControl::kContinue;
+	}
+
+	std::unordered_map<uint64_t, animEventHandler::FnProcessEvent> animEventHandler::fnHash;
 
 	void OnMeleeHitHook::install(){
 		auto eventSink = OurEventSink::GetSingleton();
