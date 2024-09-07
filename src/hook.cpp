@@ -133,7 +133,7 @@ namespace hooks
 		}
 	}
 
-	void OnMeleeHitHook::VLS_SendVampireLordTransformation(RE::Actor* a_actor)
+	void OnMeleeHitHook::VLS_SendVampireLordTransformation(STATIC_ARGS, RE::Actor* a_actor)
 	{
 		const auto race = a_actor->GetRace();
 		const auto raceEDID = race->formEditorID;
@@ -155,7 +155,7 @@ namespace hooks
 		
 	}
 
-	void OnMeleeHitHook::VLS_RevertVampireLordform(RE::Actor* a_actor)
+	void OnMeleeHitHook::VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor)
 	{
 		const auto race = a_actor->GetRace();
 		const auto raceEDID = race->formEditorID;
@@ -297,7 +297,7 @@ namespace hooks
 				const auto race = a_actor->GetRace();
 				const auto raceEDID = race->formEditorID;
 				if (raceEDID == "DLC1VampireLordRace") {
-					OnMeleeHitHook::VLS_RevertVampireLordform(a_actor);
+					OnMeleeHitHook::VLS_RevertVampireLordform(nullptr, 0, nullptr, a_actor);
 				}
 			}
 
@@ -319,7 +319,7 @@ namespace hooks
 			auto Playerhandle = RE::PlayerCharacter::GetSingleton();
 
 			if (Playerhandle->IsSneaking() || event->newLoc && event->newLoc->HasKeyword(RE::TESForm::LookupByEditorID<RE::BGSKeyword>("LocTypeHabitation"))){
-				OnMeleeHitHook::VLS_RevertVampireLordform(a_actor);
+				OnMeleeHitHook::VLS_RevertVampireLordform(nullptr, 0, nullptr, a_actor);
 			}
 
 			return RE::BSEventNotifyControl::kContinue;

@@ -17,8 +17,8 @@ namespace hooks
 
 		static void InstallHook();
 		static void install();
-		static void VLS_SendVampireLordTransformation(RE::Actor* a_actor);
-		static void VLS_RevertVampireLordform(RE::Actor* a_actor);
+		static void VLS_SendVampireLordTransformation(STATIC_ARGS, RE::Actor* a_actor);
+		static void VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor);
 		static void UnequipAll(RE::Actor* a_actor);
 		static bool BindPapyrusFunctions(VM* vm);
 		static void Set_iFrames(RE::Actor* actor);
