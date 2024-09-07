@@ -24,7 +24,8 @@ namespace hooks
 		static void Set_iFrames(RE::Actor* actor);
 		static void Reset_iFrames(RE::Actor* actor);
 		static void dispelEffect(RE::MagicItem *spellForm, RE::Actor *a_target);
-		static void RemoveVLDrain(RE::Actor *a_actor);
+		static void VLDrain(RE::Actor* a_actor, bool remove = false);
+		static void EquipfromInvent(RE::Actor* a_actor, RE::FormID a_formID);
 
 	private:
 		OnMeleeHitHook() = default;
