@@ -170,7 +170,7 @@ namespace hooks
 	void OnMeleeHitHook::startTiming(RE::Actor* a_actor, float a_time)
 	{
 		uniqueLocker lock(mtx_parryTimer);
-		auto         it = _parryTimer.find(a_actor);
+		auto it = _parryTimer.find(a_actor);
 		if (it != _parryTimer.end()) {
 			it->second = 0;
 		} else {
@@ -199,7 +199,7 @@ namespace hooks
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x10F564, "Skyrim.esm")));
 		a_actor->SetGraphVariableBool("bIsSynced", true);
 		a_actor->NotifyAnimationGraph("IdleVampireLordTransformation");
-		GetSingleton().startTiming(a_actor, 2.0f);
+		GetSingleton().startTiming(a_actor, 0.0f);
 		Set_iFrames(a_actor);
 	}
 

@@ -77,6 +77,8 @@ EXTERN_C [[maybe_unused]] __declspec(dllexport) bool SKSEAPI SKSEPlugin_Load(con
 
 	Init();
 
+	hooks::OnMeleeHitHook::install_protected();
+
 	//hooks::OnMeleeHitHook::InstallHook();
 
 	return true;
