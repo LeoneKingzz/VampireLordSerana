@@ -141,10 +141,10 @@ namespace hooks
 		if (!(a_actor->HasKeywordString("VLS_Serana_Key") || a_actor->HasKeywordString("VLS_Valerica_Key"))) {
 			return;
 		}
-		 bool bIsSynced = false;
-		 if ((a_actor)->GetGraphVariableBool("bIsSynced", bIsSynced) && !bIsSynced){
-		 	return;
-		 }
+		bool bIsSynced = false;
+		if ((a_actor)->GetGraphVariableBool("bIsSynced", bIsSynced) && !bIsSynced) {
+			return;
+		}
 		uniqueLocker lock(mtx_parryTimer);
 		auto it = _parryTimer.begin();
 		if (it == _parryTimer.end()) {
@@ -201,6 +201,7 @@ namespace hooks
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		caster->CastSpellImmediate(FXchange, true, a_actor, 1, false, 0.0, a_actor);
 		a_actor->NotifyAnimationGraph("IdleVampireLordTransformation");
+		a_actor->SetGraphVariableBool("bIsSynced", true);
 		GetSingleton().startTiming(a_actor, 0.0f);
 		Set_iFrames(a_actor);
 	}
@@ -218,6 +219,7 @@ namespace hooks
 		// a_actor->SetGraphVariableFloat("StaggerMagnitude", 1.0);
 		// a_actor->NotifyAnimationGraph("staggerStart");
 		VLDrain(a_actor);
+		a_actor->SetGraphVariableBool("bIsSynced", false);
 		a_actor->SetGraphVariableBool("IUBusy", false);
 	}
 
@@ -318,7 +320,6 @@ namespace hooks
 				// }
 
 			}else {//vamp form//
-				//a_actor->SetGraphVariableBool("bIsSynced", false);
 				OnMeleeHitHook::Reset_iFrames(a_actor);
 				OnMeleeHitHook::UnequipAll(a_actor);
 				a_actor->AddWornItem(vamp_armour, 1, false, 0, 0);
