@@ -10,7 +10,7 @@ namespace hooks
      
 	void remove_item(RE::TESObjectREFR* a_ref, RE::TESBoundObject* a_item, std::uint32_t a_count, bool a_silent, RE::TESObjectREFR* a_otherContainer);
 
-	class __declspec(dllexport) OnMeleeHitHook
+	class OnMeleeHitHook
 	{
 	public:
 		[[nodiscard]] static OnMeleeHitHook& GetSingleton() noexcept;
