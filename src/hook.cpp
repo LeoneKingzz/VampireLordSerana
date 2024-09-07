@@ -372,19 +372,7 @@ namespace hooks
 			default:
                 break;
 			}
-			// if (iState == 10) {  // using staff
-			// 	return;
-			// 	//hit_causer->SetGraphVariableInt("iStep", 0);
-			// }
         }
-
-		// bool bMaxsuWeaponParry_InWeaponParry = false;
-
-		// if ((hit_target)
-		// 		->GetGraphVariableBool("bMaxsuWeaponParry_InWeaponParry", bMaxsuWeaponParry_InWeaponParry) &&
-		// 	bMaxsuWeaponParry_InWeaponParry) {
-		// 	return;
-		// }
 		// Call the normal game's code
 		_OnMeleeHit(hit_causer, hit_target, a_int1, a_bool, a_unkptr);
 	}
