@@ -252,7 +252,6 @@ namespace hooks
 				OnMeleeHitHook::UnequipAll(a_actor);
 				RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, vamp_armour);
 				
-				
 			}
 
 			return RE::BSEventNotifyControl::kContinue;
