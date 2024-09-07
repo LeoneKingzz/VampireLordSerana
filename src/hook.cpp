@@ -133,6 +133,59 @@ namespace hooks
 		}
 	}
 
+	void OnMeleeHitHook::update(RE::Actor* a_actor, [[maybe_unused]] float a_delta)
+	{
+		if (!_bUpdate) {
+			return;
+		}
+		if (!(a_actor->HasKeywordString("VLS_Serana_Key") || a_actor->HasKeywordString("VLS_Valerica_Key"))) {
+			return;
+		}
+		bool bIsSynced = false;
+		if ((a_actor)->GetGraphVariableBool("bIsSynced", bIsSynced) && !bIsSynced){
+			return;
+		}
+		uniqueLocker lock(mtx_parryTimer);
+		auto it = _parryTimer.begin();
+		if (it == _parryTimer.end()) {
+			_bUpdate = false;
+			return;
+		}
+		while (it != _parryTimer.end()) {
+			if (!it->first) {
+				it = _parryTimer.erase(it);
+				continue;
+			}
+			if (it->second > 2.0f) {
+				VLS_CompleteTransformation(a_actor);
+				it = _parryTimer.erase(it);
+				continue;
+			}
+			//*static float* g_deltaTime = (float*)RELOCATION_ID(523660, 410199).address();*/          // 2F6B948
+			it->second += a_delta;
+			it++;
+		}
+	}
+
+	void OnMeleeHitHook::startTiming(RE::Actor* a_actor, float a_time)
+	{
+		uniqueLocker lock(mtx_parryTimer);
+		auto         it = _parryTimer.find(a_actor);
+		if (it != _parryTimer.end()) {
+			it->second = 0;
+		} else {
+			_parryTimer.insert({ a_actor, a_time });
+		}
+
+		_bUpdate = true;
+	}
+
+	void OnMeleeHitHook::finishTiming(RE::Actor* a_actor)
+	{
+		uniqueLocker lock(mtx_parryTimer);
+		_parryTimer.erase(a_actor);
+	}
+
 	void OnMeleeHitHook::VLS_SendVampireLordTransformation(STATIC_ARGS, RE::Actor* a_actor)
 	{
 		const auto race = a_actor->GetRace();
@@ -144,15 +197,16 @@ namespace hooks
 		logger::info("Began Transformation");
 		auto data = RE::TESDataHandler::GetSingleton();
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x10F564, "Skyrim.esm")));
+		a_actor->SetGraphVariableBool("bIsSynced", true);
 		a_actor->NotifyAnimationGraph("IdleVampireLordTransformation");
-		//a_actor->NotifyAnimationGraph("SetRace");
+		GetSingleton().startTiming(a_actor, 2.0f);
 		Set_iFrames(a_actor);
-		VLS_CompleteTransformation(a_actor);
 	}
 
 	void OnMeleeHitHook::VLS_CompleteTransformation(RE::Actor* a_actor){
 		//firstpart//
 		logger::info("completing Transformation");
+		GetSingleton().finishTiming(a_actor);
 		const auto FXchange = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaChangeFX");
 		const auto FXExpl = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToVLExplosionSPELL");
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
@@ -265,6 +319,7 @@ namespace hooks
 				// }
 
 			}else {//vamp form//
+				a_actor->SetGraphVariableBool("bIsSynced", false);
 				OnMeleeHitHook::Reset_iFrames(a_actor);
 				OnMeleeHitHook::UnequipAll(a_actor);
 				a_actor->AddWornItem(vamp_armour, 1, false, 0, 0);
@@ -368,6 +423,7 @@ namespace hooks
 	std::unordered_map<uint64_t, animEventHandler::FnProcessEvent> animEventHandler::fnHash;
 
 	void OnMeleeHitHook::install(){
+
 		auto eventSink = OurEventSink::GetSingleton();
 
 		// ScriptSource

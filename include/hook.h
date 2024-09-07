@@ -1,9 +1,15 @@
 #include "SKSE/Trampoline.h"
+#include <mutex>
+#include <shared_mutex>
+#include <unordered_set>
 #pragma warning(disable: 4100)
 
 
 namespace hooks
 {
+	static float& g_deltaTime = (*(float*)RELOCATION_ID(523660, 410199).address());
+	using uniqueLocker = std::unique_lock<std::shared_mutex>;
+	using sharedLocker = std::shared_lock<std::shared_mutex>;
 	using VM = RE::BSScript::Internal::VirtualMachine;
 	using StackID = RE::VMStackID;
 #define STATIC_ARGS [[maybe_unused]] VM *a_vm, [[maybe_unused]] StackID a_stackID, RE::StaticFunctionTag *
@@ -81,6 +87,9 @@ namespace hooks
 
 		static void InstallHook();
 		static void install();
+		static void install_protected(){
+			Install_Update();
+		}
 		static void VLS_SendVampireLordTransformation(STATIC_ARGS, RE::Actor* a_actor);
 		static void VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor);
 		static void UnequipAll(RE::Actor* a_actor);
@@ -91,6 +100,9 @@ namespace hooks
 		static void VLDrain(RE::Actor* a_actor, bool remove = false);
 		static void EquipfromInvent(RE::Actor* a_actor, RE::FormID a_formID);
 		static void VLS_CompleteTransformation(RE::Actor *a_actor);
+		void update(RE::Actor* a_actor, float a_delta);
+		void startTiming(RE::Actor *a_actor, float a_delta);
+	    void finishTiming(RE::Actor *a_actor);
 
 	private:
 		OnMeleeHitHook() = default;
@@ -101,12 +113,33 @@ namespace hooks
 		OnMeleeHitHook& operator=(const OnMeleeHitHook&) = delete;
 		OnMeleeHitHook& operator=(OnMeleeHitHook&&) = delete;
 
+		std::unordered_map<RE::Actor*, float> _parryTimer;
+		std::shared_mutex mtx_parryTimer;
+		bool _bUpdate;
+
 		/** Our new function */
 		static void OnMeleeHit(RE::Actor* attacker, RE::Actor* target, std::int64_t a_int1, bool a_bool,
 			void* a_unkptr);
 
 		/** The original function */
 		static inline REL::Relocation<decltype(OnMeleeHit)> _OnMeleeHit;
+
+	protected:
+
+		struct Actor_Update
+		{
+			static void thunk(RE::Actor* a_actor, float a_delta)
+			{
+				func(a_actor, a_delta);
+				GetSingleton().update(a_actor, g_deltaTime);
+			}
+			static inline REL::Relocation<decltype(thunk)> func;
+		};
+
+		static void Install_Update(){
+			stl::write_vfunc<RE::Character, 0xAD, Actor_Update>();
+		}
+
 	};
 
 
