@@ -137,7 +137,7 @@ namespace hooks
 	{
 		const auto race = a_actor->GetRace();
 		const auto raceEDID = race->formEditorID;
-		if (raceEDID == "DLC1VampireLordRace") {
+		if (raceEDID == "DLC1VampireBeastRace") {
 			return;
 		}
 		a_actor->SetGraphVariableBool("IUBusy", true);
@@ -150,7 +150,7 @@ namespace hooks
 		caster->CastSpellImmediate(FXchange, true, a_actor, 1, false, 0.0, a_actor);
 		a_actor->NotifyAnimationGraph("IdleVampireLordTransformation");
 		Set_iFrames(a_actor);
-		a_actor->SwitchRace(RE::TESForm::LookupByEditorID<RE::TESRace>("DLC1VampireLordRace"), false);
+		a_actor->SwitchRace(RE::TESForm::LookupByEditorID<RE::TESRace>("DLC1VampireBeastRace"), false);
 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDLC1AbVampireFloatBodyFX"));
 		caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
 		VLDrain(a_actor);
@@ -161,7 +161,7 @@ namespace hooks
 	{
 		const auto race = a_actor->GetRace();
 		const auto raceEDID = race->formEditorID;
-		if (!(raceEDID == "DLC1VampireLordRace")) {
+		if (!(raceEDID == "DLC1VampireBeastRace")) {
 			return;
 		}
 		a_actor->SetGraphVariableBool("IUBusy", true);
@@ -231,7 +231,7 @@ namespace hooks
 			const auto raceEDID = race->formEditorID;
 			auto vamp_armour = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("VLSeranaDLC1ClothesVampireLordRoyalArmor");
 			auto ElderScroll = RE::TESForm::LookupByEditorID<RE::TESAmmo>("DLC1ElderScrollBack");
-			if (!(raceEDID == "DLC1VampireLordRace")) {
+			if (!(raceEDID == "DLC1VampireBeastRace")) {
 				//Not vamp form//
 				OnMeleeHitHook::Reset_iFrames(a_actor);
 				if (&bElderScrollEquipped){
@@ -275,7 +275,7 @@ namespace hooks
 
 			const auto race = a_actor->GetRace();
 			const auto raceEDID = race->formEditorID;
-			if (raceEDID == "DLC1VampireLordRace") {
+			if (raceEDID == "DLC1VampireBeastRace") {
 				auto ElderScroll = RE::TESForm::LookupByEditorID<RE::TESAmmo>("DLC1ElderScrollBack");
 				auto item = event->originalRefr;
 				if (item && item == ElderScroll->formID && event->equipped) {
@@ -301,7 +301,7 @@ namespace hooks
 			if (getcombatstate == RE::ACTOR_COMBAT_STATE::kNone) {
 				const auto race = a_actor->GetRace();
 				const auto raceEDID = race->formEditorID;
-				if (raceEDID == "DLC1VampireLordRace") {
+				if (raceEDID == "DLC1VampireBeastRace") {
 					OnMeleeHitHook::VLS_RevertVampireLordform(nullptr, 0, nullptr, a_actor);
 				}
 			}
