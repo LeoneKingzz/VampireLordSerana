@@ -150,24 +150,20 @@ namespace hooks
 		}
 		uniqueLocker lock(mtx_parryTimer);
 		auto it = _parryTimer.begin();
-		if (it == _parryTimer.end()) {
+		if (!it->first) {
+			it = _parryTimer.erase(it);
+			return;
+		}
+		if (it->second > 0.6f) {
+			it = _parryTimer.erase(it);
 			_bUpdate = false;
 			VLS_CompleteTransformation(a_actor);
 			return;
-		}
-		while (it != _parryTimer.end()) {
-			if (!it->first) {
-				it = _parryTimer.erase(it);
-				continue;
-			}
-			if (it->second > 0.6f) {
-				it = _parryTimer.erase(it);
-				continue;
-			}
-			//*static float* g_deltaTime = (float*)RELOCATION_ID(523660, 410199).address();*/          // 2F6B948
+		}else{
 			it->second += a_delta;
 			it++;
 		}
+		//*static float* g_deltaTime = (float*)RELOCATION_ID(523660, 410199).address();*/          // 2F6B948
 	}
 
 	void OnMeleeHitHook::startTiming(RE::Actor* a_actor, float a_time)
