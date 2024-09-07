@@ -90,6 +90,7 @@ namespace hooks
 		static void dispelEffect(RE::MagicItem *spellForm, RE::Actor *a_target);
 		static void VLDrain(RE::Actor* a_actor, bool remove = false);
 		static void EquipfromInvent(RE::Actor* a_actor, RE::FormID a_formID);
+		static void VLS_CompleteTransformation(RE::Actor *a_actor);
 
 	private:
 		OnMeleeHitHook() = default;

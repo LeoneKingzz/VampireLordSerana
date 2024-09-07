@@ -144,19 +144,21 @@ namespace hooks
 		logger::info("Began Transformation");
 		auto data = RE::TESDataHandler::GetSingleton();
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x10F564, "Skyrim.esm")));
+
+        //firstpart initial space//
+
+		a_actor->NotifyAnimationGraph("IdleVampireLordTransformation");
+		Set_iFrames(a_actor);
+	}
+
+	void OnMeleeHitHook::VLS_CompleteTransformation(RE::Actor* a_actor){
+		//firstpart//
 		const auto FXchange = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaChangeFX");
 		const auto FXExpl = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToVLExplosionSPELL");
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		caster->CastSpellImmediate(FXchange, true, a_actor, 1, false, 0.0, a_actor);
-		a_actor->SetGraphVariableBool("bVoiceReady", false);
-		a_actor->NotifyAnimationGraph("IdleVampireLordTransformation");
-		Set_iFrames(a_actor);
-		auto bVoiceReady = false;
-		int  psuedotime = 0;
-		while (a_actor->GetGraphVariableBool("bVoiceReady", bVoiceReady) && !bVoiceReady) {
-			psuedotime += 1;
-		}
-		logger::info("bIsSynchedTime {}"sv, psuedotime);
+
+
 		a_actor->SwitchRace(RE::TESForm::LookupByEditorID<RE::TESRace>("DLC1VampireBeastRace"), false);
 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDLC1AbVampireFloatBodyFX"));
 		caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
@@ -167,6 +169,8 @@ namespace hooks
 		a_actor->SetGraphVariableBool("IUBusy", false);
 	}
 
+
+
 	void OnMeleeHitHook::VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor)
 	{
 		const auto race = a_actor->GetRace();
@@ -176,12 +180,6 @@ namespace hooks
 		}
 		a_actor->SetGraphVariableBool("IUBusy", true);
 		logger::info("Reverting Form");
-		auto bIsSynced = false;
-		int  psuedotime = 0;
-		while (a_actor->GetGraphVariableBool("bIsSynced", bIsSynced) && bIsSynced) {
-			psuedotime += 1;
-		}
-		logger::info("bIsSynchedTime {}"sv, psuedotime);
 		auto data = RE::TESDataHandler::GetSingleton();
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x10F564, "Skyrim.esm")));
 		const auto FXchange = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToNormal");
@@ -359,7 +357,7 @@ namespace hooks
 		switch (hash(a_event.tag.c_str(), a_event.tag.size())) {
 		case "SoundPlay.NPCVampireLordTransformation012D"_h:
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
-				actor->SetGraphVariableBool("bVoiceReady", true);
+				OnMeleeHitHook::VLS_CompleteTransformation(actor);
 			}
 			break;
 		}
