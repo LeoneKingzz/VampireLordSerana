@@ -150,9 +150,18 @@ namespace hooks
 		caster->CastSpellImmediate(FXchange, true, a_actor, 1, false, 0.0, a_actor);
 		a_actor->NotifyAnimationGraph("IdleVampireLordTransformation");
 		Set_iFrames(a_actor);
+		auto bIsSynced = false;
+		int  psuedotime = 0;
+		while (a_actor->GetGraphVariableBool("bIsSynced", bIsSynced) && bIsSynced) {
+			psuedotime += 1;
+		}
+		logger::info("bIsSynchedTime {}"sv, &psuedotime);
 		a_actor->SwitchRace(RE::TESForm::LookupByEditorID<RE::TESRace>("DLC1VampireBeastRace"), false);
 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDLC1AbVampireFloatBodyFX"));
 		caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
+		a_actor->SetGraphVariableFloat("staggerDirection", 0.0);
+		a_actor->SetGraphVariableFloat("StaggerMagnitude", 1.0);
+		a_actor->NotifyAnimationGraph("staggerStart");
 		VLDrain(a_actor);
 		a_actor->SetGraphVariableBool("IUBusy", false);
 	}
@@ -171,7 +180,7 @@ namespace hooks
 		while (a_actor->GetGraphVariableBool("bIsSynced", bIsSynced) && bIsSynced) {
 			psuedotime += 1;
 		}
-		logger::info("bIsSynchedTime {}"sv, psuedotime);
+		logger::info("bIsSynchedTime {}"sv, &psuedotime);
 		auto data = RE::TESDataHandler::GetSingleton();
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x10F564, "Skyrim.esm")));
 		const auto FXchange = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToNormal");
@@ -198,6 +207,9 @@ namespace hooks
 		caster->CastSpellImmediate(FXchange2, true, a_actor, 1, false, 0.0, a_actor);
 		VLDrain(a_actor, true);
 		dispelEffect(Gargoyle, a_actor);
+		a_actor->SetGraphVariableFloat("staggerDirection", 0.0);
+		a_actor->SetGraphVariableFloat("StaggerMagnitude", 1.0);
+		a_actor->NotifyAnimationGraph("staggerStart");
 		a_actor->SetGraphVariableBool("IUBusy", false);
 	}
 
@@ -255,8 +267,8 @@ namespace hooks
 			}else {//vamp form//
 				OnMeleeHitHook::Reset_iFrames(a_actor);
 				OnMeleeHitHook::UnequipAll(a_actor);
+				a_actor->AddWornItem(vamp_armour, 1, false, 0, 0);
 				RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, vamp_armour);
-				
 			}
 
 			return RE::BSEventNotifyControl::kContinue;
