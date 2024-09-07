@@ -146,7 +146,7 @@ namespace hooks
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x10F564, "Skyrim.esm")));
 		a_actor->NotifyAnimationGraph("IdleVampireLordTransformation");
 		//a_actor->NotifyAnimationGraph("SetRace");
-		Set_iFrames(a_actor);
+		//Set_iFrames(a_actor);
 	}
 
 	void OnMeleeHitHook::VLS_CompleteTransformation(RE::Actor* a_actor){
@@ -244,7 +244,7 @@ namespace hooks
 			auto ElderScroll = RE::TESForm::LookupByEditorID<RE::TESAmmo>("DLC1ElderScrollBack");
 			if (!(raceEDID == "DLC1VampireBeastRace")) {
 				//Not vamp form//
-				OnMeleeHitHook::Reset_iFrames(a_actor);
+				// OnMeleeHitHook::Reset_iFrames(a_actor);
 				if (&bElderScrollEquipped){
 					bElderScrollEquipped = false;
 					OnMeleeHitHook::EquipfromInvent(a_actor, ElderScroll->formID);
@@ -264,7 +264,7 @@ namespace hooks
 				}
 
 			}else {//vamp form//
-				OnMeleeHitHook::Reset_iFrames(a_actor);
+				// OnMeleeHitHook::Reset_iFrames(a_actor);
 				OnMeleeHitHook::UnequipAll(a_actor);
 				a_actor->AddWornItem(vamp_armour, 1, false, 0, 0);
 				RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, vamp_armour);
@@ -353,7 +353,7 @@ namespace hooks
 
 		RE::Actor* actor = const_cast<RE::TESObjectREFR*>(a_event.holder)->As<RE::Actor>();
 		switch (hash(a_event.tag.c_str(), a_event.tag.size())) {
-		case "IdleVampireLordTransformation"_h:
+		case "SoundPlay.NPCVampireLordTransformation012D"_h:
 			logger::info("Set Race Detected");
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
 				OnMeleeHitHook::VLS_CompleteTransformation(actor);
