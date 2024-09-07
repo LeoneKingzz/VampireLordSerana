@@ -148,7 +148,7 @@ namespace hooks
 		const auto FXExpl = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToVLExplosionSPELL");
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		caster->CastSpellImmediate(FXchange, true, a_actor, 1, false, 0.0, a_actor);
-		a_actor->NotifyAnimationGraph("VampireLordChangePlayer");
+		a_actor->NotifyAnimationGraph("IdleVampireLordTransformation");
 		Set_iFrames(a_actor);
 		auto bIsSynced = false;
 		int  psuedotime = 0;
