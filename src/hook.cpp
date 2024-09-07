@@ -161,7 +161,6 @@ namespace hooks
 			return;
 		}else{
 			it->second += a_delta;
-			it++;
 		}
 		//*static float* g_deltaTime = (float*)RELOCATION_ID(523660, 410199).address();*/          // 2F6B948
 	}
