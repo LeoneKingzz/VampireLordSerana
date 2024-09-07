@@ -155,7 +155,7 @@ namespace hooks
 		while (a_actor->GetGraphVariableBool("bIsSynced", bIsSynced) && bIsSynced) {
 			psuedotime += 1;
 		}
-		logger::info("bIsSynchedTime {}"sv, &psuedotime);
+		logger::info("bIsSynchedTime {}"sv, psuedotime);
 		a_actor->SwitchRace(RE::TESForm::LookupByEditorID<RE::TESRace>("DLC1VampireBeastRace"), false);
 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDLC1AbVampireFloatBodyFX"));
 		caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
@@ -180,7 +180,7 @@ namespace hooks
 		while (a_actor->GetGraphVariableBool("bIsSynced", bIsSynced) && bIsSynced) {
 			psuedotime += 1;
 		}
-		logger::info("bIsSynchedTime {}"sv, &psuedotime);
+		logger::info("bIsSynchedTime {}"sv, psuedotime);
 		auto data = RE::TESDataHandler::GetSingleton();
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x10F564, "Skyrim.esm")));
 		const auto FXchange = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToNormal");
