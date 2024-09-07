@@ -140,7 +140,7 @@ namespace hooks
 		if (raceEDID == "DLC1VampireLordRace") {
 			return;
 		}
-		VLDrain(a_actor);
+		logger::info("Began Transformation");
 		auto data = RE::TESDataHandler::GetSingleton();
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x10F564, "Skyrim.esm")));
 		const auto FXchange = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaChangeFX");
@@ -152,7 +152,7 @@ namespace hooks
 		a_actor->SwitchRace(RE::TESForm::LookupByEditorID<RE::TESRace>("DLC1VampireLordRace"), false);
 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDLC1AbVampireFloatBodyFX"));
 		caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
-		
+		VLDrain(a_actor);
 	}
 
 	void OnMeleeHitHook::VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor)
@@ -162,6 +162,7 @@ namespace hooks
 		if (!(raceEDID == "DLC1VampireLordRace")) {
 			return;
 		}
+		logger::info("Reverting Form");
 		auto bIsSynced = false;
 		int  psuedotime = 0;
 		while (a_actor->GetGraphVariableBool("bIsSynced", bIsSynced) && bIsSynced) {
