@@ -144,8 +144,8 @@ namespace hooks
 		if (!(a_actor->HasKeywordString("VLS_Serana_Key") || a_actor->HasKeywordString("VLS_Valerica_Key"))) {
 			return;
 		}
-		bool bIsSynced = false;
-		if ((a_actor)->GetGraphVariableBool("bIsSynced", bIsSynced) && !bIsSynced) {
+		bool IUBusy = false;
+		if ((a_actor)->GetGraphVariableBool("IUBusy", IUBusy) && !IUBusy) {
 			return;
 		}
 		uniqueLocker lock(mtx_parryTimer);
@@ -160,7 +160,7 @@ namespace hooks
 				it = _parryTimer.erase(it);
 				continue;
 			}
-			if (it->second > 1.5f) {
+			if (it->second > 0.6f) {
 				it = _parryTimer.erase(it);
 				continue;
 			}
@@ -204,7 +204,7 @@ namespace hooks
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		caster->CastSpellImmediate(FXchange, true, a_actor, 1, false, 0.0, a_actor);
 		a_actor->NotifyAnimationGraph("IdleVampireLordTransformation");
-		a_actor->SetGraphVariableBool("bIsSynced", true);
+		//a_actor->SetGraphVariableBool("bIsSynced", true);
 		GetSingleton().startTiming(a_actor, 0.0f);
 		Set_iFrames(a_actor);
 	}
@@ -222,7 +222,7 @@ namespace hooks
 		// a_actor->SetGraphVariableFloat("StaggerMagnitude", 1.0);
 		// a_actor->NotifyAnimationGraph("staggerStart");
 		VLDrain(a_actor);
-		a_actor->SetGraphVariableBool("bIsSynced", false);
+		//a_actor->SetGraphVariableBool("bIsSynced", false);
 		a_actor->SetGraphVariableBool("IUBusy", false);
 	}
 
