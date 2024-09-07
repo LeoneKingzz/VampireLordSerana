@@ -187,17 +187,17 @@ namespace hooks
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		caster->CastSpellImmediate(FXchange, true, a_actor, 1, false, 0.0, a_actor);
 		a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDLC1AbVampireFloatBodyFX"));
-		auto curhealth = a_actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kHealth);
-		if (curhealth <= 70.0f) {
-			if (curhealth <= 5.0f) {
-				if (a_actor->HasKeywordString("VLS_Serana_Key")) {
-					bShouldBleedOut_Serana = true;
-				} else {
-					bShouldBleedOut_Valerica = true;
-				}
-			}
-			a_actor->AsActorValueOwner()->RestoreActorValue(RE::ACTOR_VALUE_MODIFIER::kDamage, RE::ActorValue::kHealth, (70.f - curhealth));
-		}
+		// auto curhealth = a_actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kHealth);
+		// if (curhealth <= 70.0f) {
+		// 	if (curhealth <= 5.0f) {
+		// 		if (a_actor->HasKeywordString("VLS_Serana_Key")) {
+		// 			bShouldBleedOut_Serana = true;
+		// 		} else {
+		// 			bShouldBleedOut_Valerica = true;
+		// 		}
+		// 	}
+		// 	a_actor->AsActorValueOwner()->RestoreActorValue(RE::ACTOR_VALUE_MODIFIER::kDamage, RE::ActorValue::kHealth, (70.f - curhealth));
+		// }
 		auto vamp_armour = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("VLSeranaDLC1ClothesVampireLordRoyalArmor");
 		RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, vamp_armour);
 		remove_item(a_actor, vamp_armour, 1, true, nullptr);
@@ -250,19 +250,19 @@ namespace hooks
 					bElderScrollEquipped = false;
 					OnMeleeHitHook::EquipfromInvent(a_actor, ElderScroll->formID);
 				}
-				if (a_actor->HasKeywordString("VLS_Serana_Key")) {
-					if (&bShouldBleedOut_Serana){
-						bShouldBleedOut_Serana = false;
-						auto curhealth = a_actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kHealth);
-						a_actor->AsActorValueOwner()->RestoreActorValue(RE::ACTOR_VALUE_MODIFIER::kDamage, RE::ActorValue::kHealth, -(curhealth + 1.0f));
-					}
-				} else {
-					if (&bShouldBleedOut_Valerica){
-						bShouldBleedOut_Valerica = false;
-						auto curhealth = a_actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kHealth);
-						a_actor->AsActorValueOwner()->RestoreActorValue(RE::ACTOR_VALUE_MODIFIER::kDamage, RE::ActorValue::kHealth, -(curhealth + 1.0f));
-					}
-				}
+				// if (a_actor->HasKeywordString("VLS_Serana_Key")) {
+				// 	if (&bShouldBleedOut_Serana){
+				// 		bShouldBleedOut_Serana = false;
+				// 		auto curhealth = a_actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kHealth);
+				// 		a_actor->AsActorValueOwner()->RestoreActorValue(RE::ACTOR_VALUE_MODIFIER::kDamage, RE::ActorValue::kHealth, -(curhealth + 1.0f));
+				// 	}
+				// } else {
+				// 	if (&bShouldBleedOut_Valerica){
+				// 		bShouldBleedOut_Valerica = false;
+				// 		auto curhealth = a_actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kHealth);
+				// 		a_actor->AsActorValueOwner()->RestoreActorValue(RE::ACTOR_VALUE_MODIFIER::kDamage, RE::ActorValue::kHealth, -(curhealth + 1.0f));
+				// 	}
+				// }
 
 			}else {//vamp form//
 				OnMeleeHitHook::Reset_iFrames(a_actor);
