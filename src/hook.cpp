@@ -198,7 +198,7 @@ namespace hooks
 		const auto FXchange = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaChangeFX");
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		caster->CastSpellImmediate(FXchange, true, a_actor, 1, false, 0.0, a_actor);
-		a_actor->NotifyAnimationGraph("IdleVampireLordTransformation");
+		//a_actor->NotifyAnimationGraph("IdleVampireLordTransformation");
 		Set_iFrames(a_actor);
 		VLS_CompleteTransformation(a_actor);
 	}
@@ -208,7 +208,7 @@ namespace hooks
 		logger::info("completing Transformation");
 		const auto FXExpl = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToVLExplosionSPELL");
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
-		a_actor->SwitchRace(RE::TESForm::LookupByEditorID<RE::TESRace>("DLC1VampireBeastRace"), true);
+		a_actor->SwitchRace(RE::TESForm::LookupByEditorID<RE::TESRace>("DLC1VampireBeastRace"), false);
 		logger::info("Vampire lord form succesful");
 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDLC1AbVampireFloatBodyFX"));
 		caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
@@ -254,7 +254,7 @@ namespace hooks
 		RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, vamp_armour);
 		remove_item(a_actor, vamp_armour, 1, true, nullptr);
 		//a_actor->RemoveItem(a_actor->GetWornArmor(RE::BGSBipedObjectForm::BipedObjectSlot::kBody), 2, RE::ITEM_REMOVE_REASON::kRemove, nullptr, nullptr);
-		a_actor->SwitchRace(RE::TESForm::LookupByEditorID<RE::TESRace>("NordRace"), true);
+		a_actor->SwitchRace(RE::TESForm::LookupByEditorID<RE::TESRace>("NordRace"), false);
 		dispelEffect(FXchange, a_actor);
 		caster->CastSpellImmediate(FXchange2, true, a_actor, 1, false, 0.0, a_actor);
 		VLDrain(a_actor, true);
