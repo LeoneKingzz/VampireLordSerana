@@ -156,10 +156,10 @@ namespace hooks
 				it = _parryTimer.erase(it);
 				continue;
 			}
-			if (it->second > 2.0f) {
-				VLS_CompleteTransformation(a_actor);
+			if (it->second > 0.5f) {
 				it = _parryTimer.erase(it);
-				continue;
+				VLS_CompleteTransformation(a_actor);
+				break;
 			}
 			//*static float* g_deltaTime = (float*)RELOCATION_ID(523660, 410199).address();*/          // 2F6B948
 			it->second += a_delta;
@@ -197,7 +197,7 @@ namespace hooks
 		logger::info("Began Transformation");
 		auto data = RE::TESDataHandler::GetSingleton();
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x10F564, "Skyrim.esm")));
-		a_actor->SetGraphVariableBool("bIsSynced", true);
+		//a_actor->SetGraphVariableBool("bIsSynced", true);
 		a_actor->NotifyAnimationGraph("IdleVampireLordTransformation");
 		GetSingleton().startTiming(a_actor, 0.0f);
 		Set_iFrames(a_actor);
@@ -319,7 +319,7 @@ namespace hooks
 				// }
 
 			}else {//vamp form//
-				a_actor->SetGraphVariableBool("bIsSynced", false);
+				//a_actor->SetGraphVariableBool("bIsSynced", false);
 				OnMeleeHitHook::Reset_iFrames(a_actor);
 				OnMeleeHitHook::UnequipAll(a_actor);
 				a_actor->AddWornItem(vamp_armour, 1, false, 0, 0);
