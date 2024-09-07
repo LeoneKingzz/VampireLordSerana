@@ -282,7 +282,7 @@ namespace hooks
 			auto ElderScroll = RE::TESForm::LookupByEditorID<RE::TESAmmo>("DLC1ElderScrollBack");
 			if (!(raceEDID == "DLC1VampireBeastRace")) {
 				//Not vamp form//
-				a_actor->NotifyAnimationGraph("IdleVampireLordTransformation");
+				a_actor->NotifyAnimationGraph("staggerStart");
 				OnMeleeHitHook::Reset_iFrames(a_actor);
 				OnMeleeHitHook::VLS_CompleteReversion(a_actor);
 				if (bElderScrollEquipped){
