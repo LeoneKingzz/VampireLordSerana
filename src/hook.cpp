@@ -148,7 +148,7 @@ namespace hooks
 		const auto FXExpl = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToVLExplosionSPELL");
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		caster->CastSpellImmediate(FXchange, true, a_actor, 1, false, 0.0, a_actor);
-		a_actor->NotifyAnimationGraph("IdleVampireLordTransformation");
+		a_actor->NotifyAnimationGraph("VampireLordChangePlayer");
 		Set_iFrames(a_actor);
 		auto bIsSynced = false;
 		int  psuedotime = 0;
@@ -200,7 +200,9 @@ namespace hooks
 			}
 			a_actor->AsActorValueOwner()->RestoreActorValue(RE::ACTOR_VALUE_MODIFIER::kDamage, RE::ActorValue::kHealth, (70.f - curhealth));
 		}
-		remove_item(a_actor, a_actor->GetWornArmor(RE::BGSBipedObjectForm::BipedObjectSlot::kBody), 1, true, nullptr);
+		auto vamp_armour = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("VLSeranaDLC1ClothesVampireLordRoyalArmor");
+		RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, vamp_armour);
+		remove_item(a_actor, vamp_armour, 1, true, nullptr);
 		//a_actor->RemoveItem(a_actor->GetWornArmor(RE::BGSBipedObjectForm::BipedObjectSlot::kBody), 2, RE::ITEM_REMOVE_REASON::kRemove, nullptr, nullptr);
 		a_actor->SwitchRace(RE::TESForm::LookupByEditorID<RE::TESRace>("NordRace"), false);
 		dispelEffect(FXchange, a_actor);
