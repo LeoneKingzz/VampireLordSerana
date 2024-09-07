@@ -141,10 +141,10 @@ namespace hooks
 		if (!(a_actor->HasKeywordString("VLS_Serana_Key") || a_actor->HasKeywordString("VLS_Valerica_Key"))) {
 			return;
 		}
-		bool bIsSynced = false;
-		if ((a_actor)->GetGraphVariableBool("bIsSynced", bIsSynced) && !bIsSynced){
-			return;
-		}
+		// bool bIsSynced = false;
+		// if ((a_actor)->GetGraphVariableBool("bIsSynced", bIsSynced) && !bIsSynced){
+		// 	return;
+		// }
 		uniqueLocker lock(mtx_parryTimer);
 		auto it = _parryTimer.begin();
 		if (it == _parryTimer.end()) {
@@ -158,6 +158,7 @@ namespace hooks
 			}
 			if (it->second > 0.5f) {
 				it = _parryTimer.erase(it);
+				_bUpdate = false;
 				VLS_CompleteTransformation(a_actor);
 				break;
 			}
