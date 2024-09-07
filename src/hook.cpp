@@ -156,10 +156,11 @@ namespace hooks
 				it = _parryTimer.erase(it);
 				continue;
 			}
-			if (it->second > 0.5f) {
+			if (it->second > 1.0f) {
 				it = _parryTimer.erase(it);
 				_bUpdate = false;
 				VLS_CompleteTransformation(a_actor);
+				//GetSingleton().finishTiming(a_actor);
 				break;
 			}
 			//*static float* g_deltaTime = (float*)RELOCATION_ID(523660, 410199).address();*/          // 2F6B948
@@ -207,7 +208,6 @@ namespace hooks
 	void OnMeleeHitHook::VLS_CompleteTransformation(RE::Actor* a_actor){
 		//firstpart//
 		logger::info("completing Transformation");
-		GetSingleton().finishTiming(a_actor);
 		const auto FXchange = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaChangeFX");
 		const auto FXExpl = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToVLExplosionSPELL");
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
