@@ -138,6 +138,9 @@ namespace hooks
 		if (!_bUpdate) {
 			return;
 		}
+		if (!(a_actor->GetActorRuntimeData().currentProcess && a_actor->GetActorRuntimeData().currentProcess->InHighProcess() && a_actor->Is3DLoaded())){
+			return;
+		}
 		if (!(a_actor->HasKeywordString("VLS_Serana_Key") || a_actor->HasKeywordString("VLS_Valerica_Key"))) {
 			return;
 		}
