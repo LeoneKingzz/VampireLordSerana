@@ -133,7 +133,7 @@ namespace hooks
 		}
 	}
 
-	void OnMeleeHitHook::update(RE::Actor* a_actor, [[maybe_unused]] float a_delta)
+	void OnMeleeHitHook::update(RE::Actor* a_actor, float a_delta)
 	{
 		if (!_bUpdate) {
 			return;
