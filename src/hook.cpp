@@ -140,6 +140,7 @@ namespace hooks
 		if (raceEDID == "DLC1VampireLordRace") {
 			return;
 		}
+		a_actor->SetGraphVariableBool("IUBusy", true);
 		logger::info("Began Transformation");
 		auto data = RE::TESDataHandler::GetSingleton();
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x10F564, "Skyrim.esm")));
@@ -153,6 +154,7 @@ namespace hooks
 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDLC1AbVampireFloatBodyFX"));
 		caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
 		VLDrain(a_actor);
+		a_actor->SetGraphVariableBool("IUBusy", false);
 	}
 
 	void OnMeleeHitHook::VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor)
@@ -162,6 +164,7 @@ namespace hooks
 		if (!(raceEDID == "DLC1VampireLordRace")) {
 			return;
 		}
+		a_actor->SetGraphVariableBool("IUBusy", true);
 		logger::info("Reverting Form");
 		auto bIsSynced = false;
 		int  psuedotime = 0;
@@ -195,6 +198,7 @@ namespace hooks
 		caster->CastSpellImmediate(FXchange2, true, a_actor, 1, false, 0.0, a_actor);
 		VLDrain(a_actor, true);
 		dispelEffect(Gargoyle, a_actor);
+		a_actor->SetGraphVariableBool("IUBusy", false);
 	}
 
 	class OurEventSink : public RE::BSTEventSink<RE::TESSwitchRaceCompleteEvent>, public RE::BSTEventSink<RE::TESEquipEvent>, public RE::BSTEventSink<RE::TESCombatEvent>, public RE::BSTEventSink<RE::TESActorLocationChangeEvent>
