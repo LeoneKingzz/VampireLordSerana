@@ -145,7 +145,7 @@ namespace hooks
 		auto data = RE::TESDataHandler::GetSingleton();
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x10F564, "Skyrim.esm")));
 		a_actor->NotifyAnimationGraph("IdleVampireLordTransformation");
-		//a_actor->NotifyAnimationGraph("SetRace");
+		a_actor->NotifyAnimationGraph("SetRace");
 		Set_iFrames(a_actor);
 	}
 
