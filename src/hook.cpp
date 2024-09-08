@@ -223,15 +223,13 @@ namespace hooks
 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDLC1AbVampireFloatBodyFX"));
 		caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5052, "Dawnguard.esm")));
-		a_actor->SetGraphVariableBool("bIsDodging", false);
 		auto moving = GetSingleton().IsMoving(a_actor);
 		if (moving){
 			ResetAttackMoving(a_actor);
-			a_actor->UpdateCombat();
 		}else{
 			ResetAttack(a_actor);
-			a_actor->UpdateCombat();
 		}
+		a_actor->SetGraphVariableBool("bIsDodging", false);
 	}
 
 	void OnMeleeHitHook::InterruptAttack(RE::Actor* a_actor){
@@ -250,6 +248,7 @@ namespace hooks
 		a_actor->NotifyAnimationGraph("LevitationToggle");
 		a_actor->SetGraphVariableBool("MRh_SpellReady_Event", true);
 		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", true);
+		a_actor->UpdateCombat();
 	}
 
 	void OnMeleeHitHook::ResetAttackMoving(RE::Actor* a_actor)
@@ -257,6 +256,7 @@ namespace hooks
 		a_actor->NotifyAnimationGraph("LevitationToggleMoving");
 		a_actor->SetGraphVariableBool("MRh_SpellReady_Event", true);
 		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", true);
+		a_actor->UpdateCombat();
 	}
 
 	bool OnMeleeHitHook::VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor)
@@ -293,7 +293,7 @@ namespace hooks
 		a_actor->SetGraphVariableBool("bIsDodging", false);
 	}
 
-	class OurEventSink : public RE::BSTEventSink<RE::TESSwitchRaceCompleteEvent>, public RE::BSTEventSink<RE::TESEquipEvent>, public RE::BSTEventSink<RE::TESCombatEvent>, public RE::BSTEventSink<RE::TESActorLocationChangeEvent>
+	class OurEventSink : public RE::BSTEventSink<RE::TESSwitchRaceCompleteEvent>, public RE::BSTEventSink<RE::TESEquipEvent>, public RE::BSTEventSink<RE::TESCombatEvent>, public RE::BSTEventSink<RE::TESActorLocationChangeEvent>, public RE::BSTEventSink<RE::TESSpellCastEvent>
 	{
 		OurEventSink() = default;
 		OurEventSink(const OurEventSink&) = delete;
@@ -421,7 +421,42 @@ namespace hooks
 
 			return RE::BSEventNotifyControl::kContinue;
 		}
-		
+
+		RE::BSEventNotifyControl ProcessEvent(const RE::TESSpellCastEvent* event, RE::BSTEventSource<RE::TESSpellCastEvent>*)
+		{
+			auto a_actor = event->object->As<RE::Actor>();
+
+			if (!a_actor) {
+				return RE::BSEventNotifyControl::kContinue;
+			}
+
+			if (!(a_actor->HasKeywordString("VLS_Serana_Key") || a_actor->HasKeywordString("VLS_Valerica_Key"))) {
+				return RE::BSEventNotifyControl::kContinue;
+			}
+
+			auto eSpell = RE::TESForm::LookupByID(event->spell);
+
+			if (eSpell && eSpell->Is(RE::FormType::Spell)) {
+				auto rSpell = eSpell->As<RE::SpellItem>();
+				if (rSpell->GetSpellType() == RE::MagicSystem::SpellType::kVoicePower) {
+					std::string Lsht = (clib_util::editorID::get_editorID(rSpell));
+					switch (hash(Lsht.c_str(), Lsht.size())) {
+					case "VLSeranaValericaLevitateAb"_h:
+					case "VLSeranaValericaDescendAb"_h:
+						auto moving = OnMeleeHitHook::GetSingleton().IsMoving(a_actor);
+						if (moving) {
+							OnMeleeHitHook::ResetAttackMoving(a_actor);
+						} else {
+							OnMeleeHitHook::ResetAttack(a_actor);
+						}
+						break;
+					default:
+						break;
+					}
+				}
+			}
+			return RE::BSEventNotifyControl::kContinue;
+		}
 	};
 
 	RE::BSEventNotifyControl animEventHandler::HookedProcessEvent(RE::BSAnimationGraphEvent& a_event, RE::BSTEventSource<RE::BSAnimationGraphEvent>* src)
@@ -457,6 +492,7 @@ namespace hooks
 		eventSourceHolder->AddEventSink<RE::TESEquipEvent>(eventSink);
 		eventSourceHolder->AddEventSink<RE::TESCombatEvent>(eventSink);
 		eventSourceHolder->AddEventSink<RE::TESActorLocationChangeEvent>(eventSink);
+		eventSourceHolder->AddEventSink<RE::TESSpellCastEvent>(eventSink);
 		
 	}
 
