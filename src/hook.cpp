@@ -201,10 +201,10 @@ namespace hooks
 		caster->PrepareSound(RE::MagicSystem::SoundID::kRelease, FXchange);
 		caster->SpellCast(false, 0, FXchange);
 		InterruptAttack(a_actor);
-		a_actor->NotifyAnimationGraph("IdleVampireTransformation");
+		//a_actor->NotifyAnimationGraph("IdleVampireTransformation");
 		VLDrain(a_actor);
 		//util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5050, "Dawnguard.esm")));
-		//Set_iFrames(a_actor);
+		Set_iFrames(a_actor);
 		return true;
 	}
 
@@ -315,7 +315,7 @@ namespace hooks
 				//Not vamp form//
 				a_actor->SetGraphVariableBool("bNoStagger", false);
 				a_actor->NotifyAnimationGraph("staggerStart");
-				//OnMeleeHitHook::Reset_iFrames(a_actor);
+				OnMeleeHitHook::Reset_iFrames(a_actor);
 				OnMeleeHitHook::VLS_CompleteReversion(a_actor);
 				if (bElderScrollEquipped){
 					bElderScrollEquipped = false;
@@ -323,7 +323,7 @@ namespace hooks
 				}
 
 			}else {//vamp form//
-				//OnMeleeHitHook::Reset_iFrames(a_actor);
+				OnMeleeHitHook::Reset_iFrames(a_actor);
 				a_actor->SetGraphVariableBool("bNoStagger", false);
 				OnMeleeHitHook::UnequipAll(a_actor);
 				a_actor->AddWornItem(vamp_armour, 1, false, 0, 0);
