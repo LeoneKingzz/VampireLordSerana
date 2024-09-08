@@ -224,7 +224,6 @@ namespace hooks
 		caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5052, "Dawnguard.esm")));
 		auto vamp_armour = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("VLSeranaDLC1ClothesVampireLordRoyalArmor");
-		a_actor->AddWornItem(vamp_armour, 1, false, 0, 0);
 		//RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, vamp_armour);
 		VLDrain(a_actor);
 		auto moving = GetSingleton().IsMoving(a_actor);
@@ -233,6 +232,9 @@ namespace hooks
 		}else{
 			ResetAttack(a_actor);
 		}
+		dispelEffect(FXExpl, a_actor);
+		a_actor->AddWornItem(vamp_armour, 1, false, 0, 0);
+		EquipfromInvent(a_actor, vamp_armour->formID);
 		a_actor->SetGraphVariableBool("bIsDodging", false);
 	}
 
