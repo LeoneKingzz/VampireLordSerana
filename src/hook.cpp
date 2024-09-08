@@ -144,8 +144,8 @@ namespace hooks
 	// 	if (!(a_actor->HasKeywordString("VLS_Serana_Key") || a_actor->HasKeywordString("VLS_Valerica_Key"))) {
 	// 		return;
 	// 	}
-	// 	bool IUBusy = false;
-	// 	if ((a_actor)->GetGraphVariableBool("IUBusy", IUBusy) && !IUBusy) {
+	// 	bool bIsDodging = false;
+	// 	if ((a_actor)->GetGraphVariableBool("bIsDodging", bIsDodging) && !bIsDodging) {
 	// 		return;
 	// 	}
 	// 	uniqueLocker lock(mtx_parryTimer);
@@ -191,15 +191,17 @@ namespace hooks
 		if (raceEDID == "DLC1VampireBeastRace") {
 			return false;
 		}
-		a_actor->SetGraphVariableBool("IUBusy", true);
+		a_actor->SetGraphVariableBool("bIsDodging", true);
 		logger::info("Began Transformation");
 		auto data = RE::TESDataHandler::GetSingleton();
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x10F564, "Skyrim.esm")));
 		const auto FXchange = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaChangeFX");
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		caster->CastSpellImmediate(FXchange, true, a_actor, 1, false, 0.0, a_actor);
+		InterruptAttack(a_actor);
+		a_actor->NotifyAnimationGraph("IdleVampireTransformation");
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5050, "Dawnguard.esm")));
-		Set_iFrames(a_actor);
+		//Set_iFrames(a_actor);
 		return true;
 	}
 
@@ -214,7 +216,23 @@ namespace hooks
 		caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5052, "Dawnguard.esm")));
 		VLDrain(a_actor);
-		a_actor->SetGraphVariableBool("IUBusy", false);
+		a_actor->SetGraphVariableBool("bIsDodging", false);
+	}
+
+	void OnMeleeHitHook::InterruptAttack(RE::Actor* a_actor){
+		a_actor->NotifyAnimationGraph("attackStop");
+		a_actor->NotifyAnimationGraph("recoilStop");
+		a_actor->NotifyAnimationGraph("bashStop");
+		a_actor->NotifyAnimationGraph("blockStop");
+		a_actor->NotifyAnimationGraph("InterruptCast");
+		a_actor->NotifyAnimationGraph("staggerStop");
+
+		if ((a_actor->AsActorState()->GetKnockState() == RE::KNOCK_STATE_ENUM::kGetUp) ||
+			(a_actor->AsActorState()->GetKnockState() == RE::KNOCK_STATE_ENUM::kQueued)) {
+			a_actor->AsActorState()->actorState1.knockState = RE::KNOCK_STATE_ENUM::kNormal;
+			a_actor->NotifyAnimationGraph("GetUpEnd");
+		}
+		a_actor->SetGraphVariableBool("bNoStagger", true);
 	}
 
 
@@ -226,7 +244,7 @@ namespace hooks
 		if (!(raceEDID == "DLC1VampireBeastRace")) {
 			return false;
 		}
-		a_actor->SetGraphVariableBool("IUBusy", true);
+		a_actor->SetGraphVariableBool("bIsDodging", true);
 		logger::info("Reverting Form");
 		auto data = RE::TESDataHandler::GetSingleton();
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x10F564, "Skyrim.esm")));
@@ -250,7 +268,7 @@ namespace hooks
 		caster->CastSpellImmediate(FXchange2, true, a_actor, 1, false, 0.0, a_actor);
 		VLDrain(a_actor, true);
 		dispelEffect(Gargoyle, a_actor);
-		a_actor->SetGraphVariableBool("IUBusy", false);
+		a_actor->SetGraphVariableBool("bIsDodging", false);
 	}
 
 	class OurEventSink : public RE::BSTEventSink<RE::TESSwitchRaceCompleteEvent>, public RE::BSTEventSink<RE::TESEquipEvent>, public RE::BSTEventSink<RE::TESCombatEvent>, public RE::BSTEventSink<RE::TESActorLocationChangeEvent>
@@ -285,8 +303,9 @@ namespace hooks
 			auto ElderScroll = RE::TESForm::LookupByEditorID<RE::TESAmmo>("DLC1ElderScrollBack");
 			if (!(raceEDID == "DLC1VampireBeastRace")) {
 				//Not vamp form//
+				a_actor->SetGraphVariableBool("bNoStagger", false);
 				a_actor->NotifyAnimationGraph("staggerStart");
-				OnMeleeHitHook::Reset_iFrames(a_actor);
+				//OnMeleeHitHook::Reset_iFrames(a_actor);
 				OnMeleeHitHook::VLS_CompleteReversion(a_actor);
 				if (bElderScrollEquipped){
 					bElderScrollEquipped = false;
@@ -294,7 +313,8 @@ namespace hooks
 				}
 
 			}else {//vamp form//
-				OnMeleeHitHook::Reset_iFrames(a_actor);
+				//OnMeleeHitHook::Reset_iFrames(a_actor);
+				a_actor->SetGraphVariableBool("bNoStagger", false);
 				OnMeleeHitHook::UnequipAll(a_actor);
 				a_actor->AddWornItem(vamp_armour, 1, false, 0, 0);
 				RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, vamp_armour);

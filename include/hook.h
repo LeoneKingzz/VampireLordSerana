@@ -101,6 +101,7 @@ namespace hooks
 		static void EquipfromInvent(RE::Actor* a_actor, RE::FormID a_formID);
 		static void VLS_CompleteTransformation(RE::Actor *a_actor);
 		static void VLS_CompleteReversion(RE::Actor* a_actor);
+		static void InterruptAttack(RE::Actor *a_actor);
 		// void update(RE::Actor* a_actor, float a_delta);
 		// void startTiming(RE::Actor *a_actor, float a_delta);
 	    // void finishTiming(RE::Actor *a_actor);
