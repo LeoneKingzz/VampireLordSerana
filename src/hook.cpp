@@ -224,8 +224,8 @@ namespace hooks
 		caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5052, "Dawnguard.esm")));
 		auto vamp_armour = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("VLSeranaDLC1ClothesVampireLordRoyalArmor");
-		a_actor->AddWornItem(vamp_armour, 1, false, 0, 0);
-		RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, vamp_armour);
+		a_actor->AddWornItem(vamp_armour, 1, true, 0, 0);
+		//RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, vamp_armour);
 		VLDrain(a_actor);
 		auto moving = GetSingleton().IsMoving(a_actor);
 		if (moving){
@@ -307,8 +307,9 @@ namespace hooks
 		caster->CastSpellImmediate(FXchange, true, a_actor, 1, false, 0.0, a_actor);
 		a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDLC1AbVampireFloatBodyFX"));
 		auto vamp_armour = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("VLSeranaDLC1ClothesVampireLordRoyalArmor");
-		RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, vamp_armour);
-		remove_item(a_actor, vamp_armour, 1, true, nullptr);
+		//RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, vamp_armour);
+		a_actor->RemoveItem(vamp_armour, 1, RE::ITEM_REMOVE_REASON::kRemove, nullptr, nullptr);
+		//remove_item(a_actor, vamp_armour, 1, true, nullptr);
 		VLDrain(a_actor, true);
 		return true;
 	}
@@ -323,6 +324,7 @@ namespace hooks
 		dispelEffect(FXchange, a_actor);
 		caster->CastSpellImmediate(FXchange2, true, a_actor, 1, false, 0.0, a_actor);
 		dispelEffect(Gargoyle, a_actor);
+		a_actor->EvaluatePackage(true, true);
 		if (bElderScrollEquipped) {
 			bElderScrollEquipped = false;
 			OnMeleeHitHook::EquipfromInvent(a_actor, ElderScroll->formID);
