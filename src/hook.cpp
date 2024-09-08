@@ -209,15 +209,19 @@ namespace hooks
 		logger::info("completing Transformation");
 		auto data = RE::TESDataHandler::GetSingleton();
 		const auto FXExpl = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToVLExplosionSPELL");
+		const auto LevitateSpell = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaValericaLevitateAb");
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		logger::info("Vampire lord form succesful");
 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDLC1AbVampireFloatBodyFX"));
 		caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5052, "Dawnguard.esm")));
 		VLDrain(a_actor);
-		a_actor->NotifyAnimationGraph("SneakStart");
-		a_actor->UpdateCombat();
 		a_actor->SetGraphVariableBool("bIsDodging", false);
+		bool isLevitating = false;
+		if ((a_actor)->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) {
+			caster->CastSpellImmediate(LevitateSpell, true, a_actor, 1, false, 1.0, a_actor);
+		}
+		a_actor->UpdateCombat();
 	}
 
 	void OnMeleeHitHook::InterruptAttack(RE::Actor* a_actor){
