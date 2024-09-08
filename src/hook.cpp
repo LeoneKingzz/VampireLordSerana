@@ -225,8 +225,8 @@ namespace hooks
 		caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5052, "Dawnguard.esm")));
 		auto vamp_armour = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("VLSeranaDLC1ClothesVampireLordRoyalArmor");
-		a_actor->AddWornItem(vamp_armour, 1, true, 0, 0);
-		//RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, vamp_armour);
+		a_actor->AddWornItem(vamp_armour, 1, false, 0, 0);
+		RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, vamp_armour);
 		auto moving = GetSingleton().IsMoving(a_actor);
 		if (moving){
 			ResetAttackMoving(a_actor);
