@@ -198,11 +198,8 @@ namespace hooks
 		const auto FXchange = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaChangeFX");
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		caster->CastSpellImmediate(FXchange, true, a_actor, 1, false, 0.0, a_actor);
-		// caster->PrepareSound(RE::MagicSystem::SoundID::kRelease, FXchange);
-		// caster->SpellCast(false, 0, FXchange);
 		InterruptAttack(a_actor);
-		//a_actor->NotifyAnimationGraph("IdleVampireTransformation");
-		a_actor->NotifyAnimationGraph("staggerStart");
+		a_actor->NotifyAnimationGraph("IdleVampireTransformation");
 		VLDrain(a_actor);
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5050, "Dawnguard.esm")));
 		Set_iFrames(a_actor);
@@ -211,7 +208,6 @@ namespace hooks
 
 	void OnMeleeHitHook::VLS_CompleteTransformation(RE::Actor* a_actor){
 		logger::info("completing Transformation");
-		a_actor->NotifyAnimationGraph("staggerStop");
 		auto data = RE::TESDataHandler::GetSingleton();
 		const auto FXExpl = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToVLExplosionSPELL");
 		const auto LevitateSpell = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaValericaLevitateAb");
@@ -219,17 +215,16 @@ namespace hooks
 		logger::info("Vampire lord form succesful");
 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDLC1AbVampireFloatBodyFX"));
 		caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
-		// caster->PrepareSound(RE::MagicSystem::SoundID::kRelease, FXExpl);
-		// caster->SpellCast(false, 0, FXExpl);
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5052, "Dawnguard.esm")));
 		a_actor->SetGraphVariableBool("bIsDodging", false);
+		auto val = a_actor->IsMoving();
+		if (val){
+			
+		}
 		bool isLevitating = false;
 		if ((a_actor)->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) {
 			caster->CastSpellImmediate(LevitateSpell, true, a_actor, 1, false, 1.0, a_actor);
-			//caster->SpellCast(false, 0, LevitateSpell);
 		}
-		//a_actor->UpdateCombat();
-		a_actor->EvaluatePackage(true, false);
 	}
 
 	void OnMeleeHitHook::InterruptAttack(RE::Actor* a_actor){
@@ -373,13 +368,17 @@ namespace hooks
 
 			auto getcombatstate = event->newState.get();
 
-			if (getcombatstate == RE::ACTOR_COMBAT_STATE::kNone) {
-				const auto race = a_actor->GetRace();
-				const auto raceEDID = race->formEditorID;
-				if (raceEDID == "DLC1VampireBeastRace") {
-					const auto Revert = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaValericaRevertFormSpell");
-					const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
-				    caster->CastSpellImmediate(Revert, true, a_actor, 1, false, 0.0, a_actor);
+			const auto race = a_actor->GetRace();
+			const auto raceEDID = race->formEditorID;
+			if (raceEDID == "DLC1VampireBeastRace") {
+				if (getcombatstate != RE::ACTOR_COMBAT_STATE::kCombat) {
+					a_actor->UpdateCombat();
+					auto getcombatstate2 = event->newState.get();
+					if (getcombatstate2 == RE::ACTOR_COMBAT_STATE::kNone) {
+						const auto Revert = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaValericaRevertFormSpell");
+						const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
+						caster->CastSpellImmediate(Revert, true, a_actor, 1, false, 0.0, a_actor);
+					}
 				}
 			}
 
