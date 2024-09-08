@@ -215,6 +215,8 @@ namespace hooks
 
 	void OnMeleeHitHook::VLS_CompleteTransformation(RE::Actor* a_actor){
 		logger::info("completing Transformation");
+		const auto FXchange = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaChangeFX");
+		dispelEffect(FXchange, a_actor);
 		auto data = RE::TESDataHandler::GetSingleton();
 		const auto FXExpl = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToVLExplosionSPELL");
 		//const auto LevitateSpell = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaValericaLevitateAb");
