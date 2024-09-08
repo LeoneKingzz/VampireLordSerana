@@ -440,10 +440,10 @@ namespace hooks
 				auto rSpell = eSpell->As<RE::SpellItem>();
 				if (rSpell->GetSpellType() == RE::MagicSystem::SpellType::kVoicePower) {
 					std::string Lsht = (clib_util::editorID::get_editorID(rSpell));
+					auto moving = OnMeleeHitHook::GetSingleton().IsMoving(a_actor);
 					switch (hash(Lsht.c_str(), Lsht.size())) {
 					case "VLSeranaValericaLevitateAb"_h:
 					case "VLSeranaValericaDescendAb"_h:
-						auto moving = OnMeleeHitHook::GetSingleton().IsMoving(a_actor);
 						if (moving) {
 							OnMeleeHitHook::ResetAttackMoving(a_actor);
 						} else {
