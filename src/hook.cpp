@@ -321,10 +321,14 @@ namespace hooks
 		const auto FXchange2 = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToNormal2");
 		const auto Gargoyle = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaConjureGargoyle");
 		auto ElderScroll = RE::TESForm::LookupByEditorID<RE::TESAmmo>("DLC1ElderScrollBack");
+		auto royal_armour = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("DLC1ArmorVampireArmorRoyalRed");
+		auto royal_boots = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("DLC1ArmorVampireBoots");
 		dispelEffect(FXchange, a_actor);
 		caster->CastSpellImmediate(FXchange2, true, a_actor, 1, false, 0.0, a_actor);
 		dispelEffect(Gargoyle, a_actor);
 		a_actor->EvaluatePackage(true, true);
+		EquipfromInvent(a_actor, royal_armour->formID);
+		EquipfromInvent(a_actor, royal_boots->formID);
 		if (bElderScrollEquipped) {
 			bElderScrollEquipped = false;
 			OnMeleeHitHook::EquipfromInvent(a_actor, ElderScroll->formID);
