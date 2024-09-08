@@ -209,6 +209,7 @@ namespace hooks
 		a_actor->NotifyAnimationGraph("IdleVampireTransformation");
 		VLDrain(a_actor);
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5050, "Dawnguard.esm")));
+		UnequipAll(a_actor);
 		Set_iFrames(a_actor);
 		return true;
 	}
@@ -223,6 +224,9 @@ namespace hooks
 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDLC1AbVampireFloatBodyFX"));
 		caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5052, "Dawnguard.esm")));
+		auto vamp_armour = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("VLSeranaDLC1ClothesVampireLordRoyalArmor");
+		a_actor->AddWornItem(vamp_armour, 1, false, 0, 0);
+		RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, vamp_armour);
 		auto moving = GetSingleton().IsMoving(a_actor);
 		if (moving){
 			ResetAttackMoving(a_actor);
@@ -246,6 +250,9 @@ namespace hooks
 	void OnMeleeHitHook::ResetAttack(RE::Actor* a_actor)
 	{
 		a_actor->NotifyAnimationGraph("LevitationToggle");
+		a_actor->SetGraphVariableBool("WeapEquip", false);
+		a_actor->SetGraphVariableBool("MRh_Equipped_Event", false);
+		a_actor->SetGraphVariableBool("MLh_Equipped_Event", false);
 		a_actor->SetGraphVariableBool("MRh_SpellReady_Event", true);
 		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", true);
 		a_actor->UpdateCombat();
@@ -254,8 +261,33 @@ namespace hooks
 	void OnMeleeHitHook::ResetAttackMoving(RE::Actor* a_actor)
 	{
 		a_actor->NotifyAnimationGraph("LevitationToggleMoving");
+		a_actor->SetGraphVariableBool("WeapEquip", false);
+		a_actor->SetGraphVariableBool("MRh_Equipped_Event", false);
+		a_actor->SetGraphVariableBool("MLh_Equipped_Event", false);
 		a_actor->SetGraphVariableBool("MRh_SpellReady_Event", true);
 		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", true);
+		a_actor->UpdateCombat();
+	}
+
+	void OnMeleeHitHook::ResetAttack_Melee(RE::Actor* a_actor)
+	{
+		a_actor->NotifyAnimationGraph("LevitationToggle");
+		a_actor->SetGraphVariableBool("MRh_SpellReady_Event", false);
+		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", false);
+		a_actor->SetGraphVariableBool("MRh_Equipped_Event", true);
+		a_actor->SetGraphVariableBool("MLh_Equipped_Event", true);
+		a_actor->SetGraphVariableBool("WeapEquip", true);
+		a_actor->UpdateCombat();
+	}
+
+	void OnMeleeHitHook::ResetAttackMoving_Melee(RE::Actor* a_actor)
+	{
+		a_actor->NotifyAnimationGraph("LevitationToggleMoving");
+		a_actor->SetGraphVariableBool("MRh_SpellReady_Event", false);
+		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", false);
+		a_actor->SetGraphVariableBool("MRh_Equipped_Event", true);
+		a_actor->SetGraphVariableBool("MLh_Equipped_Event", true);
+		a_actor->SetGraphVariableBool("WeapEquip", true);
 		a_actor->UpdateCombat();
 	}
 
@@ -321,7 +353,6 @@ namespace hooks
 			}
 			const auto race = a_actor->GetRace();
 			const auto raceEDID = race->formEditorID;
-			auto vamp_armour = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("VLSeranaDLC1ClothesVampireLordRoyalArmor");
 			auto ElderScroll = RE::TESForm::LookupByEditorID<RE::TESAmmo>("DLC1ElderScrollBack");
 			if (!(raceEDID == "DLC1VampireBeastRace")) {
 				//Not vamp form//
@@ -337,9 +368,6 @@ namespace hooks
 			}else {//vamp form//
 				OnMeleeHitHook::Reset_iFrames(a_actor);
 				// a_actor->SetGraphVariableBool("bNoStagger", false);
-				OnMeleeHitHook::UnequipAll(a_actor);
-				a_actor->AddWornItem(vamp_armour, 1, false, 0, 0);
-				RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, vamp_armour);
 				OnMeleeHitHook::VLS_CompleteTransformation(a_actor);
 			}
 
@@ -443,11 +471,17 @@ namespace hooks
 					auto moving = OnMeleeHitHook::GetSingleton().IsMoving(a_actor);
 					switch (hash(Lsht.c_str(), Lsht.size())) {
 					case "VLSeranaValericaLevitateAb"_h:
-					case "VLSeranaValericaDescendAb"_h:
 						if (moving) {
 							OnMeleeHitHook::ResetAttackMoving(a_actor);
 						} else {
 							OnMeleeHitHook::ResetAttack(a_actor);
+						}
+						break;
+					case "VLSeranaValericaDescendAb"_h:
+						if (moving) {
+							OnMeleeHitHook::ResetAttackMoving_Melee(a_actor);
+						} else {
+							OnMeleeHitHook::ResetAttack_Melee(a_actor);
 						}
 						break;
 					default:
