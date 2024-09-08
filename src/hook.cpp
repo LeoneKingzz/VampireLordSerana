@@ -309,6 +309,7 @@ namespace hooks
 		auto vamp_armour = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("VLSeranaDLC1ClothesVampireLordRoyalArmor");
 		RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, vamp_armour);
 		remove_item(a_actor, vamp_armour, 1, true, nullptr);
+		VLDrain(a_actor, true);
 		return true;
 	}
 
@@ -318,10 +319,14 @@ namespace hooks
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		const auto FXchange2 = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToNormal2");
 		const auto Gargoyle = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaConjureGargoyle");
+		auto ElderScroll = RE::TESForm::LookupByEditorID<RE::TESAmmo>("DLC1ElderScrollBack");
 		dispelEffect(FXchange, a_actor);
 		caster->CastSpellImmediate(FXchange2, true, a_actor, 1, false, 0.0, a_actor);
-		VLDrain(a_actor, true);
 		dispelEffect(Gargoyle, a_actor);
+		if (bElderScrollEquipped) {
+			bElderScrollEquipped = false;
+			OnMeleeHitHook::EquipfromInvent(a_actor, ElderScroll->formID);
+		}
 		a_actor->SetGraphVariableBool("bIsDodging", false);
 	}
 
@@ -353,21 +358,14 @@ namespace hooks
 			}
 			const auto race = a_actor->GetRace();
 			const auto raceEDID = race->formEditorID;
-			auto ElderScroll = RE::TESForm::LookupByEditorID<RE::TESAmmo>("DLC1ElderScrollBack");
 			if (!(raceEDID == "DLC1VampireBeastRace")) {
 				//Not vamp form//
-				// a_actor->SetGraphVariableBool("bNoStagger", false);
 				a_actor->NotifyAnimationGraph("staggerStart");
 				OnMeleeHitHook::Reset_iFrames(a_actor);
 				OnMeleeHitHook::VLS_CompleteReversion(a_actor);
-				if (bElderScrollEquipped){
-					bElderScrollEquipped = false;
-					OnMeleeHitHook::EquipfromInvent(a_actor, ElderScroll->formID);
-				}
 
 			}else {//vamp form//
 				OnMeleeHitHook::Reset_iFrames(a_actor);
-				// a_actor->SetGraphVariableBool("bNoStagger", false);
 				OnMeleeHitHook::VLS_CompleteTransformation(a_actor);
 			}
 
