@@ -207,7 +207,6 @@ namespace hooks
 		caster->CastSpellImmediate(FXchange, true, a_actor, 1, false, 0.0, a_actor);
 		InterruptAttack(a_actor);
 		a_actor->NotifyAnimationGraph("IdleVampireTransformation");
-		VLDrain(a_actor);
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5050, "Dawnguard.esm")));
 		UnequipAll(a_actor);
 		Set_iFrames(a_actor);
@@ -227,6 +226,7 @@ namespace hooks
 		auto vamp_armour = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("VLSeranaDLC1ClothesVampireLordRoyalArmor");
 		a_actor->AddWornItem(vamp_armour, 1, false, 0, 0);
 		RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, vamp_armour);
+		VLDrain(a_actor);
 		auto moving = GetSingleton().IsMoving(a_actor);
 		if (moving){
 			ResetAttackMoving(a_actor);
