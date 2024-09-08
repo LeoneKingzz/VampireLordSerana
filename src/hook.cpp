@@ -224,7 +224,7 @@ namespace hooks
 		caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5052, "Dawnguard.esm")));
 		auto vamp_armour = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("VLSeranaDLC1ClothesVampireLordRoyalArmor");
-		a_actor->AddWornItem(vamp_armour, 1, true, 0, 0);
+		a_actor->AddWornItem(vamp_armour, 1, false, 0, 0);
 		//RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, vamp_armour);
 		VLDrain(a_actor);
 		auto moving = GetSingleton().IsMoving(a_actor);
@@ -255,7 +255,7 @@ namespace hooks
 		a_actor->SetGraphVariableBool("MLh_Equipped_Event", false);
 		a_actor->SetGraphVariableBool("MRh_SpellReady_Event", true);
 		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", true);
-		a_actor->UpdateCombat();
+		//a_actor->UpdateCombat();
 	}
 
 	void OnMeleeHitHook::ResetAttackMoving(RE::Actor* a_actor)
@@ -266,7 +266,7 @@ namespace hooks
 		a_actor->SetGraphVariableBool("MLh_Equipped_Event", false);
 		a_actor->SetGraphVariableBool("MRh_SpellReady_Event", true);
 		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", true);
-		a_actor->UpdateCombat();
+		//a_actor->UpdateCombat();
 	}
 
 	void OnMeleeHitHook::ResetAttack_Melee(RE::Actor* a_actor)
@@ -277,7 +277,7 @@ namespace hooks
 		a_actor->SetGraphVariableBool("MRh_Equipped_Event", true);
 		a_actor->SetGraphVariableBool("MLh_Equipped_Event", true);
 		a_actor->SetGraphVariableBool("WeapEquip", true);
-		a_actor->UpdateCombat();
+		//a_actor->UpdateCombat();
 	}
 
 	void OnMeleeHitHook::ResetAttackMoving_Melee(RE::Actor* a_actor)
@@ -288,7 +288,7 @@ namespace hooks
 		a_actor->SetGraphVariableBool("MRh_Equipped_Event", true);
 		a_actor->SetGraphVariableBool("MLh_Equipped_Event", true);
 		a_actor->SetGraphVariableBool("WeapEquip", true);
-		a_actor->UpdateCombat();
+		//a_actor->UpdateCombat();
 	}
 
 	bool OnMeleeHitHook::VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor)
@@ -418,7 +418,7 @@ namespace hooks
 			const auto raceEDID = race->formEditorID;
 			if (raceEDID == "DLC1VampireBeastRace") {
 				if (getcombatstate != RE::ACTOR_COMBAT_STATE::kCombat) {
-					a_actor->UpdateCombat();
+					//a_actor->UpdateCombat();
 					auto getcombatstate2 = event->newState.get();
 					if (getcombatstate2 == RE::ACTOR_COMBAT_STATE::kNone) {
 						const auto Revert = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaValericaRevertFormSpell");
