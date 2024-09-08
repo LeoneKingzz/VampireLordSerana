@@ -193,33 +193,38 @@ namespace hooks
 		}
 		a_actor->SetGraphVariableBool("bIsDodging", true);
 		logger::info("Began Transformation");
-		auto data = RE::TESDataHandler::GetSingleton();
-		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x10F564, "Skyrim.esm")));
+		// auto data = RE::TESDataHandler::GetSingleton();
+		// util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x10F564, "Skyrim.esm")));
 		const auto FXchange = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaChangeFX");
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
-		caster->CastSpellImmediate(FXchange, true, a_actor, 1, false, 0.0, a_actor);
+		//caster->CastSpellImmediate(FXchange, true, a_actor, 1, false, 0.0, a_actor);
+		caster->PrepareSound(RE::MagicSystem::SoundID::kRelease, FXchange);
+		caster->SpellCast(false, 0, FXchange);
 		InterruptAttack(a_actor);
-		//a_actor->NotifyAnimationGraph("IdleVampireTransformation");
-		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5050, "Dawnguard.esm")));
+		a_actor->NotifyAnimationGraph("IdleVampireTransformation");
+		VLDrain(a_actor);
+		//util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5050, "Dawnguard.esm")));
 		//Set_iFrames(a_actor);
 		return true;
 	}
 
 	void OnMeleeHitHook::VLS_CompleteTransformation(RE::Actor* a_actor){
 		logger::info("completing Transformation");
-		auto data = RE::TESDataHandler::GetSingleton();
+		// auto data = RE::TESDataHandler::GetSingleton();
 		const auto FXExpl = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToVLExplosionSPELL");
 		const auto LevitateSpell = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaValericaLevitateAb");
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		logger::info("Vampire lord form succesful");
 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDLC1AbVampireFloatBodyFX"));
-		caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
-		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5052, "Dawnguard.esm")));
-		VLDrain(a_actor);
+		//caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
+		caster->PrepareSound(RE::MagicSystem::SoundID::kRelease, FXExpl);
+		caster->SpellCast(false, 0, FXExpl);
+		// util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5052, "Dawnguard.esm")));
 		a_actor->SetGraphVariableBool("bIsDodging", false);
 		bool isLevitating = false;
 		if ((a_actor)->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) {
-			caster->CastSpellImmediate(LevitateSpell, true, a_actor, 1, false, 1.0, a_actor);
+			//caster->CastSpellImmediate(LevitateSpell, true, a_actor, 1, false, 1.0, a_actor);
+			caster->SpellCast(false, 0, LevitateSpell);
 		}
 		a_actor->UpdateCombat();
 	}
