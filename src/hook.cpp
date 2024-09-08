@@ -215,6 +215,7 @@ namespace hooks
 		caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5052, "Dawnguard.esm")));
 		VLDrain(a_actor);
+		a_actor->NotifyAnimationGraph("SneakStart");
 		a_actor->UpdateCombat();
 		a_actor->SetGraphVariableBool("bIsDodging", false);
 	}
