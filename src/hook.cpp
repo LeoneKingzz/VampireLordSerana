@@ -205,7 +205,7 @@ namespace hooks
 
 	void OnMeleeHitHook::VLS_CompleteTransformation(RE::Actor* a_actor){
 		logger::info("completing Transformation");
-		auto data = RE::TESDataHandler::GetSingleton();
+		//auto data = RE::TESDataHandler::GetSingleton();
 		const auto FXExpl = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToVLExplosionSPELL");
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		//a_actor->SwitchRace(RE::TESForm::LookupByEditorID<RE::TESRace>("DLC1VampireBeastRace"), false);
