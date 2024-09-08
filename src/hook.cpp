@@ -24,6 +24,13 @@ namespace hooks
 		_OnMeleeHit = trampoline.write_call<5>(OnMeleeHitBase.address() + REL::Relocate(0x38B, 0x45A), OnMeleeHit);
 	}
 
+	bool OnMeleeHitHook::IsMoving(RE::Actor* actor)
+	{
+		using func_t = decltype(&OnMeleeHitHook::IsMoving);
+		static REL::Relocation<func_t> func{ RELOCATION_ID(36928, 37953) };
+		return func(this, actor);
+	}
+
 	void OnMeleeHitHook::Set_iFrames(RE::Actor* actor)
 	{
 		actor->SetGraphVariableBool("bIframeActive", true);
@@ -210,20 +217,20 @@ namespace hooks
 		logger::info("completing Transformation");
 		auto data = RE::TESDataHandler::GetSingleton();
 		const auto FXExpl = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToVLExplosionSPELL");
-		const auto LevitateSpell = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaValericaLevitateAb");
+		//const auto LevitateSpell = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaValericaLevitateAb");
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		logger::info("Vampire lord form succesful");
 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDLC1AbVampireFloatBodyFX"));
 		caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5052, "Dawnguard.esm")));
 		a_actor->SetGraphVariableBool("bIsDodging", false);
-		auto val = a_actor->IsMoving();
-		if (val){
-			
-		}
-		bool isLevitating = false;
-		if ((a_actor)->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) {
-			caster->CastSpellImmediate(LevitateSpell, true, a_actor, 1, false, 1.0, a_actor);
+		auto moving = GetSingleton().IsMoving(a_actor);
+		if (moving){
+			ResetAttackMoving(a_actor);
+			a_actor->UpdateCombat();
+		}else{
+			ResetAttack(a_actor);
+			a_actor->UpdateCombat();
 		}
 	}
 
@@ -232,18 +239,25 @@ namespace hooks
 		a_actor->NotifyAnimationGraph("recoilStop");
 		a_actor->NotifyAnimationGraph("bashStop");
 		a_actor->NotifyAnimationGraph("blockStop");
-		//a_actor->NotifyAnimationGraph("InterruptCast");
 		a_actor->NotifyAnimationGraph("staggerStop");
-
-		// if ((a_actor->AsActorState()->GetKnockState() == RE::KNOCK_STATE_ENUM::kGetUp) ||
-		// 	(a_actor->AsActorState()->GetKnockState() == RE::KNOCK_STATE_ENUM::kQueued)) {
-		// 	a_actor->AsActorState()->actorState1.knockState = RE::KNOCK_STATE_ENUM::kNormal;
-		// 	a_actor->NotifyAnimationGraph("GetUpEnd");
-		// }
-		//a_actor->SetGraphVariableBool("bNoStagger", true);
+		a_actor->SetGraphVariableBool("bMLh_Ready", false);
+		a_actor->SetGraphVariableBool("bMRh_Ready", false);
+		a_actor->SetGraphVariableBool("bMagicDraw", false);
 	}
 
+	void OnMeleeHitHook::ResetAttack(RE::Actor* a_actor)
+	{
+		a_actor->NotifyAnimationGraph("LevitationToggle");
+		a_actor->SetGraphVariableBool("MRh_SpellReady_Event", true);
+		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", true);
+	}
 
+	void OnMeleeHitHook::ResetAttackMoving(RE::Actor* a_actor)
+	{
+		a_actor->NotifyAnimationGraph("LevitationToggleMoving");
+		a_actor->SetGraphVariableBool("MRh_SpellReady_Event", true);
+		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", true);
+	}
 
 	bool OnMeleeHitHook::VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor)
 	{

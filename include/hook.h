@@ -102,6 +102,9 @@ namespace hooks
 		static void VLS_CompleteTransformation(RE::Actor *a_actor);
 		static void VLS_CompleteReversion(RE::Actor* a_actor);
 		static void InterruptAttack(RE::Actor *a_actor);
+		static void ResetAttack(RE::Actor *a_actor);
+		static void ResetAttackMoving(RE::Actor* a_actor);
+		bool IsMoving(RE::Actor* actor);
 		// void update(RE::Actor* a_actor, float a_delta);
 		// void startTiming(RE::Actor *a_actor, float a_delta);
 	    // void finishTiming(RE::Actor *a_actor);
