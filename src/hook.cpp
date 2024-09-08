@@ -216,6 +216,7 @@ namespace hooks
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5052, "Dawnguard.esm")));
 		VLDrain(a_actor);
 		a_actor->UpdateCombat();
+		//a_actor->EvaluatePackage(true, true);
 		a_actor->SetGraphVariableBool("bIsDodging", false);
 	}
 
