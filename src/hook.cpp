@@ -193,40 +193,43 @@ namespace hooks
 		}
 		a_actor->SetGraphVariableBool("bIsDodging", true);
 		logger::info("Began Transformation");
-		// auto data = RE::TESDataHandler::GetSingleton();
-		// util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x10F564, "Skyrim.esm")));
+		auto data = RE::TESDataHandler::GetSingleton();
+		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x10F564, "Skyrim.esm")));
 		const auto FXchange = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaChangeFX");
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
-		//caster->CastSpellImmediate(FXchange, true, a_actor, 1, false, 0.0, a_actor);
-		caster->PrepareSound(RE::MagicSystem::SoundID::kRelease, FXchange);
-		caster->SpellCast(false, 0, FXchange);
+		caster->CastSpellImmediate(FXchange, true, a_actor, 1, false, 0.0, a_actor);
+		// caster->PrepareSound(RE::MagicSystem::SoundID::kRelease, FXchange);
+		// caster->SpellCast(false, 0, FXchange);
 		InterruptAttack(a_actor);
 		//a_actor->NotifyAnimationGraph("IdleVampireTransformation");
+		a_actor->NotifyAnimationGraph("staggerStart");
 		VLDrain(a_actor);
-		//util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5050, "Dawnguard.esm")));
+		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5050, "Dawnguard.esm")));
 		Set_iFrames(a_actor);
 		return true;
 	}
 
 	void OnMeleeHitHook::VLS_CompleteTransformation(RE::Actor* a_actor){
 		logger::info("completing Transformation");
-		// auto data = RE::TESDataHandler::GetSingleton();
+		a_actor->NotifyAnimationGraph("staggerStop");
+		auto data = RE::TESDataHandler::GetSingleton();
 		const auto FXExpl = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToVLExplosionSPELL");
 		const auto LevitateSpell = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaValericaLevitateAb");
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		logger::info("Vampire lord form succesful");
 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDLC1AbVampireFloatBodyFX"));
-		//caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
-		caster->PrepareSound(RE::MagicSystem::SoundID::kRelease, FXExpl);
-		caster->SpellCast(false, 0, FXExpl);
-		// util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5052, "Dawnguard.esm")));
+		caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
+		// caster->PrepareSound(RE::MagicSystem::SoundID::kRelease, FXExpl);
+		// caster->SpellCast(false, 0, FXExpl);
+		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5052, "Dawnguard.esm")));
 		a_actor->SetGraphVariableBool("bIsDodging", false);
 		bool isLevitating = false;
 		if ((a_actor)->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) {
-			//caster->CastSpellImmediate(LevitateSpell, true, a_actor, 1, false, 1.0, a_actor);
-			caster->SpellCast(false, 0, LevitateSpell);
+			caster->CastSpellImmediate(LevitateSpell, true, a_actor, 1, false, 1.0, a_actor);
+			//caster->SpellCast(false, 0, LevitateSpell);
 		}
-		a_actor->UpdateCombat();
+		//a_actor->UpdateCombat();
+		a_actor->EvaluatePackage(true, false);
 	}
 
 	void OnMeleeHitHook::InterruptAttack(RE::Actor* a_actor){
@@ -234,15 +237,15 @@ namespace hooks
 		a_actor->NotifyAnimationGraph("recoilStop");
 		a_actor->NotifyAnimationGraph("bashStop");
 		a_actor->NotifyAnimationGraph("blockStop");
-		a_actor->NotifyAnimationGraph("InterruptCast");
+		//a_actor->NotifyAnimationGraph("InterruptCast");
 		a_actor->NotifyAnimationGraph("staggerStop");
 
-		if ((a_actor->AsActorState()->GetKnockState() == RE::KNOCK_STATE_ENUM::kGetUp) ||
-			(a_actor->AsActorState()->GetKnockState() == RE::KNOCK_STATE_ENUM::kQueued)) {
-			a_actor->AsActorState()->actorState1.knockState = RE::KNOCK_STATE_ENUM::kNormal;
-			a_actor->NotifyAnimationGraph("GetUpEnd");
-		}
-		a_actor->SetGraphVariableBool("bNoStagger", true);
+		// if ((a_actor->AsActorState()->GetKnockState() == RE::KNOCK_STATE_ENUM::kGetUp) ||
+		// 	(a_actor->AsActorState()->GetKnockState() == RE::KNOCK_STATE_ENUM::kQueued)) {
+		// 	a_actor->AsActorState()->actorState1.knockState = RE::KNOCK_STATE_ENUM::kNormal;
+		// 	a_actor->NotifyAnimationGraph("GetUpEnd");
+		// }
+		//a_actor->SetGraphVariableBool("bNoStagger", true);
 	}
 
 
@@ -313,7 +316,7 @@ namespace hooks
 			auto ElderScroll = RE::TESForm::LookupByEditorID<RE::TESAmmo>("DLC1ElderScrollBack");
 			if (!(raceEDID == "DLC1VampireBeastRace")) {
 				//Not vamp form//
-				a_actor->SetGraphVariableBool("bNoStagger", false);
+				// a_actor->SetGraphVariableBool("bNoStagger", false);
 				a_actor->NotifyAnimationGraph("staggerStart");
 				OnMeleeHitHook::Reset_iFrames(a_actor);
 				OnMeleeHitHook::VLS_CompleteReversion(a_actor);
@@ -324,7 +327,7 @@ namespace hooks
 
 			}else {//vamp form//
 				OnMeleeHitHook::Reset_iFrames(a_actor);
-				a_actor->SetGraphVariableBool("bNoStagger", false);
+				// a_actor->SetGraphVariableBool("bNoStagger", false);
 				OnMeleeHitHook::UnequipAll(a_actor);
 				a_actor->AddWornItem(vamp_armour, 1, false, 0, 0);
 				RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, vamp_armour);
