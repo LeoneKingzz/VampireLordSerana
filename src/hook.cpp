@@ -75,15 +75,11 @@ namespace hooks
 		for (auto it = _Inventory.begin(); it != _Inventory.end(); ++it){
 			if (it->first == a_actor) {
 				auto inv = a_actor->GetInventory();
-				//auto ElderScroll = RE::TESForm::LookupByEditorID<RE::TESAmmo>("DLC1ElderScrollBack");
 				for (auto& [item, data] : inv) {
 					const auto& [count, entry] = data;
 					if (count > 0 && entry->IsWorn()) {
 						RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, item);
 						it->second.push_back(item);
-						// if (entry->object->formID == ElderScroll->formID) {
-						// 	bElderScrollEquipped = true;
-						// }
 					}
 				}
 				break;
@@ -107,16 +103,6 @@ namespace hooks
 		}
 	}
 
-	// if (!is_adversary) {
-	// 	auto combatGroup = actor1->GetCombatGroup();
-	// 	if (combatGroup) {
-	// 		for (auto it = combatGroup->targets.begin(); it != combatGroup->targets.end(); ++it) {
-	// 			if (it->targetHandle && it->targetHandle.get().get() && it->targetHandle.get().get() == actor2) {
-	// 				is_adversary = true;
-	// 			}
-	// 		}
-	// 	}
-	// }
 
 	void OnMeleeHitHook::EquipfromInvent(RE::Actor* a_actor, RE::FormID a_formID)
 	{
@@ -296,14 +282,12 @@ namespace hooks
 		dispelEffect(FXchange, a_actor);
 		auto data = RE::TESDataHandler::GetSingleton();
 		const auto FXExpl = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToVLExplosionSPELL");
-		//const auto LevitateSpell = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaValericaLevitateAb");
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		logger::info("Vampire lord form succesful");
 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDLC1AbVampireFloatBodyFX"));
 		caster->CastSpellImmediate(FXExpl, true, a_actor, 1, false, 0.0, a_actor);
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5052, "Dawnguard.esm")));
 		auto vamp_armour = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("VLSeranaDLC1ClothesVampireLordRoyalArmor");
-		//RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, vamp_armour);
 		VLDrain(a_actor);
 		auto moving = GetSingleton().IsMoving(a_actor);
 		if (moving){
@@ -336,7 +320,7 @@ namespace hooks
 		a_actor->SetGraphVariableBool("MLh_Equipped_Event", false);
 		a_actor->SetGraphVariableBool("MRh_SpellReady_Event", true);
 		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", true);
-		//a_actor->UpdateCombat();
+		
 	}
 
 	void OnMeleeHitHook::ResetAttackMoving(RE::Actor* a_actor)
@@ -347,7 +331,7 @@ namespace hooks
 		a_actor->SetGraphVariableBool("MLh_Equipped_Event", false);
 		a_actor->SetGraphVariableBool("MRh_SpellReady_Event", true);
 		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", true);
-		//a_actor->UpdateCombat();
+		
 	}
 
 	void OnMeleeHitHook::ResetAttack_Melee(RE::Actor* a_actor)
@@ -358,7 +342,7 @@ namespace hooks
 		a_actor->SetGraphVariableBool("MRh_Equipped_Event", true);
 		a_actor->SetGraphVariableBool("MLh_Equipped_Event", true);
 		a_actor->SetGraphVariableBool("WeapEquip", true);
-		//a_actor->UpdateCombat();
+		
 	}
 
 	void OnMeleeHitHook::ResetAttackMoving_Melee(RE::Actor* a_actor)
@@ -369,7 +353,7 @@ namespace hooks
 		a_actor->SetGraphVariableBool("MRh_Equipped_Event", true);
 		a_actor->SetGraphVariableBool("MLh_Equipped_Event", true);
 		a_actor->SetGraphVariableBool("WeapEquip", true);
-		//a_actor->UpdateCombat();
+		
 	}
 
 	bool OnMeleeHitHook::VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor)
@@ -388,9 +372,7 @@ namespace hooks
 		caster->CastSpellImmediate(FXchange, true, a_actor, 1, false, 0.0, a_actor);
 		a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDLC1AbVampireFloatBodyFX"));
 		auto vamp_armour = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("VLSeranaDLC1ClothesVampireLordRoyalArmor");
-		//RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, vamp_armour);
 		a_actor->RemoveItem(vamp_armour, 1, RE::ITEM_REMOVE_REASON::kRemove, nullptr, nullptr);
-		//remove_item(a_actor, vamp_armour, 1, true, nullptr);
 		VLDrain(a_actor, true);
 		return true;
 	}
@@ -401,19 +383,10 @@ namespace hooks
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		const auto FXchange2 = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToNormal2");
 		const auto Gargoyle = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaConjureGargoyle");
-		//auto ElderScroll = RE::TESForm::LookupByEditorID<RE::TESAmmo>("DLC1ElderScrollBack");
-		//auto royal_armour = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("DLC1ArmorVampireArmorRoyalRed");
-		//auto royal_boots = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("DLC1ArmorVampireBoots");
 		dispelEffect(FXchange, a_actor);
 		caster->CastSpellImmediate(FXchange2, true, a_actor, 1, false, 0.0, a_actor);
 		dispelEffect(Gargoyle, a_actor);
 		GetSingleton().Re_EquipAll(a_actor);
-		// EquipfromInvent(a_actor, royal_armour->formID);
-		// EquipfromInvent(a_actor, royal_boots->formID);
-		// if (bElderScrollEquipped) {
-		// 	bElderScrollEquipped = false;
-		// 	OnMeleeHitHook::EquipfromInvent(a_actor, ElderScroll->formID);
-		// }
 		a_actor->SetGraphVariableBool("bIsDodging", false);
 	}
 
@@ -499,7 +472,7 @@ namespace hooks
 			const auto raceEDID = race->formEditorID;
 			if (raceEDID == "DLC1VampireBeastRace") {
 				if (getcombatstate != RE::ACTOR_COMBAT_STATE::kCombat) {
-					//a_actor->UpdateCombat();
+					
 					auto getcombatstate2 = event->newState.get();
 					if (getcombatstate2 == RE::ACTOR_COMBAT_STATE::kNone) {
 						const auto Revert = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaValericaRevertFormSpell");
