@@ -110,7 +110,7 @@ namespace hooks
 		bool IsMoving(RE::Actor* actor);
 		// void update(RE::Actor* a_actor, float a_delta);
 		// void startTiming(RE::Actor *a_actor, float a_delta);
-	    void finishTiming(RE::Actor *a_actor);
+	    // void finishTiming(RE::Actor *a_actor);
 
 	private:
 		OnMeleeHitHook() = default;

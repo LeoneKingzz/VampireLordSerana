@@ -262,11 +262,11 @@ namespace hooks
 	// 	}
 	// }
 
-	void OnMeleeHitHook::finishTiming(RE::Actor* a_actor)
-	{
-		//uniqueLocker lock(mtx_parryTimer);
-		//_parryTimer.erase(a_actor);
-	}
+	// void OnMeleeHitHook::finishTiming(RE::Actor* a_actor)
+	// {
+	// 	uniqueLocker lock(mtx_parryTimer);
+	// 	_parryTimer.erase(a_actor);
+	// }
 
 	bool OnMeleeHitHook::VLS_SendVampireLordTransformation(STATIC_ARGS, RE::Actor* a_actor)
 	{
