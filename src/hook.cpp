@@ -397,13 +397,13 @@ namespace hooks
 		dispelEffect(FXchange, a_actor);
 		caster->CastSpellImmediate(FXchange2, true, a_actor, 1, false, 0.0, a_actor);
 		dispelEffect(Gargoyle, a_actor);
-		//a_actor->EvaluatePackage(true, true);
-		EquipfromInvent(a_actor, royal_armour->formID);
-		EquipfromInvent(a_actor, royal_boots->formID);
-		if (bElderScrollEquipped) {
-			bElderScrollEquipped = false;
-			OnMeleeHitHook::EquipfromInvent(a_actor, ElderScroll->formID);
-		}
+		GetSingleton().Re_EquipAll(a_actor);
+		// EquipfromInvent(a_actor, royal_armour->formID);
+		// EquipfromInvent(a_actor, royal_boots->formID);
+		// if (bElderScrollEquipped) {
+		// 	bElderScrollEquipped = false;
+		// 	OnMeleeHitHook::EquipfromInvent(a_actor, ElderScroll->formID);
+		// }
 		a_actor->SetGraphVariableBool("bIsDodging", false);
 	}
 
