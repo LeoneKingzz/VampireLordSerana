@@ -72,8 +72,6 @@ namespace hooks
 			_Inventory.insert({ a_actor, Hen });
 		}
 
-		auto it = _Inventory.begin();
-
 		for (auto it = _Inventory.begin(); it != _Inventory.end(); ++it){
 			if (it->first == a_actor) {
 				auto inv = a_actor->GetInventory();
