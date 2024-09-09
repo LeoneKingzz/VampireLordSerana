@@ -401,9 +401,9 @@ namespace hooks
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		const auto FXchange2 = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaTransformToNormal2");
 		const auto Gargoyle = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaConjureGargoyle");
-		auto ElderScroll = RE::TESForm::LookupByEditorID<RE::TESAmmo>("DLC1ElderScrollBack");
-		auto royal_armour = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("DLC1ArmorVampireArmorRoyalRed");
-		auto royal_boots = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("DLC1ArmorVampireBoots");
+		//auto ElderScroll = RE::TESForm::LookupByEditorID<RE::TESAmmo>("DLC1ElderScrollBack");
+		//auto royal_armour = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("DLC1ArmorVampireArmorRoyalRed");
+		//auto royal_boots = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("DLC1ArmorVampireBoots");
 		dispelEffect(FXchange, a_actor);
 		caster->CastSpellImmediate(FXchange2, true, a_actor, 1, false, 0.0, a_actor);
 		dispelEffect(Gargoyle, a_actor);
