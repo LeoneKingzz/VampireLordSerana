@@ -92,7 +92,8 @@ namespace hooks
 		// }
 		static bool VLS_SendVampireLordTransformation(STATIC_ARGS, RE::Actor* a_actor);
 		static bool VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor);
-		static void UnequipAll(RE::Actor* a_actor);
+		void UnequipAll(RE::Actor* a_actor);
+	    void Re_EquipAll(RE::Actor *a_actor);
 		static bool BindPapyrusFunctions(VM* vm);
 		static void Set_iFrames(RE::Actor* actor);
 		static void Reset_iFrames(RE::Actor* actor);
@@ -109,7 +110,7 @@ namespace hooks
 		bool IsMoving(RE::Actor* actor);
 		// void update(RE::Actor* a_actor, float a_delta);
 		// void startTiming(RE::Actor *a_actor, float a_delta);
-	    // void finishTiming(RE::Actor *a_actor);
+	    void finishTiming(RE::Actor *a_actor);
 
 	private:
 		OnMeleeHitHook() = default;
@@ -121,6 +122,8 @@ namespace hooks
 		OnMeleeHitHook& operator=(OnMeleeHitHook&&) = delete;
 
 		std::unordered_map<RE::Actor*, float> _parryTimer;
+		std::unordered_map<RE::Actor*, std::vector<RE::TESBoundObject*>> _Inventory;
+		std::shared_mutex mtx_Inventory;
 		std::shared_mutex mtx_parryTimer;
 		bool _bUpdate;
 

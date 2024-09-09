@@ -64,18 +64,61 @@ namespace hooks
 	}
 
 	void OnMeleeHitHook::UnequipAll(RE::Actor *a_actor){
-		auto inv = a_actor->GetInventory();
-		auto ElderScroll = RE::TESForm::LookupByEditorID<RE::TESAmmo>("DLC1ElderScrollBack");
-		for (auto& [item, data] : inv) {
-			const auto& [count, entry] = data;
-			if (count > 0 && entry->IsWorn()) {
-				if (entry->object->formID == ElderScroll->formID) {
-					bElderScrollEquipped = true;
+
+		uniqueLocker lock(mtx_Inventory);
+		auto itt = _Inventory.find(a_actor);
+		if (itt == _Inventory.end()) {
+			std::vector<RE::TESBoundObject *> Hen; 
+			_Inventory.insert({ a_actor, Hen });
+		}
+
+		auto it = _Inventory.begin();
+
+		for (auto it = _Inventory.begin(); it != _Inventory.end(); ++it){
+			if (it->first == a_actor) {
+				auto inv = a_actor->GetInventory();
+				//auto ElderScroll = RE::TESForm::LookupByEditorID<RE::TESAmmo>("DLC1ElderScrollBack");
+				for (auto& [item, data] : inv) {
+					const auto& [count, entry] = data;
+					if (count > 0 && entry->IsWorn()) {
+						RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, item);
+						it->second.push_back(item);
+						// if (entry->object->formID == ElderScroll->formID) {
+						// 	bElderScrollEquipped = true;
+						// }
+					}
 				}
-				RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, item);
+				break;
 			}
+			continue;
 		}
 	}
+
+	void OnMeleeHitHook::Re_EquipAll(RE::Actor *a_actor){
+
+		uniqueLocker lock(mtx_Inventory);
+		for (auto it = _Inventory.begin(); it != _Inventory.end(); ++it) {
+			if (it->first == a_actor){
+				for (auto item : it->second) {
+					RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, item);
+				}
+				_Inventory.erase(it);
+				break;
+			}
+			continue;
+		}
+	}
+
+	// if (!is_adversary) {
+	// 	auto combatGroup = actor1->GetCombatGroup();
+	// 	if (combatGroup) {
+	// 		for (auto it = combatGroup->targets.begin(); it != combatGroup->targets.end(); ++it) {
+	// 			if (it->targetHandle && it->targetHandle.get().get() && it->targetHandle.get().get() == actor2) {
+	// 				is_adversary = true;
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	void OnMeleeHitHook::EquipfromInvent(RE::Actor* a_actor, RE::FormID a_formID)
 	{
@@ -185,11 +228,37 @@ namespace hooks
 	// 	_bUpdate = true;
 	// }
 
-	// void OnMeleeHitHook::finishTiming(RE::Actor* a_actor)
+	// void EldenParry::update()
 	// {
+	// 	if (!_bUpdate) {
+	// 		return;
+	// 	}
 	// 	uniqueLocker lock(mtx_parryTimer);
-	// 	_parryTimer.erase(a_actor);
+	// 	auto it = _parryTimer.begin();
+	// 	if (it == _parryTimer.end()) {
+	// 		_bUpdate = false;
+	// 		return;
+	// 	}
+	// 	while (it != _parryTimer.end()) {
+	// 		if (!it->first) {
+	// 			it = _parryTimer.erase(it);
+	// 			continue;
+	// 		}
+	// 		if (it->second > EldenSettings::fParryWindow_End) {
+	// 			it = _parryTimer.erase(it);
+	// 			continue;
+	// 		}
+	// 		//*static float* g_deltaTime = (float*)RELOCATION_ID(523660, 410199).address();*/          // 2F6B948
+	// 		it->second += g_deltaTime;
+	// 		it++;
+	// 	}
 	// }
+
+	void OnMeleeHitHook::finishTiming(RE::Actor* a_actor)
+	{
+		//uniqueLocker lock(mtx_parryTimer);
+		//_parryTimer.erase(a_actor);
+	}
 
 	bool OnMeleeHitHook::VLS_SendVampireLordTransformation(STATIC_ARGS, RE::Actor* a_actor)
 	{
@@ -208,7 +277,7 @@ namespace hooks
 		InterruptAttack(a_actor);
 		a_actor->NotifyAnimationGraph("IdleVampireTransformation");
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5050, "Dawnguard.esm")));
-		UnequipAll(a_actor);
+		GetSingleton().UnequipAll(a_actor);
 		Set_iFrames(a_actor);
 		return true;
 	}
