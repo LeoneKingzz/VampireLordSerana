@@ -132,6 +132,16 @@ namespace hooks
 	}
 
 	void OnMeleeHitHook::VLDrain(RE::Actor* a_actor, bool remove){
+		const auto Gargoyle = RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaConjureGargoyle");
+
+		if(remove){
+			a_actor->RemoveSpell(Gargoyle);
+
+		}else{
+			a_actor->AddSpell(Gargoyle);
+		}
+
+
 		switch (a_actor->GetLevel()) {
 		case 20:
 		    if (remove){
