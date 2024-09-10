@@ -325,6 +325,10 @@ namespace hooks
 		a_actor->SetGraphVariableBool("bMagicDraw", true);
 		a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("doomSteedPerk"));
 		a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("BB_DG_FallDamage"));
+		a_actor->NotifyAnimationGraph("JumpStandingStart");
+		a_actor->NotifyAnimationGraph("sprintStart");
+		a_actor->NotifyAnimationGraph("JumpDirectionalStart");
+		a_actor->AsActorState()->actorState1.sprinting = 1;
 		// a_actor->SetGraphVariableBool("bWFT_IsGliding", true);
 	}
 
@@ -336,11 +340,15 @@ namespace hooks
 		a_actor->SetGraphVariableBool("MLh_Equipped_Event", false);
 		a_actor->SetGraphVariableBool("MRh_SpellReady_Event", true);
 		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", true);
-		a_actor->SetGraphVariableBool("bMLh_Ready", false);
-		a_actor->SetGraphVariableBool("bMRh_Ready", false);
-		a_actor->SetGraphVariableBool("bMagicDraw", false);
+		a_actor->SetGraphVariableBool("bMLh_Ready", true);
+		a_actor->SetGraphVariableBool("bMRh_Ready", true);
+		a_actor->SetGraphVariableBool("bMagicDraw", true);
 		a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("doomSteedPerk"));
 		a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("BB_DG_FallDamage"));
+		a_actor->NotifyAnimationGraph("JumpStandingStart");
+		a_actor->NotifyAnimationGraph("sprintStart");
+		a_actor->NotifyAnimationGraph("JumpDirectionalStart");
+		a_actor->AsActorState()->actorState1.sprinting = 1;
 		// a_actor->SetGraphVariableBool("bWFT_IsGliding", true);
 	}
 
@@ -566,8 +574,9 @@ namespace hooks
 
 					case "VLSeranaDLC1VampireBats"_h:
 					case "VLSeranaDLC1VampireBats2"_h:
-						a_actor->NotifyAnimationGraph("JumpDirectionalStart");
+						a_actor->NotifyAnimationGraph("JumpStandingStart");
 						a_actor->NotifyAnimationGraph("sprintStart");
+						a_actor->NotifyAnimationGraph("JumpDirectionalStart");
 						a_actor->AsActorState()->actorState1.sprinting = 1;
 
 						break;
@@ -677,8 +686,9 @@ namespace FallLongDistance
 						auto isLevitating = false;
 						if (a_this->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
 							// a_this->SetGraphVariableBool("bWFT_IsGliding", true);
-							a_this->NotifyAnimationGraph("JumpDirectionalStart");
+							a_this->NotifyAnimationGraph("JumpStandingStart");
 							a_this->NotifyAnimationGraph("sprintStart");
+							a_this->NotifyAnimationGraph("JumpDirectionalStart");
 							a_this->AsActorState()->actorState1.sprinting = 1;
 						} else {
 							// a_this->SetGraphVariableBool("bWFT_IsGliding", false);
