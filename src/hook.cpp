@@ -565,12 +565,12 @@ namespace hooks
 		case "LevitationToggle"_h:
 		case "LevitationToggleMoving"_h:
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
-				auto isLevitating = false;
-				if (actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
-					actor->SetGraphVariableBool("bWFT_IsGliding", true);
-				}else{
-					actor->SetGraphVariableBool("bWFT_IsGliding", false);
-				}
+				// auto isLevitating = false;
+				// if (actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
+				// 	actor->SetGraphVariableBool("bWFT_IsGliding", true);
+				// }else{
+				// 	actor->SetGraphVariableBool("bWFT_IsGliding", false);
+				// }
 			}
 			break;
 		}
