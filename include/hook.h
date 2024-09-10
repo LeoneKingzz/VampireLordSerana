@@ -246,7 +246,7 @@ constexpr uint32_t operator"" _h(const char* str, size_t size) noexcept
 	return hash(str, size);
 }
 
-// namespace FallLongDistance
-// {
-// 	void Install();
-// }
+namespace FallLongDistance
+{
+	void Install();
+}
