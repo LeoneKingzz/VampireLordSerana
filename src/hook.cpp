@@ -551,6 +551,14 @@ namespace hooks
 							OnMeleeHitHook::ResetAttack_Melee(a_actor);
 						}
 						break;
+
+					case "VLSeranaDLC1VampireBats"_h:
+					case "VLSeranaDLC1VampireBats2"_h:
+						a_actor->NotifyAnimationGraph("JumpDirectionalStart");
+						a_actor->NotifyAnimationGraph("sprintStart");
+						a_actor->AsActorState()->actorState1.sprinting = 1;
+
+						break;
 					default:
 						break;
 					}
