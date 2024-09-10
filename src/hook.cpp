@@ -633,35 +633,40 @@ namespace hooks
 
 }
 
-// namespace FallLongDistance
-// {
-// 	struct CalcDoDamage
-// 	{
-// 		static float thunk(RE::Actor* a_this, float a_fallDistance, float a_defaultMult)
-// 		{
-// 			const auto fallDamage = func(a_this, a_fallDistance, a_defaultMult);
-// 			if (fallDamage > 0.0f) {
-// 				if (a_this->HasKeywordString("VLS_Serana_Key") || a_this->HasKeywordString("VLS_Valerica_Key")) {
-// 					const auto race = a_this->GetRace();
-// 					const auto raceEDID = race->formEditorID;
-// 					if (raceEDID == "DLC1VampireBeastRace"){
+namespace FallLongDistance
+{
+	struct CalcDoDamage
+	{
+		static float thunk(RE::Actor* a_this, float a_fallDistance, float a_defaultMult)
+		{
+			const auto fallDamage = func(a_this, a_fallDistance, a_defaultMult);
+			if (fallDamage > 0.0f) {
+				if (a_this->HasKeywordString("VLS_Serana_Key") || a_this->HasKeywordString("VLS_Valerica_Key")) {
+					const auto race = a_this->GetRace();
+					const auto raceEDID = race->formEditorID;
+					if (raceEDID == "DLC1VampireBeastRace"){
+						auto isLevitating = false;
+						if (a_this->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
+							a_this->SetGraphVariableBool("bWFT_IsGliding", true);
+						} else {
+							a_this->SetGraphVariableBool("bWFT_IsGliding", false);
+						}
+					}
+				}
+			}
+			return fallDamage;
+		}
+		static inline REL::Relocation<decltype(thunk)> func;
+	};
 
-// 					}
-// 				}
-// 			}
-// 			return fallDamage;
-// 		}
-// 		static inline REL::Relocation<decltype(thunk)> func;
-// 	};
+	void Install()
+	{
+		REL::Relocation<std::uintptr_t> take_ragdoll_damage{ RELOCATION_ID(36346, 37336), 0x35 };
+		stl::write_thunk_call<CalcDoDamage>(take_ragdoll_damage.address());
 
-// 	void Install()
-// 	{
-// 		REL::Relocation<std::uintptr_t> take_ragdoll_damage{ RELOCATION_ID(36346, 37336), 0x35 };
-// 		stl::write_thunk_call<CalcDoDamage>(take_ragdoll_damage.address());
+		REL::Relocation<std::uintptr_t> process_movefinish_event{ RELOCATION_ID(36973, 37998), REL::Relocate(0xAE, 0xAB) };
+		stl::write_thunk_call<CalcDoDamage>(process_movefinish_event.address());
 
-// 		REL::Relocation<std::uintptr_t> process_movefinish_event{ RELOCATION_ID(36973, 37998), REL::Relocate(0xAE, 0xAB) };
-// 		stl::write_thunk_call<CalcDoDamage>(process_movefinish_event.address());
-
-// 		logger::info("Hooked Fall Damage"sv);
-// 	}
-// }
+		logger::info("Hooked Fall Damage"sv);
+	}
+}
