@@ -320,6 +320,9 @@ namespace hooks
 		a_actor->SetGraphVariableBool("MLh_Equipped_Event", false);
 		a_actor->SetGraphVariableBool("MRh_SpellReady_Event", true);
 		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", true);
+		a_actor->SetGraphVariableBool("bMLh_Ready", true);
+		a_actor->SetGraphVariableBool("bMRh_Ready", true);
+		a_actor->SetGraphVariableBool("bMagicDraw", true);
 		a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("doomSteedPerk"));
 		a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("BB_DG_FallDamage"));
 		// a_actor->SetGraphVariableBool("bWFT_IsGliding", true);
@@ -333,6 +336,9 @@ namespace hooks
 		a_actor->SetGraphVariableBool("MLh_Equipped_Event", false);
 		a_actor->SetGraphVariableBool("MRh_SpellReady_Event", true);
 		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", true);
+		a_actor->SetGraphVariableBool("bMLh_Ready", false);
+		a_actor->SetGraphVariableBool("bMRh_Ready", false);
+		a_actor->SetGraphVariableBool("bMagicDraw", false);
 		a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("doomSteedPerk"));
 		a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("BB_DG_FallDamage"));
 		// a_actor->SetGraphVariableBool("bWFT_IsGliding", true);
@@ -345,6 +351,9 @@ namespace hooks
 		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", false);
 		a_actor->SetGraphVariableBool("MRh_Equipped_Event", true);
 		a_actor->SetGraphVariableBool("MLh_Equipped_Event", true);
+		a_actor->SetGraphVariableBool("bMLh_Ready", false);
+		a_actor->SetGraphVariableBool("bMRh_Ready", false);
+		a_actor->SetGraphVariableBool("bMagicDraw", false);
 		a_actor->SetGraphVariableBool("WeapEquip", true);
 		a_actor->RemovePerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("doomSteedPerk"));
 		a_actor->RemovePerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("BB_DG_FallDamage"));
@@ -358,6 +367,9 @@ namespace hooks
 		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", false);
 		a_actor->SetGraphVariableBool("MRh_Equipped_Event", true);
 		a_actor->SetGraphVariableBool("MLh_Equipped_Event", true);
+		a_actor->SetGraphVariableBool("bMLh_Ready", false);
+		a_actor->SetGraphVariableBool("bMRh_Ready", false);
+		a_actor->SetGraphVariableBool("bMagicDraw", false);
 		a_actor->SetGraphVariableBool("WeapEquip", true);
 		a_actor->RemovePerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("doomSteedPerk"));
 		a_actor->RemovePerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("BB_DG_FallDamage"));
