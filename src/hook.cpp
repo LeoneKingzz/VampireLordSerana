@@ -320,7 +320,9 @@ namespace hooks
 		a_actor->SetGraphVariableBool("MLh_Equipped_Event", false);
 		a_actor->SetGraphVariableBool("MRh_SpellReady_Event", true);
 		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", true);
-		a_actor->SetGraphVariableBool("bWFT_IsGliding", true);
+		a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("doomSteedPerk"));
+		a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("BB_DG_FallDamage"));
+		// a_actor->SetGraphVariableBool("bWFT_IsGliding", true);
 	}
 
 	void OnMeleeHitHook::ResetAttackMoving(RE::Actor* a_actor)
@@ -331,7 +333,9 @@ namespace hooks
 		a_actor->SetGraphVariableBool("MLh_Equipped_Event", false);
 		a_actor->SetGraphVariableBool("MRh_SpellReady_Event", true);
 		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", true);
-		a_actor->SetGraphVariableBool("bWFT_IsGliding", true);
+		a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("doomSteedPerk"));
+		a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("BB_DG_FallDamage"));
+		// a_actor->SetGraphVariableBool("bWFT_IsGliding", true);
 	}
 
 	void OnMeleeHitHook::ResetAttack_Melee(RE::Actor* a_actor)
@@ -342,7 +346,9 @@ namespace hooks
 		a_actor->SetGraphVariableBool("MRh_Equipped_Event", true);
 		a_actor->SetGraphVariableBool("MLh_Equipped_Event", true);
 		a_actor->SetGraphVariableBool("WeapEquip", true);
-		a_actor->SetGraphVariableBool("bWFT_IsGliding", false);
+		a_actor->RemovePerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("doomSteedPerk"));
+		a_actor->RemovePerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("BB_DG_FallDamage"));
+		// a_actor->SetGraphVariableBool("bWFT_IsGliding", false);
 	}
 
 	void OnMeleeHitHook::ResetAttackMoving_Melee(RE::Actor* a_actor)
@@ -353,7 +359,9 @@ namespace hooks
 		a_actor->SetGraphVariableBool("MRh_Equipped_Event", true);
 		a_actor->SetGraphVariableBool("MLh_Equipped_Event", true);
 		a_actor->SetGraphVariableBool("WeapEquip", true);
-		a_actor->SetGraphVariableBool("bWFT_IsGliding", false);
+		a_actor->RemovePerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("doomSteedPerk"));
+		a_actor->RemovePerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("BB_DG_FallDamage"));
+		// a_actor->SetGraphVariableBool("bWFT_IsGliding", false);
 	}
 
 	bool OnMeleeHitHook::VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor)
@@ -420,7 +428,7 @@ namespace hooks
 			const auto raceEDID = race->formEditorID;
 			if (!(raceEDID == "DLC1VampireBeastRace")) {
 				//Not vamp form//
-				a_actor->SetGraphVariableBool("bWFT_IsGliding", false);
+				// a_actor->SetGraphVariableBool("bWFT_IsGliding", false);
 				a_actor->NotifyAnimationGraph("staggerStart");
 				OnMeleeHitHook::Reset_iFrames(a_actor);
 				OnMeleeHitHook::VLS_CompleteReversion(a_actor);
@@ -645,11 +653,16 @@ namespace FallLongDistance
 					const auto race = a_this->GetRace();
 					const auto raceEDID = race->formEditorID;
 					if (raceEDID == "DLC1VampireBeastRace"){
+
 						auto isLevitating = false;
 						if (a_this->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
-							a_this->SetGraphVariableBool("bWFT_IsGliding", true);
+							// a_this->SetGraphVariableBool("bWFT_IsGliding", true);
+							a_this->NotifyAnimationGraph("JumpDirectionalStart");
+							a_this->NotifyAnimationGraph("sprintStart");
+							a_this->AsActorState()->actorState1.sprinting = 1;
 						} else {
-							a_this->SetGraphVariableBool("bWFT_IsGliding", false);
+							// a_this->SetGraphVariableBool("bWFT_IsGliding", false);
+							a_this->AsActorState()->actorState1.sprinting = 0;
 						}
 					}
 				}
