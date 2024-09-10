@@ -122,9 +122,11 @@ namespace hooks
 
 		if(remove){
 			a_actor->RemoveSpell(Gargoyle);
+			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage03"));
 
 		}else{
 			a_actor->AddSpell(Gargoyle);
+			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage03"));
 		}
 
 
@@ -323,8 +325,8 @@ namespace hooks
 		a_actor->SetGraphVariableBool("bMLh_Ready", true);
 		a_actor->SetGraphVariableBool("bMRh_Ready", true);
 		a_actor->SetGraphVariableBool("bMagicDraw", true);
-		a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("doomSteedPerk"));
-		a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("BB_DG_FallDamage"));
+		// a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("doomSteedPerk"));
+		// a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("BB_DG_FallDamage"));
 		a_actor->NotifyAnimationGraph("JumpStandingStart");
 		a_actor->NotifyAnimationGraph("sprintStart");
 		a_actor->NotifyAnimationGraph("JumpDirectionalStart");
@@ -343,8 +345,8 @@ namespace hooks
 		a_actor->SetGraphVariableBool("bMLh_Ready", true);
 		a_actor->SetGraphVariableBool("bMRh_Ready", true);
 		a_actor->SetGraphVariableBool("bMagicDraw", true);
-		a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("doomSteedPerk"));
-		a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("BB_DG_FallDamage"));
+		// a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("doomSteedPerk"));
+		// a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("BB_DG_FallDamage"));
 		a_actor->NotifyAnimationGraph("JumpStandingStart");
 		a_actor->NotifyAnimationGraph("sprintStart");
 		a_actor->NotifyAnimationGraph("JumpDirectionalStart");
