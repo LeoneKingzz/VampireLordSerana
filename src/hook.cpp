@@ -525,7 +525,7 @@ namespace hooks
 
 			if (eSpell && eSpell->Is(RE::FormType::Spell)) {
 				auto rSpell = eSpell->As<RE::SpellItem>();
-				if (rSpell->GetSpellType() == RE::MagicSystem::SpellType::kVoicePower) {
+				if (rSpell->GetSpellType() == RE::MagicSystem::SpellType::kSpell) {
 					std::string Lsht = (clib_util::editorID::get_editorID(rSpell));
 					auto moving = OnMeleeHitHook::GetSingleton().IsMoving(a_actor);
 					switch (hash(Lsht.c_str(), Lsht.size())) {
