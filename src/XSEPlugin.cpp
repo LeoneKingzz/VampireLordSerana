@@ -11,6 +11,7 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_msg)
 	case SKSE::MessagingInterface::kDataLoaded:
 		hooks::animEventHandler::Register(false, true);
 		hooks::OnMeleeHitHook::install();
+		//FallLongDistance::Install();
 
 		break;
 	default:

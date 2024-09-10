@@ -320,7 +320,7 @@ namespace hooks
 		a_actor->SetGraphVariableBool("MLh_Equipped_Event", false);
 		a_actor->SetGraphVariableBool("MRh_SpellReady_Event", true);
 		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", true);
-		
+		a_actor->SetGraphVariableBool("bWFT_IsGliding", true);
 	}
 
 	void OnMeleeHitHook::ResetAttackMoving(RE::Actor* a_actor)
@@ -331,7 +331,7 @@ namespace hooks
 		a_actor->SetGraphVariableBool("MLh_Equipped_Event", false);
 		a_actor->SetGraphVariableBool("MRh_SpellReady_Event", true);
 		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", true);
-		
+		a_actor->SetGraphVariableBool("bWFT_IsGliding", true);
 	}
 
 	void OnMeleeHitHook::ResetAttack_Melee(RE::Actor* a_actor)
@@ -342,7 +342,7 @@ namespace hooks
 		a_actor->SetGraphVariableBool("MRh_Equipped_Event", true);
 		a_actor->SetGraphVariableBool("MLh_Equipped_Event", true);
 		a_actor->SetGraphVariableBool("WeapEquip", true);
-		
+		a_actor->SetGraphVariableBool("bWFT_IsGliding", false);
 	}
 
 	void OnMeleeHitHook::ResetAttackMoving_Melee(RE::Actor* a_actor)
@@ -353,7 +353,7 @@ namespace hooks
 		a_actor->SetGraphVariableBool("MRh_Equipped_Event", true);
 		a_actor->SetGraphVariableBool("MLh_Equipped_Event", true);
 		a_actor->SetGraphVariableBool("WeapEquip", true);
-		
+		a_actor->SetGraphVariableBool("bWFT_IsGliding", false);
 	}
 
 	bool OnMeleeHitHook::VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor)
@@ -420,6 +420,7 @@ namespace hooks
 			const auto raceEDID = race->formEditorID;
 			if (!(raceEDID == "DLC1VampireBeastRace")) {
 				//Not vamp form//
+				a_actor->SetGraphVariableBool("bWFT_IsGliding", false);
 				a_actor->NotifyAnimationGraph("staggerStart");
 				OnMeleeHitHook::Reset_iFrames(a_actor);
 				OnMeleeHitHook::VLS_CompleteReversion(a_actor);
@@ -561,11 +562,16 @@ namespace hooks
 
 		RE::Actor* actor = const_cast<RE::TESObjectREFR*>(a_event.holder)->As<RE::Actor>();
 		switch (hash(a_event.tag.c_str(), a_event.tag.size())) {
-		case "SoundPlay.NPCVampireLordTransformation012D"_h:
-			 logger::info("Set Race Detected");
-			 if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
-			 	/*OnMeleeHitHook::VLS_CompleteTransformation(actor);*/
-			 }
+		case "LevitationToggle"_h:
+		case "LevitationToggleMoving"_h:
+			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
+				auto isLevitating = false;
+				if (actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
+					actor->SetGraphVariableBool("bWFT_IsGliding", true);
+				}else{
+					actor->SetGraphVariableBool("bWFT_IsGliding", false);
+				}
+			}
 			break;
 		}
 
@@ -627,6 +633,35 @@ namespace hooks
 
 }
 
-// a_actor->SetGraphVariableFloat("staggerDirection", 0.0);
-// a_actor->SetGraphVariableFloat("StaggerMagnitude", 1.0);
-// a_actor->NotifyAnimationGraph("staggerStart");
+// namespace FallLongDistance
+// {
+// 	struct CalcDoDamage
+// 	{
+// 		static float thunk(RE::Actor* a_this, float a_fallDistance, float a_defaultMult)
+// 		{
+// 			const auto fallDamage = func(a_this, a_fallDistance, a_defaultMult);
+// 			if (fallDamage > 0.0f) {
+// 				if (a_this->HasKeywordString("VLS_Serana_Key") || a_this->HasKeywordString("VLS_Valerica_Key")) {
+// 					const auto race = a_this->GetRace();
+// 					const auto raceEDID = race->formEditorID;
+// 					if (raceEDID == "DLC1VampireBeastRace"){
+
+// 					}
+// 				}
+// 			}
+// 			return fallDamage;
+// 		}
+// 		static inline REL::Relocation<decltype(thunk)> func;
+// 	};
+
+// 	void Install()
+// 	{
+// 		REL::Relocation<std::uintptr_t> take_ragdoll_damage{ RELOCATION_ID(36346, 37336), 0x35 };
+// 		stl::write_thunk_call<CalcDoDamage>(take_ragdoll_damage.address());
+
+// 		REL::Relocation<std::uintptr_t> process_movefinish_event{ RELOCATION_ID(36973, 37998), REL::Relocate(0xAE, 0xAB) };
+// 		stl::write_thunk_call<CalcDoDamage>(process_movefinish_event.address());
+
+// 		logger::info("Hooked Fall Damage"sv);
+// 	}
+// }
