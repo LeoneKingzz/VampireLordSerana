@@ -372,65 +372,36 @@ namespace hooks
 		a_actor->NotifyAnimationGraph("bashStop");
 		a_actor->NotifyAnimationGraph("blockStop");
 		a_actor->NotifyAnimationGraph("staggerStop");
-		a_actor->SetGraphVariableBool("bMLh_Ready", false);
-		a_actor->SetGraphVariableBool("bMRh_Ready", false);
-		a_actor->SetGraphVariableBool("bMagicDraw", false);
 	}
 
 	void OnMeleeHitHook::ResetAttack(RE::Actor* a_actor)
 	{
 		a_actor->NotifyAnimationGraph("LevitationToggle");
-		a_actor->SetGraphVariableBool("WeapEquip", false);
-		a_actor->SetGraphVariableBool("MRh_Equipped_Event", false);
-		a_actor->SetGraphVariableBool("MLh_Equipped_Event", false);
-		a_actor->SetGraphVariableBool("MRh_SpellReady_Event", true);
-		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", true);
+		a_actor->SetGraphVariableBool("bMagicDraw", true);
 		a_actor->SetGraphVariableBool("bMLh_Ready", true);
 		a_actor->SetGraphVariableBool("bMRh_Ready", true);
-		a_actor->SetGraphVariableBool("bMagicDraw", true);
-		// a_actor->SetGraphVariableBool("bWFT_IsGliding", true);
 	}
 
 	void OnMeleeHitHook::ResetAttackMoving(RE::Actor* a_actor)
 	{
 		a_actor->NotifyAnimationGraph("LevitationToggleMoving");
-		a_actor->SetGraphVariableBool("WeapEquip", false);
-		a_actor->SetGraphVariableBool("MRh_Equipped_Event", false);
-		a_actor->SetGraphVariableBool("MLh_Equipped_Event", false);
-		a_actor->SetGraphVariableBool("MRh_SpellReady_Event", true);
-		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", true);
 		a_actor->SetGraphVariableBool("bMLh_Ready", true);
 		a_actor->SetGraphVariableBool("bMRh_Ready", true);
 		a_actor->SetGraphVariableBool("bMagicDraw", true);
-		// a_actor->SetGraphVariableBool("bWFT_IsGliding", true);
 	}
 
 	void OnMeleeHitHook::ResetAttack_Melee(RE::Actor* a_actor)
 	{
 		a_actor->NotifyAnimationGraph("LevitationToggle");
-		a_actor->SetGraphVariableBool("MRh_SpellReady_Event", false);
-		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", false);
-		a_actor->SetGraphVariableBool("MRh_Equipped_Event", true);
-		a_actor->SetGraphVariableBool("MLh_Equipped_Event", true);
-		a_actor->SetGraphVariableBool("bMLh_Ready", false);
-		a_actor->SetGraphVariableBool("bMRh_Ready", false);
-		a_actor->SetGraphVariableBool("bMagicDraw", false);
+		a_actor->NotifyAnimationGraph("weaponDraw");
 		a_actor->SetGraphVariableBool("WeapEquip", true);
-		// a_actor->SetGraphVariableBool("bWFT_IsGliding", false);
 	}
 
 	void OnMeleeHitHook::ResetAttackMoving_Melee(RE::Actor* a_actor)
 	{
 		a_actor->NotifyAnimationGraph("LevitationToggleMoving");
-		a_actor->SetGraphVariableBool("MRh_SpellReady_Event", false);
-		a_actor->SetGraphVariableBool("MLh_SpellReady_Event", false);
-		a_actor->SetGraphVariableBool("MRh_Equipped_Event", true);
-		a_actor->SetGraphVariableBool("MLh_Equipped_Event", true);
-		a_actor->SetGraphVariableBool("bMLh_Ready", false);
-		a_actor->SetGraphVariableBool("bMRh_Ready", false);
-		a_actor->SetGraphVariableBool("bMagicDraw", false);
+		a_actor->NotifyAnimationGraph("weaponDraw");
 		a_actor->SetGraphVariableBool("WeapEquip", true);
-		// a_actor->SetGraphVariableBool("bWFT_IsGliding", false);
 	}
 
 	bool OnMeleeHitHook::VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor)
@@ -497,7 +468,6 @@ namespace hooks
 			const auto raceEDID = race->formEditorID;
 			if (!(raceEDID == "DLC1VampireBeastRace")) {
 				//Not vamp form//
-				// a_actor->SetGraphVariableBool("bWFT_IsGliding", false);
 				a_actor->NotifyAnimationGraph("staggerStart");
 				OnMeleeHitHook::Reset_iFrames(a_actor);
 				OnMeleeHitHook::VLS_CompleteReversion(a_actor);
@@ -633,11 +603,6 @@ namespace hooks
 
 					// case "VLSeranaDLC1VampireBats"_h:
 					// case "VLSeranaDLC1VampireBats2"_h:
-					// 	a_actor->NotifyAnimationGraph("JumpStandingStart");
-					// 	a_actor->NotifyAnimationGraph("sprintStart");
-					// 	a_actor->NotifyAnimationGraph("JumpDirectionalStart");
-					// 	a_actor->AsActorState()->actorState1.sprinting = 1;
-
 					// 	break;
 					default:
 						break;
@@ -660,30 +625,21 @@ namespace hooks
 		switch (hash(a_event.tag.c_str(), a_event.tag.size())) {
 		case "BatSprintOff"_h:
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
-				// auto isLevitating = false;
-				// if (actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
-				// 	actor->SetGraphVariableBool("bWFT_IsGliding", true);
-				// }else{
-				// 	actor->SetGraphVariableBool("bWFT_IsGliding", false);
-				// }
-
-				// a_this->SetGraphVariableBool("bWFT_IsGliding", true);
-				actor->NotifyAnimationGraph("JumpStandingStart");
-				actor->NotifyAnimationGraph("sprintStart");
-				actor->NotifyAnimationGraph("JumpDirectionalStart");
+				auto isLevitating = false;
+				if (actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
+					actor->NotifyAnimationGraph("sprintStart");
+					actor->AsActorState()->actorState1.sprinting = 1;
+				}
 			}
 			break;
 
 		case "BatSprintStop"_h:
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
-				// auto isLevitating = false;
-				// if (actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
-				// 	actor->SetGraphVariableBool("bWFT_IsGliding", true);
-				// }else{
-				// 	actor->SetGraphVariableBool("bWFT_IsGliding", false);
-				// }
-
-				// a_this->SetGraphVariableBool("bWFT_IsGliding", true);
+				auto isLevitating = false;
+				if (actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
+					actor->NotifyAnimationGraph("sprintStart");
+					actor->AsActorState()->actorState1.sprinting = 1;
+				}
 			}
 			break;
 
@@ -786,17 +742,10 @@ namespace FallLongDistance
 					const auto race = a_this->GetRace();
 					const auto raceEDID = race->formEditorID;
 					if (raceEDID == "DLC1VampireBeastRace"){
-
 						auto isLevitating = false;
 						if (a_this->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
-							// a_this->SetGraphVariableBool("bWFT_IsGliding", true);
-							a_this->NotifyAnimationGraph("JumpStandingStart");
 							a_this->NotifyAnimationGraph("sprintStart");
-							a_this->NotifyAnimationGraph("JumpDirectionalStart");
-							// a_this->AsActorState()->actorState1.sprinting = 1;
-						} else {
-							// a_this->SetGraphVariableBool("bWFT_IsGliding", false);
-
+							a_this->AsActorState()->actorState1.sprinting = 1;
 						}
 					}
 				}
@@ -817,3 +766,7 @@ namespace FallLongDistance
 		logger::info("Hooked Fall Damage"sv);
 	}
 }
+
+// a_this->SetGraphVariableBool("bWFT_IsGliding", true);
+// actor->NotifyAnimationGraph("JumpStandingStart");
+// actor->NotifyAnimationGraph("JumpDirectionalStart");
