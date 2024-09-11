@@ -701,7 +701,9 @@ namespace hooks
 		//     break;
 
 		case "LandStart"_h:
-			OnMeleeHitHook::GetSingleton().PrepareForMelee(actor);
+			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
+				OnMeleeHitHook::GetSingleton().PrepareForMelee(actor);
+			}
 			break;
 
 		// case "GroundStart"_h:
@@ -709,7 +711,9 @@ namespace hooks
 		// 	break;
 
 		case "LiftoffStart"_h:
-			OnMeleeHitHook::GetSingleton().Re_EquipAll_LevitateMode(actor);
+			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
+				OnMeleeHitHook::GetSingleton().Re_EquipAll_LevitateMode(actor);
+			}
 			break;
 		}
 
