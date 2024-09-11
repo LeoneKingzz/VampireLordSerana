@@ -398,6 +398,7 @@ namespace hooks
 	void OnMeleeHitHook::ResetAttack_Melee(RE::Actor* a_actor)
 	{
 		a_actor->NotifyAnimationGraph("LevitationToggle");
+		a_actor->NotifyAnimationGraph("attackStart");
 		// a_actor->NotifyAnimationGraph("weaponDraw");
 		// a_actor->SetGraphVariableBool("WeapEquip", true);
 	}
@@ -405,6 +406,7 @@ namespace hooks
 	void OnMeleeHitHook::ResetAttackMoving_Melee(RE::Actor* a_actor)
 	{
 		a_actor->NotifyAnimationGraph("LevitationToggleMoving");
+		a_actor->NotifyAnimationGraph("attackStart");
 		// a_actor->NotifyAnimationGraph("weaponDraw");
 		// a_actor->SetGraphVariableBool("WeapEquip", true);
 	}
@@ -675,6 +677,18 @@ namespace hooks
 		case "LevitateStart"_h:
 		    OnMeleeHitHook::GetSingleton().Re_EquipAll_LevitateMode(actor);
 		    break;
+
+		case "LandStart"_h:
+			OnMeleeHitHook::GetSingleton().Re_EquipAll_LevitateMode(actor);
+			break;
+
+		case "GroundStart"_h:
+			OnMeleeHitHook::GetSingleton().Re_EquipAll_LevitateMode(actor);
+			break;
+
+		case "LiftoffStart"_h:
+			OnMeleeHitHook::GetSingleton().Re_EquipAll_LevitateMode(actor);
+			break;
 		}
 
 		return fn ? (this->*fn)(a_event, src) : RE::BSEventNotifyControl::kContinue;
