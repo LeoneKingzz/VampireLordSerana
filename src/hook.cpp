@@ -633,15 +633,15 @@ namespace hooks
 			}
 			break;
 
-		case "BatSprintStop"_h:
-			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
-				auto isLevitating = false;
-				if (actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
-					actor->NotifyAnimationGraph("sprintStart");
-					actor->AsActorState()->actorState1.sprinting = 1;
-				}
-			}
-			break;
+		// case "BatSprintStop"_h:
+		// 	if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
+		// 		auto isLevitating = false;
+		// 		if (actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
+		// 			actor->NotifyAnimationGraph("sprintStart");
+		// 			actor->AsActorState()->actorState1.sprinting = 1;
+		// 		}
+		// 	}
+		// 	break;
 
 		case "BeginCastLeft"_h:
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
