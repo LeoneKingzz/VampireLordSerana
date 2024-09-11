@@ -382,31 +382,31 @@ namespace hooks
 	void OnMeleeHitHook::ResetAttack(RE::Actor* a_actor)
 	{
 		a_actor->NotifyAnimationGraph("LevitationToggle");
-		a_actor->SetGraphVariableBool("bMagicDraw", true);
-		a_actor->SetGraphVariableBool("bMLh_Ready", true);
-		a_actor->SetGraphVariableBool("bMRh_Ready", true);
+		// a_actor->SetGraphVariableBool("bMagicDraw", true);
+		// a_actor->SetGraphVariableBool("bMLh_Ready", true);
+		// a_actor->SetGraphVariableBool("bMRh_Ready", true);
 	}
 
 	void OnMeleeHitHook::ResetAttackMoving(RE::Actor* a_actor)
 	{
 		a_actor->NotifyAnimationGraph("LevitationToggleMoving");
-		a_actor->SetGraphVariableBool("bMLh_Ready", true);
-		a_actor->SetGraphVariableBool("bMRh_Ready", true);
-		a_actor->SetGraphVariableBool("bMagicDraw", true);
+		// a_actor->SetGraphVariableBool("bMLh_Ready", true);
+		// a_actor->SetGraphVariableBool("bMRh_Ready", true);
+		// a_actor->SetGraphVariableBool("bMagicDraw", true);
 	}
 
 	void OnMeleeHitHook::ResetAttack_Melee(RE::Actor* a_actor)
 	{
 		a_actor->NotifyAnimationGraph("LevitationToggle");
-		a_actor->NotifyAnimationGraph("weaponDraw");
-		a_actor->SetGraphVariableBool("WeapEquip", true);
+		// a_actor->NotifyAnimationGraph("weaponDraw");
+		// a_actor->SetGraphVariableBool("WeapEquip", true);
 	}
 
 	void OnMeleeHitHook::ResetAttackMoving_Melee(RE::Actor* a_actor)
 	{
 		a_actor->NotifyAnimationGraph("LevitationToggleMoving");
-		a_actor->NotifyAnimationGraph("weaponDraw");
-		a_actor->SetGraphVariableBool("WeapEquip", true);
+		// a_actor->NotifyAnimationGraph("weaponDraw");
+		// a_actor->SetGraphVariableBool("WeapEquip", true);
 	}
 
 	bool OnMeleeHitHook::VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor)
