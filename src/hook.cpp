@@ -88,6 +88,46 @@ namespace hooks
 		}
 	}
 
+	void OnMeleeHitHook::Unequip_DescendMode(RE::Actor* a_actor, RE::SpellItem* a_spell)
+	{
+		uniqueLocker lock(mtx_SpellList);
+		auto itt = _SpellList.find(a_actor);
+		if (itt == _SpellList.end()) {
+			std::vector<RE::SpellItem*> Hen;
+			_SpellList.insert({ a_actor, Hen });
+		}
+
+		for (auto it = _SpellList.begin(); it != _SpellList.end(); ++it) {
+			if (it->first == a_actor) {
+				if (std::find(it->second.begin(), it->second.end(), a_spell) != it->second.end()){
+					RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, a_spell);
+					a_actor->RemoveSpell(a_spell);
+				}else{
+					RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, a_spell);
+					a_actor->RemoveSpell(a_spell);
+					it->second.push_back(a_spell);
+				}
+				break;
+			}
+			continue;
+		}
+	}
+
+	void OnMeleeHitHook::Re_EquipAll_LevitateMode(RE::Actor* a_actor)
+	{
+		uniqueLocker lock(mtx_SpellList);
+		for (auto it = _SpellList.begin(); it != _SpellList.end(); ++it) {
+			if (it->first == a_actor) {
+				for (auto spell : it->second) {
+					a_actor->AddSpell(spell);
+				}
+				_SpellList.erase(it);
+				break;
+			}
+			continue;
+		}
+	}
+
 	void OnMeleeHitHook::Re_EquipAll(RE::Actor *a_actor){
 
 		uniqueLocker lock(mtx_Inventory);
@@ -177,6 +217,29 @@ namespace hooks
 			}
 			break;
 		}
+	}
+
+	std::pair<bool, RE::SpellItem*> OnMeleeHitHook::GetAttackSpell(RE::Actor* actor, bool lefthand)
+	{
+		bool result = false;
+		RE::SpellItem* a_spell = nullptr;
+		auto  limbospell = actor->GetActorRuntimeData().currentProcess;
+
+		if (limbospell) {
+			if (lefthand) {
+				auto eSpell = limbospell->GetEquippedLeftHand();
+				if (eSpell && eSpell->Is(RE::FormType::Spell) && !eSpell->As<RE::SpellItem>()->HasKeyword(RE::TESForm::LookupByEditorID<RE::BGSKeyword>("VLS_AbSpells_Key"))) {
+					result = true;
+					a_spell = eSpell->As<RE::SpellItem>();
+				}
+			} else {
+				auto eSpell = limbospell->GetEquippedRightHand();
+				if (eSpell && eSpell->Is(RE::FormType::Spell) && !eSpell->As<RE::SpellItem>()->HasKeyword(RE::TESForm::LookupByEditorID<RE::BGSKeyword>("VLS_AbSpells_Key"))) {
+					result = true;
+				}
+			}
+		}
+		return { result, a_spell };
 	}
 
 	// void OnMeleeHitHook::update(RE::Actor* a_actor, float a_delta)
@@ -325,12 +388,6 @@ namespace hooks
 		a_actor->SetGraphVariableBool("bMLh_Ready", true);
 		a_actor->SetGraphVariableBool("bMRh_Ready", true);
 		a_actor->SetGraphVariableBool("bMagicDraw", true);
-		// a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("doomSteedPerk"));
-		// a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("BB_DG_FallDamage"));
-		a_actor->NotifyAnimationGraph("JumpStandingStart");
-		a_actor->NotifyAnimationGraph("sprintStart");
-		a_actor->NotifyAnimationGraph("JumpDirectionalStart");
-		a_actor->AsActorState()->actorState1.sprinting = 1;
 		// a_actor->SetGraphVariableBool("bWFT_IsGliding", true);
 	}
 
@@ -345,12 +402,6 @@ namespace hooks
 		a_actor->SetGraphVariableBool("bMLh_Ready", true);
 		a_actor->SetGraphVariableBool("bMRh_Ready", true);
 		a_actor->SetGraphVariableBool("bMagicDraw", true);
-		// a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("doomSteedPerk"));
-		// a_actor->AddPerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("BB_DG_FallDamage"));
-		a_actor->NotifyAnimationGraph("JumpStandingStart");
-		a_actor->NotifyAnimationGraph("sprintStart");
-		a_actor->NotifyAnimationGraph("JumpDirectionalStart");
-		a_actor->AsActorState()->actorState1.sprinting = 1;
 		// a_actor->SetGraphVariableBool("bWFT_IsGliding", true);
 	}
 
@@ -365,8 +416,6 @@ namespace hooks
 		a_actor->SetGraphVariableBool("bMRh_Ready", false);
 		a_actor->SetGraphVariableBool("bMagicDraw", false);
 		a_actor->SetGraphVariableBool("WeapEquip", true);
-		a_actor->RemovePerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("doomSteedPerk"));
-		a_actor->RemovePerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("BB_DG_FallDamage"));
 		// a_actor->SetGraphVariableBool("bWFT_IsGliding", false);
 	}
 
@@ -381,8 +430,6 @@ namespace hooks
 		a_actor->SetGraphVariableBool("bMRh_Ready", false);
 		a_actor->SetGraphVariableBool("bMagicDraw", false);
 		a_actor->SetGraphVariableBool("WeapEquip", true);
-		a_actor->RemovePerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("doomSteedPerk"));
-		a_actor->RemovePerk(RE::TESForm::LookupByEditorID<RE::BGSPerk>("BB_DG_FallDamage"));
 		// a_actor->SetGraphVariableBool("bWFT_IsGliding", false);
 	}
 
@@ -482,6 +529,16 @@ namespace hooks
 				if (item && item == ElderScroll->formID && event->equipped) {
 					RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, ElderScroll);
 				}
+
+				auto isLevitating = false;
+				if (a_actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) {
+					if (item && RE::TESForm::LookupByID(item)) {
+						auto formitem = RE::TESForm::LookupByID<RE::TESForm>(item);
+						if (formitem && formitem->Is(RE::FormType::Spell) && !formitem->As<RE::SpellItem>()->HasKeyword(RE::TESForm::LookupByEditorID<RE::BGSKeyword>("VLS_AbSpells_Key"))) {
+							OnMeleeHitHook::GetSingleton().Unequip_DescendMode(a_actor, formitem->As<RE::SpellItem>());
+						}
+					}
+				}
 			}
 			return RE::BSEventNotifyControl::kContinue;
 		}
@@ -574,14 +631,14 @@ namespace hooks
 						}
 						break;
 
-					case "VLSeranaDLC1VampireBats"_h:
-					case "VLSeranaDLC1VampireBats2"_h:
-						a_actor->NotifyAnimationGraph("JumpStandingStart");
-						a_actor->NotifyAnimationGraph("sprintStart");
-						a_actor->NotifyAnimationGraph("JumpDirectionalStart");
-						a_actor->AsActorState()->actorState1.sprinting = 1;
+					// case "VLSeranaDLC1VampireBats"_h:
+					// case "VLSeranaDLC1VampireBats2"_h:
+					// 	a_actor->NotifyAnimationGraph("JumpStandingStart");
+					// 	a_actor->NotifyAnimationGraph("sprintStart");
+					// 	a_actor->NotifyAnimationGraph("JumpDirectionalStart");
+					// 	a_actor->AsActorState()->actorState1.sprinting = 1;
 
-						break;
+					// 	break;
 					default:
 						break;
 					}
@@ -601,8 +658,7 @@ namespace hooks
 
 		RE::Actor* actor = const_cast<RE::TESObjectREFR*>(a_event.holder)->As<RE::Actor>();
 		switch (hash(a_event.tag.c_str(), a_event.tag.size())) {
-		case "LevitationToggle"_h:
-		case "LevitationToggleMoving"_h:
+		case "BatSprintOff"_h:
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
 				// auto isLevitating = false;
 				// if (actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
@@ -610,8 +666,54 @@ namespace hooks
 				// }else{
 				// 	actor->SetGraphVariableBool("bWFT_IsGliding", false);
 				// }
+
+				// a_this->SetGraphVariableBool("bWFT_IsGliding", true);
+				actor->NotifyAnimationGraph("JumpStandingStart");
+				actor->NotifyAnimationGraph("sprintStart");
+				actor->NotifyAnimationGraph("JumpDirectionalStart");
 			}
 			break;
+
+		case "BatSprintStop"_h:
+			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
+				// auto isLevitating = false;
+				// if (actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
+				// 	actor->SetGraphVariableBool("bWFT_IsGliding", true);
+				// }else{
+				// 	actor->SetGraphVariableBool("bWFT_IsGliding", false);
+				// }
+
+				// a_this->SetGraphVariableBool("bWFT_IsGliding", true);
+			}
+			break;
+
+		case "BeginCastLeft"_h:
+			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
+				auto isLevitating = false;
+				if (actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) {
+					auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
+					if (it.first) {
+						actor->GetActorRuntimeData().magicCasters[0]->InterruptCastImpl(false);
+						OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it.second);
+					}
+				}
+			}
+			break;
+		case "BeginCastRight"_h:
+			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
+				auto isLevitating = false;
+				if (actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) {
+					auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
+					if (it.first){
+						actor->GetActorRuntimeData().magicCasters[1]->InterruptCastImpl(false);
+						OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it.second);
+					}
+				}
+			}
+			break;
+		case "LevitateStart"_h:
+		    OnMeleeHitHook::GetSingleton().Re_EquipAll_LevitateMode(actor);
+		    break;
 		}
 
 		return fn ? (this->*fn)(a_event, src) : RE::BSEventNotifyControl::kContinue;
@@ -691,10 +793,10 @@ namespace FallLongDistance
 							a_this->NotifyAnimationGraph("JumpStandingStart");
 							a_this->NotifyAnimationGraph("sprintStart");
 							a_this->NotifyAnimationGraph("JumpDirectionalStart");
-							a_this->AsActorState()->actorState1.sprinting = 1;
+							// a_this->AsActorState()->actorState1.sprinting = 1;
 						} else {
 							// a_this->SetGraphVariableBool("bWFT_IsGliding", false);
-							a_this->AsActorState()->actorState1.sprinting = 0;
+
 						}
 					}
 				}

@@ -93,7 +93,10 @@ namespace hooks
 		static bool VLS_SendVampireLordTransformation(STATIC_ARGS, RE::Actor* a_actor);
 		static bool VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor);
 		void UnequipAll(RE::Actor* a_actor);
-	    void Re_EquipAll(RE::Actor *a_actor);
+		void Unequip_DescendMode(RE::Actor* a_actor, RE::SpellItem* a_spell);
+		std::pair<bool, RE::SpellItem*> GetAttackSpell(RE::Actor* actor, bool lefthand = false);
+		void Re_EquipAll(RE::Actor *a_actor);
+		void Re_EquipAll_LevitateMode(RE::Actor *a_actor);
 		static bool BindPapyrusFunctions(VM* vm);
 		static void Set_iFrames(RE::Actor* actor);
 		static void Reset_iFrames(RE::Actor* actor);
@@ -123,8 +126,10 @@ namespace hooks
 
 		std::unordered_map<RE::Actor*, float> _parryTimer;
 		std::unordered_map<RE::Actor*, std::vector<RE::TESBoundObject*>> _Inventory;
+		std::unordered_map<RE::Actor*, std::vector<RE::SpellItem*>> _SpellList;
 		std::shared_mutex mtx_Inventory;
 		std::shared_mutex mtx_parryTimer;
+		std::shared_mutex mtx_SpellList;
 		bool _bUpdate;
 
 		/** Our new function */
