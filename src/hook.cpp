@@ -409,6 +409,18 @@ namespace hooks
 		// a_actor->SetGraphVariableBool("WeapEquip", true);
 	}
 
+	void OnMeleeHitHook::PrepareForMelee(RE::Actor* a_actor)
+	{
+		auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(a_actor);
+		auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(a_actor, true);
+		if (it.first) {
+			OnMeleeHitHook::GetSingleton().Unequip_DescendMode(a_actor, it.second);
+		}
+		if (it2.first) {
+			OnMeleeHitHook::GetSingleton().Unequip_DescendMode(a_actor, it2.second);
+		}
+	}
+
 	bool OnMeleeHitHook::VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor)
 	{
 		const auto race = a_actor->GetRace();
@@ -677,14 +689,7 @@ namespace hooks
 		//     break;
 
 		case "LandStart"_h:
-			auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
-			auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
-			if (it.first){
-				OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it.second);
-			}
-			if (it2.first) {
-				OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it2.second);
-			}
+			OnMeleeHitHook::GetSingleton().PrepareForMelee(actor);
 			break;
 
 		case "GroundStart"_h:

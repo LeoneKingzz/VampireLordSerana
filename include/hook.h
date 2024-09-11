@@ -110,6 +110,7 @@ namespace hooks
 		static void ResetAttackMoving(RE::Actor* a_actor);
 		static void ResetAttack_Melee(RE::Actor* a_actor);
 		static void ResetAttackMoving_Melee(RE::Actor* a_actor);
+		void PrepareForMelee(RE::Actor *a_actor);
 		bool IsMoving(RE::Actor* actor);
 		// void update(RE::Actor* a_actor, float a_delta);
 		// void startTiming(RE::Actor *a_actor, float a_delta);
