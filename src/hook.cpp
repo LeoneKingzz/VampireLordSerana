@@ -704,9 +704,9 @@ namespace hooks
 			OnMeleeHitHook::GetSingleton().PrepareForMelee(actor);
 			break;
 
-		case "GroundStart"_h:
-			actor->NotifyAnimationGraph("attackStart");
-			break;
+		// case "GroundStart"_h:
+		// 	actor->NotifyAnimationGraph("attackStart");
+		// 	break;
 
 		case "LiftoffStart"_h:
 			OnMeleeHitHook::GetSingleton().Re_EquipAll_LevitateMode(actor);
