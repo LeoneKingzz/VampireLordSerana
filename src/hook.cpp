@@ -401,18 +401,20 @@ namespace hooks
 
 	void OnMeleeHitHook::ResetAttack_Melee(RE::Actor* a_actor)
 	{
-		// a_actor->NotifyAnimationGraph("LevitationToggle");
-		a_actor->NotifyAnimationGraph("SneakStop");
 		a_actor->AsActorState()->actorState2.forceSneak = 0;
+		a_actor->AsActorState()->actorState1.sneaking = 0;
+		//a_actor->NotifyAnimationGraph("LevitationToggle");
+		// a_actor->NotifyAnimationGraph("SneakStop");
 		a_actor->NotifyAnimationGraph("weaponDraw");
 		a_actor->SetGraphVariableBool("WeapEquip", true);
 	}
 
 	void OnMeleeHitHook::ResetAttackMoving_Melee(RE::Actor* a_actor)
 	{
-		// a_actor->NotifyAnimationGraph("LevitationToggleMoving");
-		a_actor->NotifyAnimationGraph("SneakStop");
 		a_actor->AsActorState()->actorState2.forceSneak = 0;
+		a_actor->AsActorState()->actorState1.sneaking = 0;
+		//a_actor->NotifyAnimationGraph("LevitationToggleMoving");
+		// a_actor->NotifyAnimationGraph("SneakStop");
 		a_actor->NotifyAnimationGraph("weaponDraw");
 		a_actor->SetGraphVariableBool("WeapEquip", true);
 	}
