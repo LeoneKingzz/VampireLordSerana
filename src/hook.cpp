@@ -640,15 +640,16 @@ namespace hooks
 
 		RE::Actor* actor = const_cast<RE::TESObjectREFR*>(a_event.holder)->As<RE::Actor>();
 		switch (hash(a_event.tag.c_str(), a_event.tag.size())) {
-		// case "BatSprintOff"_h:
-		// 	if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
-		// 		auto isLevitating = false;
-		// 		if (actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
-		// 			actor->NotifyAnimationGraph("sprintStart");
-		// 			actor->AsActorState()->actorState1.sprinting = 1;
-		// 		}
-		// 	}
-		// 	break;
+		case "BatSprintOff"_h:
+			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
+				OnMeleeHitHook::GetSingleton().Reset_iFrames(actor);
+				// auto isLevitating = false;
+				// if (actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
+				// 	actor->NotifyAnimationGraph("sprintStart");
+				// 	actor->AsActorState()->actorState1.sprinting = 1;
+				// }
+			}
+			break;
 
 		// case "BatSprintStop"_h:
 		// 	if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
@@ -659,6 +660,17 @@ namespace hooks
 		// 		}
 		// 	}
 		// 	break;
+
+		case "BatSprintOn"_h:
+			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
+				OnMeleeHitHook::GetSingleton().Set_iFrames(actor);
+				// auto isLevitating = false;
+				// if (actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
+				// 	actor->NotifyAnimationGraph("sprintStart");
+				// 	actor->AsActorState()->actorState1.sprinting = 1;
+				// }
+			}
+			break;
 
 		case "BeginCastLeft"_h:
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
