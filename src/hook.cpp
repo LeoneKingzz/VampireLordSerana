@@ -116,6 +116,11 @@ namespace hooks
 	void OnMeleeHitHook::Re_EquipAll_LevitateMode(RE::Actor* a_actor)
 	{
 		uniqueLocker lock(mtx_SpellList);
+		auto itt = _SpellList.find(a_actor);
+		if (itt == _SpellList.end()) {
+			return;
+		}
+
 		for (auto it = _SpellList.begin(); it != _SpellList.end(); ++it) {
 			if (it->first == a_actor) {
 				for (auto spell : it->second) {
@@ -623,15 +628,15 @@ namespace hooks
 
 		RE::Actor* actor = const_cast<RE::TESObjectREFR*>(a_event.holder)->As<RE::Actor>();
 		switch (hash(a_event.tag.c_str(), a_event.tag.size())) {
-		case "BatSprintOff"_h:
-			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
-				auto isLevitating = false;
-				if (actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
-					actor->NotifyAnimationGraph("sprintStart");
-					actor->AsActorState()->actorState1.sprinting = 1;
-				}
-			}
-			break;
+		// case "BatSprintOff"_h:
+		// 	if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
+		// 		auto isLevitating = false;
+		// 		if (actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
+		// 			actor->NotifyAnimationGraph("sprintStart");
+		// 			actor->AsActorState()->actorState1.sprinting = 1;
+		// 		}
+		// 	}
+		// 	break;
 
 		// case "BatSprintStop"_h:
 		// 	if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
