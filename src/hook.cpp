@@ -381,6 +381,7 @@ namespace hooks
 		}
 		a_actor->SetGraphVariableBool("bIsDodging", true);
 		logger::info("Began Transformation");
+		GetSingleton().Store_CStyleSettings(a_actor);
 		auto data = RE::TESDataHandler::GetSingleton();
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x10F564, "Skyrim.esm")));
 		const auto FXchange = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaChangeFX");
@@ -508,6 +509,7 @@ namespace hooks
 		caster->CastSpellImmediate(FXchange2, true, a_actor, 1, false, 0.0, a_actor);
 		dispelEffect(Gargoyle, a_actor);
 		GetSingleton().Re_EquipAll(a_actor);
+		GetSingleton().Restore_CStyleSettings(a_actor);
 		a_actor->SetGraphVariableBool("bIsDodging", false);
 	}
 
