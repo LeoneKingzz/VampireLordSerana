@@ -381,9 +381,9 @@ namespace hooks
 
 	void OnMeleeHitHook::ResetAttack(RE::Actor* a_actor)
 	{
-		a_actor->NotifyAnimationGraph("tailSneakIdle");
-		a_actor->AsActorState()->actorState2.forceSneak = 1;
-		// a_actor->NotifyAnimationGraph("LevitationToggle");
+		// a_actor->NotifyAnimationGraph("tailSneakIdle");
+		// a_actor->AsActorState()->actorState2.forceSneak = 1;
+		a_actor->NotifyAnimationGraph("LevitationToggle");
 		// a_actor->SetGraphVariableBool("bMagicDraw", true);
 		// a_actor->SetGraphVariableBool("bMLh_Ready", true);
 		// a_actor->SetGraphVariableBool("bMRh_Ready", true);
@@ -391,9 +391,9 @@ namespace hooks
 
 	void OnMeleeHitHook::ResetAttackMoving(RE::Actor* a_actor)
 	{
-		a_actor->NotifyAnimationGraph("tailSneakLocomotion");
-		a_actor->AsActorState()->actorState2.forceSneak = 1;
-		// a_actor->NotifyAnimationGraph("LevitationToggleMoving");
+		// a_actor->NotifyAnimationGraph("tailSneakLocomotion");
+		// a_actor->AsActorState()->actorState2.forceSneak = 1;
+		a_actor->NotifyAnimationGraph("LevitationToggleMoving");
 		// a_actor->SetGraphVariableBool("bMLh_Ready", true);
 		// a_actor->SetGraphVariableBool("bMRh_Ready", true);
 		// a_actor->SetGraphVariableBool("bMagicDraw", true);
@@ -401,18 +401,18 @@ namespace hooks
 
 	void OnMeleeHitHook::ResetAttack_Melee(RE::Actor* a_actor)
 	{
-		a_actor->NotifyAnimationGraph("tailCombatIdle");
-		a_actor->AsActorState()->actorState2.forceSneak = 0;
-		// a_actor->NotifyAnimationGraph("LevitationToggle");
+		// a_actor->NotifyAnimationGraph("tailCombatIdle");
+		// a_actor->AsActorState()->actorState2.forceSneak = 0;
+		a_actor->NotifyAnimationGraph("LevitationToggle");
 		// a_actor->NotifyAnimationGraph("weaponDraw");
 		// a_actor->SetGraphVariableBool("WeapEquip", true);
 	}
 
 	void OnMeleeHitHook::ResetAttackMoving_Melee(RE::Actor* a_actor)
 	{
-		a_actor->NotifyAnimationGraph("tailCombatLocomotion");
-		a_actor->AsActorState()->actorState2.forceSneak = 0;
-		// a_actor->NotifyAnimationGraph("LevitationToggleMoving");
+		// a_actor->NotifyAnimationGraph("tailCombatLocomotion");
+		// a_actor->AsActorState()->actorState2.forceSneak = 0;
+		a_actor->NotifyAnimationGraph("LevitationToggleMoving");
 		// a_actor->NotifyAnimationGraph("weaponDraw");
 		// a_actor->SetGraphVariableBool("WeapEquip", true);
 	}
@@ -463,7 +463,12 @@ namespace hooks
 		a_actor->SetGraphVariableBool("bIsDodging", false);
 	}
 
-	class OurEventSink : public RE::BSTEventSink<RE::TESSwitchRaceCompleteEvent>, public RE::BSTEventSink<RE::TESEquipEvent>, public RE::BSTEventSink<RE::TESCombatEvent>, public RE::BSTEventSink<RE::TESActorLocationChangeEvent>, public RE::BSTEventSink<RE::TESSpellCastEvent>
+	class OurEventSink : 
+	public RE::BSTEventSink<RE::TESSwitchRaceCompleteEvent>, 
+	public RE::BSTEventSink<RE::TESEquipEvent>, 
+	public RE::BSTEventSink<RE::TESCombatEvent>, 
+	public RE::BSTEventSink<RE::TESActorLocationChangeEvent>, 
+	public RE::BSTEventSink<RE::TESSpellCastEvent>
 	{
 		OurEventSink() = default;
 		OurEventSink(const OurEventSink&) = delete;
@@ -609,21 +614,21 @@ namespace hooks
 				auto rSpell = eSpell->As<RE::SpellItem>();
 				if (rSpell->GetSpellType() == RE::MagicSystem::SpellType::kSpell) {
 					std::string Lsht = (clib_util::editorID::get_editorID(rSpell));
-					//auto moving = OnMeleeHitHook::GetSingleton().IsMoving(a_actor);
+					auto moving = OnMeleeHitHook::GetSingleton().IsMoving(a_actor);
 					switch (hash(Lsht.c_str(), Lsht.size())) {
 					case "VLSeranaValericaLevitateAb"_h:
-						// if (moving) {
-						// 	OnMeleeHitHook::ResetAttackMoving(a_actor);
-						// } else {
-						// 	OnMeleeHitHook::ResetAttack(a_actor);
-						// }
+						if (moving) {
+							OnMeleeHitHook::ResetAttackMoving(a_actor);
+						} else {
+							OnMeleeHitHook::ResetAttack(a_actor);
+						}
 						break;
 					case "VLSeranaValericaDescendAb"_h:
-						// if (moving) {
-						// 	OnMeleeHitHook::ResetAttackMoving_Melee(a_actor);
-						// } else {
-						// 	OnMeleeHitHook::ResetAttack_Melee(a_actor);
-						// }
+						if (moving) {
+							OnMeleeHitHook::ResetAttackMoving_Melee(a_actor);
+						} else {
+							OnMeleeHitHook::ResetAttack_Melee(a_actor);
+						}
 						break;
 
 					// case "VLSeranaDLC1VampireBats"_h:
@@ -831,3 +836,15 @@ namespace FallLongDistance
 // a_this->SetGraphVariableBool("bWFT_IsGliding", true);
 // actor->NotifyAnimationGraph("JumpStandingStart");
 // actor->NotifyAnimationGraph("JumpDirectionalStart");
+
+// if (a_actor->GetActorRuntimeData().combatController) {
+// 	RE::TESCombatStyle* style = a_actor->GetActorRuntimeData().combatController->combatStyle;
+// 	if (style) {
+// 		Score += style->generalData.defensiveMult * Protagnist_Reflexes.Defensive_Weighting;
+
+// 		Score += style->generalData.avoidThreatChance * CStyle.Skirmish_AvoidThreat_Weighting * Protagnist_Reflexes.Skirmish_Weighting;
+// 		Score += style->closeRangeData.circleMult * CStyle.Skirmish_Circle_Weighting * Protagnist_Reflexes.Skirmish_Weighting;
+// 		Score += style->closeRangeData.fallbackMult * CStyle.Skirmish_Fallback_Weighting * Protagnist_Reflexes.Skirmish_Weighting;
+// 		Score += style->longRangeData.strafeMult * CStyle.Skirmish_Strafe_Weighting * Protagnist_Reflexes.Skirmish_Weighting;
+// 	}
+// }
