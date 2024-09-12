@@ -381,7 +381,9 @@ namespace hooks
 
 	void OnMeleeHitHook::ResetAttack(RE::Actor* a_actor)
 	{
-		a_actor->NotifyAnimationGraph("LevitationToggle");
+		a_actor->NotifyAnimationGraph("tailSneakIdle");
+		a_actor->AsActorState()->actorState2.forceSneak = 1;
+		// a_actor->NotifyAnimationGraph("LevitationToggle");
 		// a_actor->SetGraphVariableBool("bMagicDraw", true);
 		// a_actor->SetGraphVariableBool("bMLh_Ready", true);
 		// a_actor->SetGraphVariableBool("bMRh_Ready", true);
@@ -389,7 +391,9 @@ namespace hooks
 
 	void OnMeleeHitHook::ResetAttackMoving(RE::Actor* a_actor)
 	{
-		a_actor->NotifyAnimationGraph("LevitationToggleMoving");
+		a_actor->NotifyAnimationGraph("tailSneakLocomotion");
+		a_actor->AsActorState()->actorState2.forceSneak = 1;
+		// a_actor->NotifyAnimationGraph("LevitationToggleMoving");
 		// a_actor->SetGraphVariableBool("bMLh_Ready", true);
 		// a_actor->SetGraphVariableBool("bMRh_Ready", true);
 		// a_actor->SetGraphVariableBool("bMagicDraw", true);
@@ -397,14 +401,18 @@ namespace hooks
 
 	void OnMeleeHitHook::ResetAttack_Melee(RE::Actor* a_actor)
 	{
-		a_actor->NotifyAnimationGraph("LevitationToggle");
+		a_actor->NotifyAnimationGraph("tailCombatIdle");
+		a_actor->AsActorState()->actorState2.forceSneak = 0;
+		// a_actor->NotifyAnimationGraph("LevitationToggle");
 		// a_actor->NotifyAnimationGraph("weaponDraw");
 		// a_actor->SetGraphVariableBool("WeapEquip", true);
 	}
 
 	void OnMeleeHitHook::ResetAttackMoving_Melee(RE::Actor* a_actor)
 	{
-		a_actor->NotifyAnimationGraph("LevitationToggleMoving");
+		a_actor->NotifyAnimationGraph("tailCombatLocomotion");
+		a_actor->AsActorState()->actorState2.forceSneak = 0;
+		// a_actor->NotifyAnimationGraph("LevitationToggleMoving");
 		// a_actor->NotifyAnimationGraph("weaponDraw");
 		// a_actor->SetGraphVariableBool("WeapEquip", true);
 	}
