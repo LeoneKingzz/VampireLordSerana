@@ -112,6 +112,8 @@ namespace hooks
 		static void ResetAttackMoving_Melee(RE::Actor* a_actor);
 		void PrepareForMelee(RE::Actor *a_actor);
 		bool IsMoving(RE::Actor* actor);
+		void Store_CStyleSettings(RE::Actor *a_actor);
+		void Restore_CStyleSettings(RE::Actor *a_actor);
 		// void update(RE::Actor* a_actor, float a_delta);
 		// void startTiming(RE::Actor *a_actor, float a_delta);
 	    // void finishTiming(RE::Actor *a_actor);
@@ -126,11 +128,13 @@ namespace hooks
 		OnMeleeHitHook& operator=(OnMeleeHitHook&&) = delete;
 
 		std::unordered_map<RE::Actor*, float> _parryTimer;
+		std::unordered_map<RE::Actor*, std::vector<float, float>> _CStyledefault;
 		std::unordered_map<RE::Actor*, std::vector<RE::TESBoundObject*>> _Inventory;
 		std::unordered_map<RE::Actor*, std::vector<RE::SpellItem*>> _SpellList;
 		std::shared_mutex mtx_Inventory;
 		std::shared_mutex mtx_parryTimer;
 		std::shared_mutex mtx_SpellList;
+		std::shared_mutex mtx_CStyledefault;
 		bool _bUpdate;
 
 		/** Our new function */

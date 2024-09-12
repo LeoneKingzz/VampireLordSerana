@@ -113,6 +113,54 @@ namespace hooks
 		}
 	}
 
+	void OnMeleeHitHook::Store_CStyleSettings(RE::Actor* a_actor)
+	{
+		uniqueLocker lock(mtx_CStyledefault);
+		auto itt = _CStyledefault.find(a_actor);
+		if (itt == _CStyledefault.end()) {
+			std::vector<float, float> Hen;
+			_CStyledefault.insert({ a_actor, Hen });
+		}
+
+		for (auto it = _CStyledefault.begin(); it != _CStyledefault.end(); ++it) {
+			if (it->first == a_actor) {
+				if (a_actor->GetActorRuntimeData().combatController) {
+					RE::TESCombatStyle* style = a_actor->GetActorRuntimeData().combatController->combatStyle;
+					if (style) {
+						it->second.front() = style->generalData.magicScoreMult;
+						it->second.back() = style->generalData.meleeScoreMult;
+					}
+				}
+				break;
+			}
+			continue;
+		}
+	}
+
+	void OnMeleeHitHook::Restore_CStyleSettings(RE::Actor* a_actor)
+	{
+		uniqueLocker lock(mtx_CStyledefault);
+		auto itt = _CStyledefault.find(a_actor);
+		if (itt == _CStyledefault.end()) {
+			return;
+		}
+
+		for (auto it = _CStyledefault.begin(); it != _CStyledefault.end(); ++it) {
+			if (it->first == a_actor) {
+				if (a_actor->GetActorRuntimeData().combatController) {
+					RE::TESCombatStyle* style = a_actor->GetActorRuntimeData().combatController->combatStyle;
+					if (style) {
+						style->generalData.magicScoreMult = it->second.front();
+						style->generalData.meleeScoreMult = it->second.back();
+					}
+				}
+				_CStyledefault.erase(it);
+				break;
+			}
+			continue;
+		}
+	}
+
 	void OnMeleeHitHook::Re_EquipAll_LevitateMode(RE::Actor* a_actor)
 	{
 		uniqueLocker lock(mtx_SpellList);
@@ -617,18 +665,18 @@ namespace hooks
 					auto moving = OnMeleeHitHook::GetSingleton().IsMoving(a_actor);
 					switch (hash(Lsht.c_str(), Lsht.size())) {
 					case "VLSeranaValericaLevitateAb"_h:
-						if (moving) {
-							OnMeleeHitHook::ResetAttackMoving(a_actor);
-						} else {
-							OnMeleeHitHook::ResetAttack(a_actor);
-						}
+						// if (moving) {
+						// 	OnMeleeHitHook::ResetAttackMoving(a_actor);
+						// } else {
+						// 	OnMeleeHitHook::ResetAttack(a_actor);
+						// }
 						break;
 					case "VLSeranaValericaDescendAb"_h:
-						if (moving) {
-							OnMeleeHitHook::ResetAttackMoving_Melee(a_actor);
-						} else {
-							OnMeleeHitHook::ResetAttack_Melee(a_actor);
-						}
+						// if (moving) {
+						// 	OnMeleeHitHook::ResetAttackMoving_Melee(a_actor);
+						// } else {
+						// 	OnMeleeHitHook::ResetAttack_Melee(a_actor);
+						// }
 						break;
 
 					// case "VLSeranaDLC1VampireBats"_h:
@@ -724,6 +772,13 @@ namespace hooks
 		case "LandStart"_h:
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
 				OnMeleeHitHook::GetSingleton().PrepareForMelee(actor);
+				if (actor->GetActorRuntimeData().combatController) {
+					RE::TESCombatStyle* style = actor->GetActorRuntimeData().combatController->combatStyle;
+					if (style) {
+						style->generalData.magicScoreMult = 0.0f;
+						style->generalData.meleeScoreMult = 10.0f;
+					}
+				}
 			}
 			break;
 
@@ -734,6 +789,13 @@ namespace hooks
 		case "LiftoffStart"_h:
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
 				OnMeleeHitHook::GetSingleton().Re_EquipAll_LevitateMode(actor);
+				if (actor->GetActorRuntimeData().combatController) {
+					RE::TESCombatStyle* style = actor->GetActorRuntimeData().combatController->combatStyle;
+					if (style) {
+						style->generalData.magicScoreMult = 10.0f;
+						style->generalData.meleeScoreMult = 0.0f;
+					}
+				}
 			}
 			break;
 		}
@@ -836,15 +898,3 @@ namespace FallLongDistance
 // a_this->SetGraphVariableBool("bWFT_IsGliding", true);
 // actor->NotifyAnimationGraph("JumpStandingStart");
 // actor->NotifyAnimationGraph("JumpDirectionalStart");
-
-// if (a_actor->GetActorRuntimeData().combatController) {
-// 	RE::TESCombatStyle* style = a_actor->GetActorRuntimeData().combatController->combatStyle;
-// 	if (style) {
-// 		Score += style->generalData.defensiveMult * Protagnist_Reflexes.Defensive_Weighting;
-
-// 		Score += style->generalData.avoidThreatChance * CStyle.Skirmish_AvoidThreat_Weighting * Protagnist_Reflexes.Skirmish_Weighting;
-// 		Score += style->closeRangeData.circleMult * CStyle.Skirmish_Circle_Weighting * Protagnist_Reflexes.Skirmish_Weighting;
-// 		Score += style->closeRangeData.fallbackMult * CStyle.Skirmish_Fallback_Weighting * Protagnist_Reflexes.Skirmish_Weighting;
-// 		Score += style->longRangeData.strafeMult * CStyle.Skirmish_Strafe_Weighting * Protagnist_Reflexes.Skirmish_Weighting;
-// 	}
-// }
