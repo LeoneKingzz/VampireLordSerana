@@ -359,12 +359,12 @@ namespace hooks
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5052, "Dawnguard.esm")));
 		auto vamp_armour = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("VLSeranaDLC1ClothesVampireLordRoyalArmor");
 		VLDrain(a_actor);
-		auto moving = GetSingleton().IsMoving(a_actor);
-		if (moving){
-			ResetAttackMoving(a_actor);
-		}else{
-			ResetAttack(a_actor);
-		}
+		// auto moving = GetSingleton().IsMoving(a_actor);
+		// if (moving){
+		// 	ResetAttackMoving(a_actor);
+		// }else{
+		// 	ResetAttack(a_actor);
+		// }
 		dispelEffect(FXExpl, a_actor);
 		a_actor->AddWornItem(vamp_armour, 1, false, 0, 0);
 		EquipfromInvent(a_actor, vamp_armour->formID);
@@ -609,21 +609,21 @@ namespace hooks
 				auto rSpell = eSpell->As<RE::SpellItem>();
 				if (rSpell->GetSpellType() == RE::MagicSystem::SpellType::kSpell) {
 					std::string Lsht = (clib_util::editorID::get_editorID(rSpell));
-					auto moving = OnMeleeHitHook::GetSingleton().IsMoving(a_actor);
+					//auto moving = OnMeleeHitHook::GetSingleton().IsMoving(a_actor);
 					switch (hash(Lsht.c_str(), Lsht.size())) {
 					case "VLSeranaValericaLevitateAb"_h:
-						if (moving) {
-							OnMeleeHitHook::ResetAttackMoving(a_actor);
-						} else {
-							OnMeleeHitHook::ResetAttack(a_actor);
-						}
+						// if (moving) {
+						// 	OnMeleeHitHook::ResetAttackMoving(a_actor);
+						// } else {
+						// 	OnMeleeHitHook::ResetAttack(a_actor);
+						// }
 						break;
 					case "VLSeranaValericaDescendAb"_h:
-						if (moving) {
-							OnMeleeHitHook::ResetAttackMoving_Melee(a_actor);
-						} else {
-							OnMeleeHitHook::ResetAttack_Melee(a_actor);
-						}
+						// if (moving) {
+						// 	OnMeleeHitHook::ResetAttackMoving_Melee(a_actor);
+						// } else {
+						// 	OnMeleeHitHook::ResetAttack_Melee(a_actor);
+						// }
 						break;
 
 					// case "VLSeranaDLC1VampireBats"_h:
@@ -683,11 +683,15 @@ namespace hooks
 		case "BeginCastLeft"_h:
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
 				auto isLevitating = false;
-				if (actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) {
-					auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
-					if (it.first) {
-						actor->GetActorRuntimeData().magicCasters[0]->InterruptCastImpl(false);
-						OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it.second);
+				const auto race = actor->GetRace();
+				const auto raceEDID = race->formEditorID;
+				if (raceEDID == "DLC1VampireBeastRace"){
+					if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) || actor->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kMagicka) <= 0.1f) {
+						auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
+						if (it.first) {
+							actor->GetActorRuntimeData().magicCasters[0]->InterruptCastImpl(false);
+							OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it.second);
+						}
 					}
 				}
 			}
@@ -695,11 +699,15 @@ namespace hooks
 		case "BeginCastRight"_h:
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
 				auto isLevitating = false;
-				if (actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) {
-					auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
-					if (it.first){
-						actor->GetActorRuntimeData().magicCasters[1]->InterruptCastImpl(false);
-						OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it.second);
+				const auto race = actor->GetRace();
+				const auto raceEDID = race->formEditorID;
+				if (raceEDID == "DLC1VampireBeastRace"){
+					if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) || actor->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kMagicka) <= 0.1f) {
+						auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
+						if (it.first) {
+							actor->GetActorRuntimeData().magicCasters[1]->InterruptCastImpl(false);
+							OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it.second);
+						}
 					}
 				}
 			}
