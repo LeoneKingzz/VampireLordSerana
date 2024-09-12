@@ -686,7 +686,7 @@ namespace hooks
 				const auto race = actor->GetRace();
 				const auto raceEDID = race->formEditorID;
 				if (raceEDID == "DLC1VampireBeastRace"){
-					if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) || actor->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kMagicka) <= 0.1f) {
+					if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) || (actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka)/actor->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kMagicka) <= 0.1f)) {
 						auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
 						if (it.first) {
 							actor->GetActorRuntimeData().magicCasters[0]->InterruptCastImpl(false);
@@ -702,7 +702,7 @@ namespace hooks
 				const auto race = actor->GetRace();
 				const auto raceEDID = race->formEditorID;
 				if (raceEDID == "DLC1VampireBeastRace"){
-					if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) || actor->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kMagicka) <= 0.1f) {
+					if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) || (actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka) / actor->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kMagicka) <= 0.1f)) {
 						auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
 						if (it.first) {
 							actor->GetActorRuntimeData().magicCasters[1]->InterruptCastImpl(false);
