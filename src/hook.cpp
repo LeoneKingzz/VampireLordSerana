@@ -118,7 +118,7 @@ namespace hooks
 		uniqueLocker lock(mtx_CStyledefault);
 		auto itt = _CStyledefault.find(a_actor);
 		if (itt == _CStyledefault.end()) {
-			std::vector<float, float> Hen;
+			std::pair<float, float> Hen;
 			_CStyledefault.insert({ a_actor, Hen });
 		}
 
@@ -127,8 +127,8 @@ namespace hooks
 				if (a_actor->GetActorRuntimeData().combatController) {
 					RE::TESCombatStyle* style = a_actor->GetActorRuntimeData().combatController->combatStyle;
 					if (style) {
-						it->second.front() = style->generalData.magicScoreMult;
-						it->second.back() = style->generalData.meleeScoreMult;
+						it->second.first = style->generalData.magicScoreMult;
+						it->second.second = style->generalData.meleeScoreMult;
 					}
 				}
 				break;
@@ -150,8 +150,8 @@ namespace hooks
 				if (a_actor->GetActorRuntimeData().combatController) {
 					RE::TESCombatStyle* style = a_actor->GetActorRuntimeData().combatController->combatStyle;
 					if (style) {
-						style->generalData.magicScoreMult = it->second.front();
-						style->generalData.meleeScoreMult = it->second.back();
+						style->generalData.magicScoreMult = it->second.first;
+						style->generalData.meleeScoreMult = it->second.second;
 					}
 				}
 				_CStyledefault.erase(it);
