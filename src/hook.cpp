@@ -430,12 +430,19 @@ namespace hooks
 
 	void OnMeleeHitHook::ResetAttack(RE::Actor* a_actor)
 	{
-		// a_actor->NotifyAnimationGraph("tailSneakIdle");
-		// a_actor->AsActorState()->actorState2.forceSneak = 1;
-		a_actor->NotifyAnimationGraph("LevitationToggle");
-		// a_actor->SetGraphVariableBool("bMagicDraw", true);
-		// a_actor->SetGraphVariableBool("bMLh_Ready", true);
-		// a_actor->SetGraphVariableBool("bMRh_Ready", true);
+		auto isLevitating = false;
+		if (a_actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating){
+			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
+		}else{
+			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
+		}
+
+		auto moving = GetSingleton().IsMoving(a_actor);
+		if (moving){
+			a_actor->NotifyAnimationGraph("LevitationToggleMoving");
+		}else{
+			a_actor->NotifyAnimationGraph("LevitationToggle");
+		}
 	}
 
 	void OnMeleeHitHook::ResetAttackMoving(RE::Actor* a_actor)
@@ -513,12 +520,13 @@ namespace hooks
 		a_actor->SetGraphVariableBool("bIsDodging", false);
 	}
 
-	class OurEventSink : 
-	public RE::BSTEventSink<RE::TESSwitchRaceCompleteEvent>, 
-	public RE::BSTEventSink<RE::TESEquipEvent>, 
-	public RE::BSTEventSink<RE::TESCombatEvent>, 
-	public RE::BSTEventSink<RE::TESActorLocationChangeEvent>, 
-	public RE::BSTEventSink<RE::TESSpellCastEvent>
+	class OurEventSink :
+		public RE::BSTEventSink<RE::TESSwitchRaceCompleteEvent>,
+		public RE::BSTEventSink<RE::TESEquipEvent>,
+		public RE::BSTEventSink<RE::TESCombatEvent>,
+		public RE::BSTEventSink<RE::TESActorLocationChangeEvent>,
+		public RE::BSTEventSink<RE::TESSpellCastEvent>,
+		public RE::BSTEventSink<RE::TESActiveEffectApplyRemoveEvent>
 	{
 		OurEventSink() = default;
 		OurEventSink(const OurEventSink&) = delete;
@@ -641,6 +649,43 @@ namespace hooks
 				const auto Revert = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaValericaRevertFormSpell");
 				const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 				caster->CastSpellImmediate(Revert, true, a_actor, 1, false, 0.0, a_actor);
+			}
+
+			return RE::BSEventNotifyControl::kContinue;
+		}
+
+		RE::BSEventNotifyControl ProcessEvent(const RE::TESActiveEffectApplyRemoveEvent* event, RE::BSTEventSource<RE::TESActiveEffectApplyRemoveEvent>*)
+		{
+			auto a_actor = event->caster->As<RE::Actor>();
+
+			if (!a_actor) {
+				return RE::BSEventNotifyControl::kContinue;
+			}
+
+			if (!(a_actor->HasKeywordString("VLS_Serana_Key") || a_actor->HasKeywordString("VLS_Valerica_Key"))) {
+				return RE::BSEventNotifyControl::kContinue;
+			}
+
+			if (event->isApplied){
+				const auto CasterActor = a_actor->AsMagicTarget();
+				auto activeEffects = CasterActor->GetActiveEffectList();
+				if (activeEffects) {
+					for (const auto& effect : *activeEffects) {
+						if (effect && effect->usUniqueID && effect->usUniqueID == event->activeEffectUniqueID && effect->effect && effect->effect->baseEffect) {
+							std::string Lsht = (clib_util::editorID::get_editorID(effect->effect->baseEffect));
+							switch (hash(Lsht.c_str(), Lsht.size())) {
+							case "VLS_LevitateORDescendToggle_Effect"_h:
+								OnMeleeHitHook::ResetAttack(a_actor);
+								break;
+
+							default:
+								break;
+							}
+							break;
+						}
+						continue;
+					}
+				}
 			}
 
 			return RE::BSEventNotifyControl::kContinue;
@@ -818,7 +863,7 @@ namespace hooks
 		eventSourceHolder->AddEventSink<RE::TESCombatEvent>(eventSink);
 		eventSourceHolder->AddEventSink<RE::TESActorLocationChangeEvent>(eventSink);
 		eventSourceHolder->AddEventSink<RE::TESSpellCastEvent>(eventSink);
-		
+		eventSourceHolder->AddEventSink<RE::TESActiveEffectApplyRemoveEvent>(eventSink);
 	}
 
 	bool OnMeleeHitHook::BindPapyrusFunctions(VM* vm)
