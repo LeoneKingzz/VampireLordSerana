@@ -107,7 +107,7 @@ namespace hooks
 		static void VLS_CompleteReversion(RE::Actor* a_actor);
 		static void InterruptAttack(RE::Actor *a_actor);
 		static void ResetAttack(RE::Actor *a_actor);
-		static void ResetAttackMoving(RE::Actor* a_actor);
+		static void BatForm(RE::Actor* a_actor, bool forward = false);
 		static void ResetAttack_Melee(RE::Actor* a_actor);
 		static void ResetAttackMoving_Melee(RE::Actor* a_actor);
 		void PrepareForMelee(RE::Actor *a_actor);

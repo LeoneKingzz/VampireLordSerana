@@ -445,14 +445,16 @@ namespace hooks
 		}
 	}
 
-	void OnMeleeHitHook::ResetAttackMoving(RE::Actor* a_actor)
+	void OnMeleeHitHook::BatForm(RE::Actor* a_actor, bool forward)
 	{
-		// a_actor->NotifyAnimationGraph("tailSneakLocomotion");
-		// a_actor->AsActorState()->actorState2.forceSneak = 1;
-		a_actor->NotifyAnimationGraph("LevitationToggleMoving");
-		// a_actor->SetGraphVariableBool("bMLh_Ready", true);
-		// a_actor->SetGraphVariableBool("bMRh_Ready", true);
-		// a_actor->SetGraphVariableBool("bMagicDraw", true);
+		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
+		const auto power_forward = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaDLC1VampireBats2");
+		const auto power_skirmish = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaDLC1VampireBats");
+		if (forward){
+			caster->CastSpellImmediate(power_forward, true, a_actor, 1, false, 1.0, a_actor);
+		}else{
+			caster->CastSpellImmediate(power_skirmish, true, a_actor, 1, false, 1.0, a_actor);
+		}
 	}
 
 	void OnMeleeHitHook::ResetAttack_Melee(RE::Actor* a_actor)
@@ -668,15 +670,23 @@ namespace hooks
 			}
 
 			if (event->isApplied){
-				const auto CasterActor = a_actor->AsMagicTarget();
+				auto CasterActor = a_actor->AsMagicTarget();
 				auto activeEffects = CasterActor->GetActiveEffectList();
 				if (activeEffects) {
-					for (const auto& effect : *activeEffects) {
+					for (auto effect : *activeEffects) {
 						if (effect && effect->usUniqueID && effect->usUniqueID == event->activeEffectUniqueID && effect->effect && effect->effect->baseEffect) {
 							std::string Lsht = (clib_util::editorID::get_editorID(effect->effect->baseEffect));
 							switch (hash(Lsht.c_str(), Lsht.size())) {
 							case "VLS_LevitateORDescendToggle_Effect"_h:
 								OnMeleeHitHook::ResetAttack(a_actor);
+								break;
+
+							case "VLSeranaValericaBats_AIEffect_Foward"_h:
+								OnMeleeHitHook::BatForm(a_actor, true);
+								break;
+
+							case "VLSeranaValericaBats_AIEffect2_Skirmish"_h:
+								OnMeleeHitHook::BatForm(a_actor);
 								break;
 
 							default:
@@ -946,3 +956,11 @@ namespace FallLongDistance
 // a_this->SetGraphVariableBool("bWFT_IsGliding", true);
 // actor->NotifyAnimationGraph("JumpStandingStart");
 // actor->NotifyAnimationGraph("JumpDirectionalStart");
+// a_actor->SetGraphVariableBool("bMLh_Ready", true);
+// a_actor->SetGraphVariableBool("bMRh_Ready", true);
+// a_actor->SetGraphVariableBool("bMagicDraw", true);
+// a_actor->NotifyAnimationGraph("weaponDraw");
+// a_actor->SetGraphVariableBool("WeapEquip", true);
+// a_actor->NotifyAnimationGraph("tailCombatIdle");
+// a_actor->AsActorState()->actorState2.forceSneak = 0;
+// a_actor->NotifyAnimationGraph("tailSneakLocomotion");
