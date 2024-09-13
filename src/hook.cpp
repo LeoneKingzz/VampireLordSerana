@@ -451,19 +451,25 @@ namespace hooks
 		const auto power_forward = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaDLC1VampireBats2");
 		const auto power_skirmish = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaDLC1VampireBats");
 		if (forward){
-			caster->CastSpellImmediate(power_forward, true, a_actor, 1, false, 1.0, a_actor);
+			caster->CastSpellImmediate(power_forward, true, a_actor, 1, false, 0.0, a_actor);
 		}else{
-			caster->CastSpellImmediate(power_skirmish, true, a_actor, 1, false, 1.0, a_actor);
+			caster->CastSpellImmediate(power_skirmish, true, a_actor, 1, false, 0.0, a_actor);
 		}
 	}
 
-	void OnMeleeHitHook::ResetAttack_Melee(RE::Actor* a_actor)
+	void OnMeleeHitHook::Night_Powers(RE::Actor* a_actor, bool mistform, bool sreflexes)
 	{
-		// a_actor->NotifyAnimationGraph("tailCombatIdle");
-		// a_actor->AsActorState()->actorState2.forceSneak = 0;
-		a_actor->NotifyAnimationGraph("LevitationToggle");
-		// a_actor->NotifyAnimationGraph("weaponDraw");
-		// a_actor->SetGraphVariableBool("WeapEquip", true);
+		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
+		const auto power_mist = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSerana_MistForm");
+		const auto power_sreflexes = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLS_VampireLord_Spell_Power_SupernaturalReflexes");
+		const auto power_echo = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLS_VampireLord_Spell_Power_EchoScream");
+		if (mistform) {
+			caster->CastSpellImmediate(power_mist, true, a_actor, 1, false, 0.0, a_actor);
+		} else if(sreflexes) {
+			caster->CastSpellImmediate(power_sreflexes, true, a_actor, 1, false, 0.0, a_actor);
+		}else{
+			caster->CastSpellImmediate(power_echo, true, a_actor, 1, false, 0.0, a_actor);
+		}
 	}
 
 	void OnMeleeHitHook::ResetAttackMoving_Melee(RE::Actor* a_actor)
@@ -687,6 +693,18 @@ namespace hooks
 
 							case "VLSeranaValericaBats_AIEffect2_Skirmish"_h:
 								OnMeleeHitHook::BatForm(a_actor);
+								break;
+
+							case "VLSeranaValerica_MistForm_AIEffect"_h:
+								OnMeleeHitHook::Night_Powers(a_actor, true);
+								break;
+
+							case "VLSerana_SupernaturalReflexes_AIEffect"_h:
+								OnMeleeHitHook::Night_Powers(a_actor, false, true);
+								break;
+
+							case "VLSerana_EchoLocation_AIEffect"_h:
+								OnMeleeHitHook::Night_Powers(a_actor);
 								break;
 
 							default:
