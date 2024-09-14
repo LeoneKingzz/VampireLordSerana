@@ -472,13 +472,25 @@ namespace hooks
 		}
 	}
 
-	void OnMeleeHitHook::ResetAttackMoving_Melee(RE::Actor* a_actor)
+	void OnMeleeHitHook::Mortal_Powers(RE::Actor* a_actor, bool transform, bool shadow, bool scream)
 	{
-		// a_actor->NotifyAnimationGraph("tailCombatLocomotion");
-		// a_actor->AsActorState()->actorState2.forceSneak = 0;
-		a_actor->NotifyAnimationGraph("LevitationToggleMoving");
-		// a_actor->NotifyAnimationGraph("weaponDraw");
-		// a_actor->SetGraphVariableBool("WeapEquip", true);
+		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
+		const auto power_transform = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaAb");
+		const auto power_shadow = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLS_VampiresShadow_Power");
+		const auto power_scream = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLS_VampiresScream_Power");
+		const auto power_seduction = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLS_VampiresSeduction_Power");
+		if (transform) {
+			caster->CastSpellImmediate(power_transform, true, a_actor, 1, false, 0.0, a_actor);
+		} else if (shadow) {
+			caster->CastSpellImmediate(power_shadow, true, a_actor, 1, false, 0.0, a_actor);
+		} else if (scream) {
+			caster->CastSpellImmediate(power_scream, true, a_actor, 1, false, 0.0, a_actor);
+		}else{
+			auto CT = a_actor->GetActorRuntimeData().currentCombatTarget.get().get();
+			if (CT){
+				caster->CastSpellImmediate(power_seduction, true, CT, 1, false, 0.0, a_actor);
+			}
+		}
 	}
 
 	void OnMeleeHitHook::PrepareForMelee(RE::Actor* a_actor)
@@ -704,6 +716,22 @@ namespace hooks
 								break;
 
 							case "VLSerana_EchoLocation_AIEffect"_h:
+								OnMeleeHitHook::Night_Powers(a_actor);
+								break;
+
+							case "VLS_SeranaVLTransformMain_AIEffect"_h:
+								OnMeleeHitHook::Night_Powers(a_actor);
+								break;
+
+							case "VLS_VampiresScream_AIEffect"_h:
+								OnMeleeHitHook::Night_Powers(a_actor);
+								break;
+
+							case "VLS_VampiresSeduction_AIEffect"_h:
+								OnMeleeHitHook::Night_Powers(a_actor);
+								break;
+
+							case "VLS_VampiresShadow_AIEffect"_h:
 								OnMeleeHitHook::Night_Powers(a_actor);
 								break;
 

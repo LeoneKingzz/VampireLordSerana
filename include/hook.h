@@ -109,7 +109,7 @@ namespace hooks
 		static void ResetAttack(RE::Actor *a_actor);
 		static void BatForm(RE::Actor* a_actor, bool forward = false);
 		static void Night_Powers(RE::Actor* a_actor, bool mistform = false, bool sreflexes = false);
-		static void ResetAttackMoving_Melee(RE::Actor* a_actor);
+		static void Mortal_Powers(RE::Actor* a_actor, bool transform = false, bool shadow = false, bool scream = false);
 		void PrepareForMelee(RE::Actor *a_actor);
 		bool IsMoving(RE::Actor* actor);
 		void Store_CStyleSettings(RE::Actor *a_actor);
