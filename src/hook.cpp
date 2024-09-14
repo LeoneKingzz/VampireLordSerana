@@ -211,63 +211,67 @@ namespace hooks
 	}
 
 	void OnMeleeHitHook::VLDrain(RE::Actor* a_actor, bool remove){
-		const auto Gargoyle = RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaConjureGargoyle");
 
 		if(remove){
-			a_actor->RemoveSpell(Gargoyle);
-			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage03"));
+			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaConjureGargoyle"));
+			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDrain_Raze"));
+			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDrain_BloodStorm"));
 
 		}else{
-			a_actor->AddSpell(Gargoyle);
-			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage03"));
+			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaConjureGargoyle"));
+			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDrain_Raze"));
+			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDrain_BloodStorm"));
 		}
 
 
 		switch (a_actor->GetLevel()) {
 		case 20:
 		    if (remove){
-				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDrain03"));
+				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
 			}else{
-				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDrain03"));
+				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
 			}
 			break;
 
 		case 28:
 			if (remove) {
-				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDrain04"));
+				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
+				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_VampiricGrip"));
 				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage01"));
 			} else {
-				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDrain04"));
+				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
+				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_VampiricGrip"));
 				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage01"));
 			}
 			break;
 
 		case 38:
 			if (remove) {
-				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDrain05"));
+				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
+				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_VampiricGrip"));
 				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage02"));
 			} else {
-				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDrain05"));
+				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
+				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_VampiricGrip"));
 				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage02"));
 			}
 			break;
 
 		case 48:
 			if (remove) {
-				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDrain06"));
+				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
+				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_VampiricGrip"));
+				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_VampireLord_Spell_Hand_Maelstrom"));
 				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage03"));
 			} else {
-				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDrain06"));
+				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
+				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_VampiricGrip"));
+				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_VampireLord_Spell_Hand_Maelstrom"));
 				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage03"));
 			}
 			break;
 
 		default:
-			if (remove) {
-				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDrain02"));
-			} else {
-				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDrain02"));
-			}
 			break;
 		}
 	}
@@ -384,6 +388,7 @@ namespace hooks
 		GetSingleton().Store_CStyleSettings(a_actor);
 		auto data = RE::TESDataHandler::GetSingleton();
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x10F564, "Skyrim.esm")));
+		a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_MortalForm_ability"));
 		const auto FXchange = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaChangeFX");
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		caster->CastSpellImmediate(FXchange, true, a_actor, 1, false, 0.0, a_actor);
@@ -432,7 +437,9 @@ namespace hooks
 	{
 		auto isLevitating = false;
 		if (a_actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating){
-			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
+			if(!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))){
+				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
+			}
 		}else{
 			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
 		}
@@ -495,6 +502,9 @@ namespace hooks
 
 	void OnMeleeHitHook::PrepareForMelee(RE::Actor* a_actor)
 	{
+		if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))) {
+			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
+		}
 		auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(a_actor);
 		auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(a_actor, true);
 		if (it.first) {
@@ -536,6 +546,7 @@ namespace hooks
 		dispelEffect(FXchange, a_actor);
 		caster->CastSpellImmediate(FXchange2, true, a_actor, 1, false, 0.0, a_actor);
 		dispelEffect(Gargoyle, a_actor);
+		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_MortalForm_ability"));
 		GetSingleton().Re_EquipAll(a_actor);
 		GetSingleton().Restore_CStyleSettings(a_actor);
 		a_actor->SetGraphVariableBool("bIsDodging", false);
@@ -720,19 +731,19 @@ namespace hooks
 								break;
 
 							case "VLS_SeranaVLTransformMain_AIEffect"_h:
-								OnMeleeHitHook::Night_Powers(a_actor);
+								OnMeleeHitHook::Mortal_Powers(a_actor, true);
 								break;
 
 							case "VLS_VampiresScream_AIEffect"_h:
-								OnMeleeHitHook::Night_Powers(a_actor);
+								OnMeleeHitHook::Mortal_Powers(a_actor, false, false, true);
 								break;
 
 							case "VLS_VampiresSeduction_AIEffect"_h:
-								OnMeleeHitHook::Night_Powers(a_actor);
+								OnMeleeHitHook::Mortal_Powers(a_actor);
 								break;
 
 							case "VLS_VampiresShadow_AIEffect"_h:
-								OnMeleeHitHook::Night_Powers(a_actor);
+								OnMeleeHitHook::Mortal_Powers(a_actor, false, true);
 								break;
 
 							default:
@@ -843,7 +854,7 @@ namespace hooks
 				const auto race = actor->GetRace();
 				const auto raceEDID = race->formEditorID;
 				if (raceEDID == "DLC1VampireBeastRace"){
-					if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) || (actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka) <= 20.0f)) {
+					if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) || (actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka) <= 15.0f)) {
 						auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
 						if (it.first) {
 							actor->InterruptCast(false);
@@ -859,7 +870,7 @@ namespace hooks
 				const auto race = actor->GetRace();
 				const auto raceEDID = race->formEditorID;
 				if (raceEDID == "DLC1VampireBeastRace"){
-					if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) || (actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka) <= 20.0f)) {
+					if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) || (actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka) <= 15.0f)) {
 						auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
 						if (it.first) {
 							actor->InterruptCast(false);
@@ -892,6 +903,7 @@ namespace hooks
 
 		case "LiftoffStart"_h:
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
+				actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
 				OnMeleeHitHook::GetSingleton().Re_EquipAll_LevitateMode(actor);
 				if (actor->GetActorRuntimeData().combatController) {
 					RE::TESCombatStyle* style = actor->GetActorRuntimeData().combatController->combatStyle;
