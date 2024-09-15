@@ -443,15 +443,23 @@ namespace hooks
 			if(!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))){
 				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
 			}
+			if (a_actor->GetActorRuntimeData().combatController) {
+				RE::TESCombatStyle* style = a_actor->GetActorRuntimeData().combatController->combatStyle;
+				if (style) {
+					style->generalData.magicScoreMult = 0.0f;
+					style->generalData.meleeScoreMult = 10.0f;
+				}
+			}
+
 		}else{
 			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
-		}
-
-		auto moving = GetSingleton().IsMoving(a_actor);
-		if (moving){
-			a_actor->NotifyAnimationGraph("LevitationToggleMoving");
-		}else{
-			a_actor->NotifyAnimationGraph("LevitationToggle");
+			if (a_actor->GetActorRuntimeData().combatController) {
+				RE::TESCombatStyle* style = a_actor->GetActorRuntimeData().combatController->combatStyle;
+				if (style) {
+					style->generalData.magicScoreMult = 10.0f;
+					style->generalData.meleeScoreMult = 0.0f;
+				}
+			}
 		}
 	}
 
@@ -513,14 +521,14 @@ namespace hooks
 		if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))) {
 			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
 		}
-		auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(a_actor);
-		auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(a_actor, true);
-		if (it.first) {
-			OnMeleeHitHook::GetSingleton().Unequip_DescendMode(a_actor, it.second);
-		}
-		if (it2.first) {
-			OnMeleeHitHook::GetSingleton().Unequip_DescendMode(a_actor, it2.second);
-		}
+		// auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(a_actor);
+		// auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(a_actor, true);
+		// if (it.first) {
+		// 	OnMeleeHitHook::GetSingleton().Unequip_DescendMode(a_actor, it.second);
+		// }
+		// if (it2.first) {
+		// 	OnMeleeHitHook::GetSingleton().Unequip_DescendMode(a_actor, it2.second);
+		// }
 	}
 
 	bool OnMeleeHitHook::VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor)
@@ -802,40 +810,40 @@ namespace hooks
 
 		case "BeginCastLeft"_h:
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
-				auto isLevitating = false;
-				const auto race = actor->GetRace();
-				const auto raceEDID = race->formEditorID;
-				if (raceEDID == "DLC1VampireBeastRace"){
-					if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) || (actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka) <= 15.0f)) {
-						if (!actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))) {
-							actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
-						}
-						auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
-						if (it.first) {
-							actor->InterruptCast(false);
-							OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it.second);
-						}
-					}
-				}
+				// auto isLevitating = false;
+				// const auto race = actor->GetRace();
+				// const auto raceEDID = race->formEditorID;
+				// if (raceEDID == "DLC1VampireBeastRace"){
+				// 	if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) || (actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka) <= 15.0f)) {
+				// 		if (!actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))) {
+				// 			actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
+				// 		}
+				// 		auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
+				// 		if (it.first) {
+				// 			actor->InterruptCast(false);
+				// 			OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it.second);
+				// 		}
+				// 	}
+				// }
 			}
 			break;
 		case "BeginCastRight"_h:
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
-				auto isLevitating = false;
-				const auto race = actor->GetRace();
-				const auto raceEDID = race->formEditorID;
-				if (raceEDID == "DLC1VampireBeastRace"){
-					if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) || (actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka) <= 15.0f)) {
-						if (!actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))) {
-							actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
-						}
-						auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
-						if (it.first) {
-							actor->InterruptCast(false);
-							OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it.second);
-						}
-					}
-				}
+				// auto isLevitating = false;
+				// const auto race = actor->GetRace();
+				// const auto raceEDID = race->formEditorID;
+				// if (raceEDID == "DLC1VampireBeastRace"){
+				// 	if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) || (actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka) <= 15.0f)) {
+				// 		if (!actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))) {
+				// 			actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
+				// 		}
+				// 		auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
+				// 		if (it.first) {
+				// 			actor->InterruptCast(false);
+				// 			OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it.second);
+				// 		}
+				// 	}
+				// }
 			}
 			break;
 		// case "LevitateStart"_h:
@@ -844,13 +852,9 @@ namespace hooks
 
 		case "LandStart"_h:
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
-				OnMeleeHitHook::GetSingleton().PrepareForMelee(actor);
-				if (actor->GetActorRuntimeData().combatController) {
-					RE::TESCombatStyle* style = actor->GetActorRuntimeData().combatController->combatStyle;
-					if (style) {
-						style->generalData.magicScoreMult = 0.0f;
-						style->generalData.meleeScoreMult = 10.0f;
-					}
+				//OnMeleeHitHook::GetSingleton().PrepareForMelee(actor);
+				if (!actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))) {
+					actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
 				}
 			}
 			break;
@@ -861,15 +865,10 @@ namespace hooks
 
 		case "LiftoffStart"_h:
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
-				actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
-				OnMeleeHitHook::GetSingleton().Re_EquipAll_LevitateMode(actor);
-				if (actor->GetActorRuntimeData().combatController) {
-					RE::TESCombatStyle* style = actor->GetActorRuntimeData().combatController->combatStyle;
-					if (style) {
-						style->generalData.magicScoreMult = 10.0f;
-						style->generalData.meleeScoreMult = 0.0f;
-					}
+				if (actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))) {
+					actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
 				}
+				//OnMeleeHitHook::GetSingleton().Re_EquipAll_LevitateMode(actor);
 			}
 			break;
 		}
@@ -983,3 +982,10 @@ namespace FallLongDistance
 // a_actor->NotifyAnimationGraph("tailCombatIdle");
 // a_actor->AsActorState()->actorState2.forceSneak = 0;
 // a_actor->NotifyAnimationGraph("tailSneakLocomotion");
+
+// auto moving = GetSingleton().IsMoving(a_actor);
+// if (moving) {
+// 	a_actor->NotifyAnimationGraph("LevitationToggleMoving");
+// } else {
+// 	a_actor->NotifyAnimationGraph("LevitationToggle");
+// }
