@@ -721,7 +721,7 @@ namespace hooks
 				auto activeEffects = CasterActor->GetActiveEffectList();
 				if (activeEffects) {
 					for (auto effect : *activeEffects) {
-						if (effect && effect->usUniqueID && effect->usUniqueID == event->activeEffectUniqueID && effect->effect && effect->effect->baseEffect) {
+						if (effect && effect->effect && effect->effect->baseEffect) {
 							std::string Lsht = (clib_util::editorID::get_editorID(effect->effect->baseEffect));
 							switch (hash(Lsht.c_str(), Lsht.size())) {
 							case "VLS_LevitateORDescendToggle_Effect"_h:
