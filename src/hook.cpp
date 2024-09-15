@@ -216,13 +216,11 @@ namespace hooks
 			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaConjureGargoyle"));
 			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDrain_Raze"));
 			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDrain_BloodStorm"));
-			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage03"));
 
 		}else{
 			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaConjureGargoyle"));
 			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDrain_Raze"));
 			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDrain_BloodStorm"));
-			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage03"));
 		}
 
 
@@ -239,11 +237,11 @@ namespace hooks
 			if (remove) {
 				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
 				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_VampiricGrip"));
-				//a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage01"));
+				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage01"));
 			} else {
 				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
 				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_VampiricGrip"));
-				//a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage01"));
+				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage01"));
 			}
 			break;
 
@@ -251,11 +249,11 @@ namespace hooks
 			if (remove) {
 				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
 				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_VampiricGrip"));
-				//a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage02"));
+				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage02"));
 			} else {
 				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
 				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_VampiricGrip"));
-				//a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage02"));
+				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage02"));
 			}
 			break;
 
@@ -264,12 +262,12 @@ namespace hooks
 				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
 				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_VampiricGrip"));
 				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_VampireLord_Spell_Hand_Maelstrom"));
-				//a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage03"));
+				a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage03"));
 			} else {
 				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
 				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_VampiricGrip"));
 				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_VampireLord_Spell_Hand_Maelstrom"));
-				//a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage03"));
+				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage03"));
 			}
 			break;
 
@@ -416,12 +414,6 @@ namespace hooks
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x5052, "Dawnguard.esm")));
 		auto vamp_armour = RE::TESForm::LookupByEditorID<RE::TESObjectARMO>("VLSeranaDLC1ClothesVampireLordRoyalArmor");
 		VLDrain(a_actor);
-		// auto moving = GetSingleton().IsMoving(a_actor);
-		// if (moving){
-		// 	ResetAttackMoving(a_actor);
-		// }else{
-		// 	ResetAttack(a_actor);
-		// }
 		dispelEffect(FXExpl, a_actor);
 		a_actor->AddWornItem(vamp_armour, 1, false, 0, 0);
 		EquipfromInvent(a_actor, vamp_armour->formID);
@@ -530,14 +522,6 @@ namespace hooks
 		if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))) {
 			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
 		}
-		// auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(a_actor);
-		// auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(a_actor, true);
-		// if (it.first) {
-		// 	OnMeleeHitHook::GetSingleton().Unequip_DescendMode(a_actor, it.second);
-		// }
-		// if (it2.first) {
-		// 	OnMeleeHitHook::GetSingleton().Unequip_DescendMode(a_actor, it2.second);
-		// }
 	}
 
 	bool OnMeleeHitHook::VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor)
