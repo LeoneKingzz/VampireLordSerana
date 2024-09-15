@@ -300,83 +300,6 @@ namespace hooks
 		return { result, a_spell };
 	}
 
-	// void OnMeleeHitHook::update(RE::Actor* a_actor, float a_delta)
-	// {
-	// 	if (!_bUpdate) {
-	// 		return;
-	// 	}
-	// 	if (!(a_actor->GetActorRuntimeData().currentProcess && a_actor->GetActorRuntimeData().currentProcess->InHighProcess() && a_actor->Is3DLoaded())){
-	// 		return;
-	// 	}
-	// 	if (!(a_actor->HasKeywordString("VLS_Serana_Key") || a_actor->HasKeywordString("VLS_Valerica_Key"))) {
-	// 		return;
-	// 	}
-	// 	bool bIsDodging = false;
-	// 	if ((a_actor)->GetGraphVariableBool("bIsDodging", bIsDodging) && !bIsDodging) {
-	// 		return;
-	// 	}
-	// 	uniqueLocker lock(mtx_parryTimer);
-	// 	auto it = _parryTimer.begin();
-	// 	if (!it->first) {
-	// 		it = _parryTimer.erase(it);
-	// 		return;
-	// 	}
-	// 	if (it->second > 0.6f) {
-	// 		it = _parryTimer.erase(it);
-	// 		_bUpdate = false;
-	// 		VLS_CompleteTransformation(a_actor);
-	// 		return;
-	// 	}else{
-	// 		it->second += a_delta;
-	// 	}
-	// 	//*static float* g_deltaTime = (float*)RELOCATION_ID(523660, 410199).address();*/          // 2F6B948
-	// }
-
-	// void OnMeleeHitHook::startTiming(RE::Actor* a_actor, float a_time)
-	// {
-	// 	uniqueLocker lock(mtx_parryTimer);
-	// 	auto it = _parryTimer.find(a_actor);
-	// 	if (it != _parryTimer.end()) {
-	// 		it->second = 0;
-	// 	} else {
-	// 		_parryTimer.insert({ a_actor, a_time });
-	// 	}
-
-	// 	_bUpdate = true;
-	// }
-
-	// void EldenParry::update()
-	// {
-	// 	if (!_bUpdate) {
-	// 		return;
-	// 	}
-	// 	uniqueLocker lock(mtx_parryTimer);
-	// 	auto it = _parryTimer.begin();
-	// 	if (it == _parryTimer.end()) {
-	// 		_bUpdate = false;
-	// 		return;
-	// 	}
-	// 	while (it != _parryTimer.end()) {
-	// 		if (!it->first) {
-	// 			it = _parryTimer.erase(it);
-	// 			continue;
-	// 		}
-	// 		if (it->second > EldenSettings::fParryWindow_End) {
-	// 			it = _parryTimer.erase(it);
-	// 			continue;
-	// 		}
-	// 		//*static float* g_deltaTime = (float*)RELOCATION_ID(523660, 410199).address();*/          // 2F6B948
-	// 		it->second += g_deltaTime;
-	// 		it++;
-	// 	}
-	// }
-
-	// void OnMeleeHitHook::finishTiming(RE::Actor* a_actor)
-	// {
-	// 	uniqueLocker lock(mtx_parryTimer);
-	// 	_parryTimer.erase(a_actor);
-	// }
-
 	bool OnMeleeHitHook::VLS_SendVampireLordTransformation(STATIC_ARGS, RE::Actor* a_actor)
 	{
 		const auto race = a_actor->GetRace();
@@ -435,32 +358,8 @@ namespace hooks
 			if(!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))){
 				a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
 			}
-			if (a_actor->GetActorRuntimeData().combatController) {
-				RE::TESCombatStyle* style = a_actor->GetActorRuntimeData().combatController->combatStyle;
-				if (style) {
-					style->generalData.magicScoreMult = 0.0f;
-					style->generalData.meleeScoreMult = 10.0f;
-				}
-			}
-			auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(a_actor);
-			auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(a_actor, true);
-			if (it.first) {
-				OnMeleeHitHook::GetSingleton().Unequip_DescendMode(a_actor, it.second);
-			}
-			if (it2.first) {
-				OnMeleeHitHook::GetSingleton().Unequip_DescendMode(a_actor, it2.second);
-			}
-
 		}else{
 			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
-			if (a_actor->GetActorRuntimeData().combatController) {
-				RE::TESCombatStyle* style = a_actor->GetActorRuntimeData().combatController->combatStyle;
-				if (style) {
-					style->generalData.magicScoreMult = 10.0f;
-					style->generalData.meleeScoreMult = 0.0f;
-				}
-			}
-			OnMeleeHitHook::GetSingleton().Re_EquipAll_LevitateMode(a_actor);
 		}
 	}
 
@@ -596,7 +495,6 @@ namespace hooks
 			const auto raceEDID = race->formEditorID;
 			if (!(raceEDID == "DLC1VampireBeastRace")) {
 				//Not vamp form//
-				a_actor->NotifyAnimationGraph("staggerStart");
 				OnMeleeHitHook::Reset_iFrames(a_actor);
 				OnMeleeHitHook::VLS_CompleteReversion(a_actor);
 
@@ -626,16 +524,6 @@ namespace hooks
 				auto item = event->originalRefr;
 				if (item && item == ElderScroll->formID && event->equipped) {
 					RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, ElderScroll);
-				}
-
-				auto isLevitating = false;
-				if (a_actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) {
-					if (item && RE::TESForm::LookupByID(item)) {
-						auto formitem = RE::TESForm::LookupByID<RE::TESForm>(item);
-						if (formitem && formitem->Is(RE::FormType::Spell) && !formitem->As<RE::SpellItem>()->HasKeyword(RE::TESForm::LookupByEditorID<RE::BGSKeyword>("VLS_AbSpells_Key"))) {
-							OnMeleeHitHook::GetSingleton().Unequip_DescendMode(a_actor, formitem->As<RE::SpellItem>());
-						}
-					}
 				}
 			}
 			return RE::BSEventNotifyControl::kContinue;
@@ -730,26 +618,11 @@ namespace hooks
 				auto rSpell = eSpell->As<RE::SpellItem>();
 				if (rSpell->GetSpellType() == RE::MagicSystem::SpellType::kSpell) {
 					std::string Lsht = (clib_util::editorID::get_editorID(rSpell));
-					//auto moving = OnMeleeHitHook::GetSingleton().IsMoving(a_actor);
 					switch (hash(Lsht.c_str(), Lsht.size())) {
 					case "VLSeranaValericaLevitateAb"_h:
-						// if (moving) {
-						// 	OnMeleeHitHook::ResetAttackMoving(a_actor);
-						// } else {
-						// 	OnMeleeHitHook::ResetAttack(a_actor);
-						// }
 						break;
 					case "VLSeranaValericaDescendAb"_h:
-						// if (moving) {
-						// 	OnMeleeHitHook::ResetAttackMoving_Melee(a_actor);
-						// } else {
-						// 	OnMeleeHitHook::ResetAttack_Melee(a_actor);
-						// }
 						break;
-
-					// case "VLSeranaDLC1VampireBats"_h:
-					// case "VLSeranaDLC1VampireBats2"_h:
-					// 	break;
 					default:
 						break;
 					}
@@ -772,80 +645,28 @@ namespace hooks
 		case "BatSprintOff"_h:
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
 				OnMeleeHitHook::GetSingleton().Reset_iFrames(actor);
-				// auto isLevitating = false;
-				// if (actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
-				// 	actor->NotifyAnimationGraph("sprintStart");
-				// 	actor->AsActorState()->actorState1.sprinting = 1;
-				// }
 			}
 			break;
 
 		// case "BatSprintStop"_h:
-		// 	if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
-		// 		auto isLevitating = false;
-		// 		if (actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
-		// 			actor->NotifyAnimationGraph("sprintStart");
-		// 			actor->AsActorState()->actorState1.sprinting = 1;
-		// 		}
-		// 	}
-		// 	break;
 
 		case "BatSprintOn"_h:
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
 				OnMeleeHitHook::GetSingleton().Set_iFrames(actor);
-				// auto isLevitating = false;
-				// if (actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
-				// 	actor->NotifyAnimationGraph("sprintStart");
-				// 	actor->AsActorState()->actorState1.sprinting = 1;
-				// }
 			}
 			break;
 
-		case "BeginCastLeft"_h:
-			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
-				// auto isLevitating = false;
-				// const auto race = actor->GetRace();
-				// const auto raceEDID = race->formEditorID;
-				// if (raceEDID == "DLC1VampireBeastRace"){
-				// 	if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) || (actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka) <= 15.0f)) {
-				// 		if (!actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))) {
-				// 			actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
-				// 		}
-				// 		auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
-				// 		if (it.first) {
-				// 			actor->InterruptCast(false);
-				// 			OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it.second);
-				// 		}
-				// 	}
-				// }
-			}
-			break;
-		case "BeginCastRight"_h:
-			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
-				// auto isLevitating = false;
-				// const auto race = actor->GetRace();
-				// const auto raceEDID = race->formEditorID;
-				// if (raceEDID == "DLC1VampireBeastRace"){
-				// 	if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) || (actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka) <= 15.0f)) {
-				// 		if (!actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))) {
-				// 			actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
-				// 		}
-				// 		auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
-				// 		if (it.first) {
-				// 			actor->InterruptCast(false);
-				// 			OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it.second);
-				// 		}
-				// 	}
-				// }
-			}
-			break;
+		// case "BeginCastLeft"_h:
+		// 	if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
+		// 	}
+		// 	break;
+
+		// case "BeginCastRight"_h:
+
 		// case "LevitateStart"_h:
-		//     OnMeleeHitHook::GetSingleton().Re_EquipAll_LevitateMode(actor);
-		//     break;
 
 		case "LandStart"_h:
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
-				//OnMeleeHitHook::GetSingleton().PrepareForMelee(actor);
 				if (!actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))) {
 					actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
 				}
@@ -853,15 +674,12 @@ namespace hooks
 			break;
 
 		// case "GroundStart"_h:
-		// 	actor->NotifyAnimationGraph("attackStart");
-		// 	break;
 
 		case "LiftoffStart"_h:
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
 				if (actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))) {
 					actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
 				}
-				//OnMeleeHitHook::GetSingleton().Re_EquipAll_LevitateMode(actor);
 			}
 			break;
 		}
@@ -981,4 +799,102 @@ namespace FallLongDistance
 // 	a_actor->NotifyAnimationGraph("LevitationToggleMoving");
 // } else {
 // 	a_actor->NotifyAnimationGraph("LevitationToggle");
+// }
+
+// if (a_actor->GetActorRuntimeData().combatController) {
+// 	RE::TESCombatStyle* style = a_actor->GetActorRuntimeData().combatController->combatStyle;
+// 	if (style) {
+// 		style->generalData.magicScoreMult = 0.0f;
+// 		style->generalData.meleeScoreMult = 10.0f;
+// 	}
+// }
+// auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(a_actor);
+// auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(a_actor, true);
+// if (it.first) {
+// 	OnMeleeHitHook::GetSingleton().Unequip_DescendMode(a_actor, it.second);
+// }
+// if (it2.first) {
+// 	OnMeleeHitHook::GetSingleton().Unequip_DescendMode(a_actor, it2.second);
+// }
+
+// OnMeleeHitHook::GetSingleton().Re_EquipAll_LevitateMode(a_actor);
+
+
+
+
+// void OnMeleeHitHook::update(RE::Actor* a_actor, float a_delta)
+// {
+// 	if (!_bUpdate) {
+// 		return;
+// 	}
+// 	if (!(a_actor->GetActorRuntimeData().currentProcess && a_actor->GetActorRuntimeData().currentProcess->InHighProcess() && a_actor->Is3DLoaded())){
+// 		return;
+// 	}
+// 	if (!(a_actor->HasKeywordString("VLS_Serana_Key") || a_actor->HasKeywordString("VLS_Valerica_Key"))) {
+// 		return;
+// 	}
+// 	bool bIsDodging = false;
+// 	if ((a_actor)->GetGraphVariableBool("bIsDodging", bIsDodging) && !bIsDodging) {
+// 		return;
+// 	}
+// 	uniqueLocker lock(mtx_parryTimer);
+// 	auto it = _parryTimer.begin();
+// 	if (!it->first) {
+// 		it = _parryTimer.erase(it);
+// 		return;
+// 	}
+// 	if (it->second > 0.6f) {
+// 		it = _parryTimer.erase(it);
+// 		_bUpdate = false;
+// 		VLS_CompleteTransformation(a_actor);
+// 		return;
+// 	}else{
+// 		it->second += a_delta;
+// 	}
+// 	//*static float* g_deltaTime = (float*)RELOCATION_ID(523660, 410199).address();*/          // 2F6B948
+// }
+
+// void OnMeleeHitHook::startTiming(RE::Actor* a_actor, float a_time)
+// {
+// 	uniqueLocker lock(mtx_parryTimer);
+// 	auto it = _parryTimer.find(a_actor);
+// 	if (it != _parryTimer.end()) {
+// 		it->second = 0;
+// 	} else {
+// 		_parryTimer.insert({ a_actor, a_time });
+// 	}
+
+// 	_bUpdate = true;
+// }
+
+// void EldenParry::update()
+// {
+// 	if (!_bUpdate) {
+// 		return;
+// 	}
+// 	uniqueLocker lock(mtx_parryTimer);
+// 	auto it = _parryTimer.begin();
+// 	if (it == _parryTimer.end()) {
+// 		_bUpdate = false;
+// 		return;
+// 	}
+// 	while (it != _parryTimer.end()) {
+// 		if (!it->first) {
+// 			it = _parryTimer.erase(it);
+// 			continue;
+// 		}
+// 		if (it->second > EldenSettings::fParryWindow_End) {
+// 			it = _parryTimer.erase(it);
+// 			continue;
+// 		}
+// 		//*static float* g_deltaTime = (float*)RELOCATION_ID(523660, 410199).address();*/          // 2F6B948
+// 		it->second += g_deltaTime;
+// 		it++;
+// 	}
+// }
+
+// void OnMeleeHitHook::finishTiming(RE::Actor* a_actor)
+// {
+// 	uniqueLocker lock(mtx_parryTimer);
+// 	_parryTimer.erase(a_actor);
 // }
