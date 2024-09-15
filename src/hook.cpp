@@ -295,6 +295,7 @@ namespace hooks
 				auto eSpell = limbospell->GetEquippedRightHand();
 				if (eSpell && eSpell->Is(RE::FormType::Spell) && !eSpell->As<RE::SpellItem>()->HasKeyword(RE::TESForm::LookupByEditorID<RE::BGSKeyword>("VLS_AbSpells_Key"))) {
 					result = true;
+					a_spell = eSpell->As<RE::SpellItem>();
 				}
 			}
 		}
