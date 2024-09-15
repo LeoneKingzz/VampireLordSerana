@@ -658,6 +658,24 @@ namespace hooks
 						caster->CastSpellImmediate(Revert, true, a_actor, 1, false, 0.0, a_actor);
 					}
 				}
+			}else{
+				if (getcombatstate == RE::ACTOR_COMBAT_STATE::kCombat || getcombatstate == RE::ACTOR_COMBAT_STATE::kSearching) {
+					if (a_actor->HasKeywordString("VLS_Serana_Key") && a_actor->HasKeywordString("Vampire")) {
+						if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_MortalForm_ability"))) {
+							a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_MortalForm_ability"));
+						}
+						if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("crAbVampire"))) {
+							a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("crAbVampire"));
+						}
+						if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_IceSpike_Right"))) {
+							a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_IceSpike_Right"));
+						}
+						if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_VampiricDrain_Normal"))) {
+							a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_VampiricDrain_Normal"));
+						}
+					}
+					
+				}
 			}
 
 			return RE::BSEventNotifyControl::kContinue;
