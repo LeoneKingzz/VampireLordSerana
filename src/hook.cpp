@@ -450,6 +450,14 @@ namespace hooks
 					style->generalData.meleeScoreMult = 10.0f;
 				}
 			}
+			auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(a_actor);
+			auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(a_actor, true);
+			if (it.first) {
+				OnMeleeHitHook::GetSingleton().Unequip_DescendMode(a_actor, it.second);
+			}
+			if (it2.first) {
+				OnMeleeHitHook::GetSingleton().Unequip_DescendMode(a_actor, it2.second);
+			}
 
 		}else{
 			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
@@ -460,6 +468,7 @@ namespace hooks
 					style->generalData.meleeScoreMult = 0.0f;
 				}
 			}
+			OnMeleeHitHook::GetSingleton().Re_EquipAll_LevitateMode(a_actor);
 		}
 	}
 
