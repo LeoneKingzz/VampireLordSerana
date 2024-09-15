@@ -216,11 +216,13 @@ namespace hooks
 			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaConjureGargoyle"));
 			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDrain_Raze"));
 			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDrain_BloodStorm"));
+			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage03"));
 
 		}else{
 			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaConjureGargoyle"));
 			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDrain_Raze"));
 			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaDrain_BloodStorm"));
+			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage03"));
 		}
 
 
@@ -804,6 +806,9 @@ namespace hooks
 				const auto raceEDID = race->formEditorID;
 				if (raceEDID == "DLC1VampireBeastRace"){
 					if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) || (actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka) <= 15.0f)) {
+						if (!actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))) {
+							actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
+						}
 						auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
 						if (it.first) {
 							actor->InterruptCast(false);
@@ -820,6 +825,9 @@ namespace hooks
 				const auto raceEDID = race->formEditorID;
 				if (raceEDID == "DLC1VampireBeastRace"){
 					if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) || (actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka) <= 15.0f)) {
+						if (!actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))) {
+							actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
+						}
 						auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
 						if (it.first) {
 							actor->InterruptCast(false);
