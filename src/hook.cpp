@@ -433,7 +433,7 @@ namespace hooks
 		a_actor->NotifyAnimationGraph("staggerStop");
 	}
 
-	void OnMeleeHitHook::ResetAttack(RE::Actor* a_actor)
+	void OnMeleeHitHook::ResetAttack(STATIC_ARGS, RE::Actor* a_actor)
 	{
 		auto isLevitating = false;
 		if (a_actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating){
@@ -452,7 +452,7 @@ namespace hooks
 		}
 	}
 
-	void OnMeleeHitHook::BatForm(RE::Actor* a_actor, bool forward)
+	void OnMeleeHitHook::BatForm(STATIC_ARGS, RE::Actor* a_actor, bool forward)
 	{
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		const auto power_forward = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaDLC1VampireBats2");
@@ -464,22 +464,27 @@ namespace hooks
 		}
 	}
 
-	void OnMeleeHitHook::Night_Powers(RE::Actor* a_actor, bool mistform, bool sreflexes)
+	void OnMeleeHitHook::Night_Powers(STATIC_ARGS, RE::Actor* a_actor, bool mistform, bool sreflexes, bool tremor)
 	{
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		const auto power_mist = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSerana_MistForm");
 		const auto power_sreflexes = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLS_VampireLord_Spell_Power_SupernaturalReflexes");
 		const auto power_echo = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLS_VampireLord_Spell_Power_EchoScream");
+		const auto power_tremor = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLS_VampireLord_Spell_Power_Tremor");
 		if (mistform) {
 			caster->CastSpellImmediate(power_mist, true, a_actor, 1, false, 0.0, a_actor);
-		} else if(sreflexes) {
+		}else if(sreflexes) {
 			caster->CastSpellImmediate(power_sreflexes, true, a_actor, 1, false, 0.0, a_actor);
+		
+		}else if(tremor){
+			caster->CastSpellImmediate(power_tremor, true, a_actor, 1, false, 0.0, a_actor);
+
 		}else{
 			caster->CastSpellImmediate(power_echo, true, a_actor, 1, false, 0.0, a_actor);
 		}
 	}
 
-	void OnMeleeHitHook::Mortal_Powers(RE::Actor* a_actor, bool transform, bool shadow, bool scream)
+	void OnMeleeHitHook::Mortal_Powers(STATIC_ARGS, RE::Actor* a_actor, bool transform, bool shadow, bool scream)
 	{
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		const auto power_transform = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaAb");
@@ -557,8 +562,7 @@ namespace hooks
 		public RE::BSTEventSink<RE::TESEquipEvent>,
 		public RE::BSTEventSink<RE::TESCombatEvent>,
 		public RE::BSTEventSink<RE::TESActorLocationChangeEvent>,
-		public RE::BSTEventSink<RE::TESSpellCastEvent>,
-		public RE::BSTEventSink<RE::TESActiveEffectApplyRemoveEvent>
+		public RE::BSTEventSink<RE::TESSpellCastEvent>
 	{
 		OurEventSink() = default;
 		OurEventSink(const OurEventSink&) = delete;
@@ -699,79 +703,6 @@ namespace hooks
 				const auto Revert = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaValericaRevertFormSpell");
 				const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 				caster->CastSpellImmediate(Revert, true, a_actor, 1, false, 0.0, a_actor);
-			}
-
-			return RE::BSEventNotifyControl::kContinue;
-		}
-
-		RE::BSEventNotifyControl ProcessEvent(const RE::TESActiveEffectApplyRemoveEvent* event, RE::BSTEventSource<RE::TESActiveEffectApplyRemoveEvent>*)
-		{
-			auto a_actor = event->caster->As<RE::Actor>();
-
-			if (!a_actor) {
-				return RE::BSEventNotifyControl::kContinue;
-			}
-
-			if (!(a_actor->HasKeywordString("VLS_Serana_Key") || a_actor->HasKeywordString("VLS_Valerica_Key"))) {
-				return RE::BSEventNotifyControl::kContinue;
-			}
-
-			if (event->isApplied){
-				auto CasterActor = a_actor->AsMagicTarget();
-				auto activeEffects = CasterActor->GetActiveEffectList();
-				if (activeEffects) {
-					for (auto effect : *activeEffects) {
-						if (effect && effect->effect && effect->effect->baseEffect) {
-							std::string Lsht = (clib_util::editorID::get_editorID(effect->effect->baseEffect));
-							switch (hash(Lsht.c_str(), Lsht.size())) {
-							case "VLS_LevitateORDescendToggle_Effect"_h:
-								OnMeleeHitHook::ResetAttack(a_actor);
-								break;
-
-							case "VLSeranaValericaBats_AIEffect_Foward"_h:
-								OnMeleeHitHook::BatForm(a_actor, true);
-								break;
-
-							case "VLSeranaValericaBats_AIEffect2_Skirmish"_h:
-								OnMeleeHitHook::BatForm(a_actor);
-								break;
-
-							case "VLSeranaValerica_MistForm_AIEffect"_h:
-								OnMeleeHitHook::Night_Powers(a_actor, true);
-								break;
-
-							case "VLSerana_SupernaturalReflexes_AIEffect"_h:
-								OnMeleeHitHook::Night_Powers(a_actor, false, true);
-								break;
-
-							case "VLSerana_EchoLocation_AIEffect"_h:
-								OnMeleeHitHook::Night_Powers(a_actor);
-								break;
-
-							case "VLS_SeranaVLTransformMain_AIEffect"_h:
-								OnMeleeHitHook::Mortal_Powers(a_actor, true);
-								break;
-
-							case "VLS_VampiresScream_AIEffect"_h:
-								OnMeleeHitHook::Mortal_Powers(a_actor, false, false, true);
-								break;
-
-							case "VLS_VampiresSeduction_AIEffect"_h:
-								OnMeleeHitHook::Mortal_Powers(a_actor);
-								break;
-
-							case "VLS_VampiresShadow_AIEffect"_h:
-								OnMeleeHitHook::Mortal_Powers(a_actor, false, true);
-								break;
-
-							default:
-								break;
-							}
-							break;
-						}
-						continue;
-					}
-				}
 			}
 
 			return RE::BSEventNotifyControl::kContinue;
@@ -950,13 +881,16 @@ namespace hooks
 		eventSourceHolder->AddEventSink<RE::TESCombatEvent>(eventSink);
 		eventSourceHolder->AddEventSink<RE::TESActorLocationChangeEvent>(eventSink);
 		eventSourceHolder->AddEventSink<RE::TESSpellCastEvent>(eventSink);
-		eventSourceHolder->AddEventSink<RE::TESActiveEffectApplyRemoveEvent>(eventSink);
 	}
 
 	bool OnMeleeHitHook::BindPapyrusFunctions(VM* vm)
 	{
 		vm->RegisterFunction("VLS_SendVampireLordTransformation", "VLS_NativeFunctions", VLS_SendVampireLordTransformation);
 		vm->RegisterFunction("VLS_RevertVampireLordform", "VLS_NativeFunctions", VLS_RevertVampireLordform);
+		vm->RegisterFunction("ResetAttack", "VLS_NativeFunctions", ResetAttack);
+		vm->RegisterFunction("BatForm", "VLS_NativeFunctions", BatForm);
+		vm->RegisterFunction("Night_Powers", "VLS_NativeFunctions", Night_Powers);
+		vm->RegisterFunction("Mortal_Powers", "VLS_NativeFunctions", Mortal_Powers);
 		return true;
 	}
 

@@ -106,10 +106,10 @@ namespace hooks
 		static void VLS_CompleteTransformation(RE::Actor *a_actor);
 		static void VLS_CompleteReversion(RE::Actor* a_actor);
 		static void InterruptAttack(RE::Actor *a_actor);
-		static void ResetAttack(RE::Actor *a_actor);
-		static void BatForm(RE::Actor* a_actor, bool forward = false);
-		static void Night_Powers(RE::Actor* a_actor, bool mistform = false, bool sreflexes = false);
-		static void Mortal_Powers(RE::Actor* a_actor, bool transform = false, bool shadow = false, bool scream = false);
+		static void ResetAttack(STATIC_ARGS, RE::Actor *a_actor);
+		static void BatForm(STATIC_ARGS, RE::Actor* a_actor, bool forward = false);
+		static void Night_Powers(STATIC_ARGS, RE::Actor* a_actor, bool mistform = false, bool sreflexes = false, bool tremor = false);
+		static void Mortal_Powers(STATIC_ARGS, RE::Actor* a_actor, bool transform = false, bool shadow = false, bool scream = false);
 		void PrepareForMelee(RE::Actor *a_actor);
 		bool IsMoving(RE::Actor* actor);
 		void Store_CStyleSettings(RE::Actor *a_actor);
