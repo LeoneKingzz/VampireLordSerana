@@ -542,6 +542,10 @@ namespace hooks
 
 			auto a_actor = event->sender->As<RE::Actor>();
 
+			if (!a_actor) {
+				return RE::BSEventNotifyControl::kContinue;
+			}
+
 			auto magicTarget = a_actor->AsMagicTarget();
 			const auto magicEffect1 = RE::TESForm::LookupByEditorID("VLS_TransformCooldown_VampAb")->As<RE::EffectSetting>();
 			const auto magicEffect2 = RE::TESForm::LookupByEditorID("VLS_VampireLord_Effect_Power_MistForm_Dummy")->As<RE::EffectSetting>();
@@ -549,6 +553,9 @@ namespace hooks
 			if (magicTarget->HasMagicEffect(magicEffect1) || magicTarget->HasMagicEffect(magicEffect2) || magicTarget->HasMagicEffect(magicEffect3)) {
 				return RE::BSEventNotifyControl::kContinue;
 			}
+
+			a_actor->NotifyAnimationGraph("InterruptCast");
+			a_actor->InterruptCast(false);
 
 			OnMeleeHitHook::BatForm(nullptr, 0, nullptr, a_actor);
 			
