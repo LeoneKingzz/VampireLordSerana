@@ -113,6 +113,7 @@ namespace hooks
 		static void BatForm(STATIC_ARGS, RE::Actor* a_actor, bool forward = false);
 		static void Night_Powers(STATIC_ARGS, RE::Actor* a_actor, bool mistform = false, bool sreflexes = false, bool tremor = false);
 		static void Mortal_Powers(STATIC_ARGS, RE::Actor* a_actor, bool transform = false, bool shadow = false, bool scream = false);
+		static void LevitateToggle(STATIC_ARGS, RE::Actor* a_actor);
 		void PrepareForMelee(RE::Actor *a_actor);
 		void Store_CStyleSettings(RE::Actor *a_actor);
 		void Restore_CStyleSettings(RE::Actor *a_actor);

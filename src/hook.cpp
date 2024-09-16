@@ -388,6 +388,16 @@ namespace hooks
 		}
 	}
 
+	void OnMeleeHitHook::LevitateToggle(STATIC_ARGS, RE::Actor* a_actor)
+	{
+		if (IsMoving(a_actor)) {
+			a_actor->NotifyAnimationGraph("LevitationToggleMoving");
+
+		} else {
+			a_actor->NotifyAnimationGraph("LevitationToggle");
+		}
+	}
+
 	void OnMeleeHitHook::BatForm(STATIC_ARGS, RE::Actor* a_actor, bool forward)
 	{
 		const auto caster = a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
@@ -744,27 +754,14 @@ namespace hooks
 			break;
 
 		case "InitiateStart"_h:
-			if (OnMeleeHitHook::getrace_VLserana(actor)){
-				if(!actor->IsAttacking() && !OnMeleeHitHook::IsCasting(actor)){
-					actor->NotifyAnimationGraph("InterruptCast");
-					actor->InterruptCast(false);
-					const auto reset = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSerana_LevitateAIReset_Spell");
-					const auto caster = actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
-					caster->CastSpellImmediate(reset, true, actor, 1, false, 0.0, actor);
-				}
-			}
-			break;
+		case "InitiateStartLeft"_h:
 		case "InitiateStartRight"_h:
 			if (OnMeleeHitHook::getrace_VLserana(actor)) {
-				if (!actor->IsAttacking() && !OnMeleeHitHook::IsCasting(actor)) {
-					if (IsMoving(actor)) {
-						actor->NotifyAnimationGraph("LevitationToggleMoving");
-
-					} else {
-						actor->NotifyAnimationGraph("LevitationToggle");
-					}
+				if (!actor->IsAttacking()) {
+					OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
 				}
 			}
+
 			break;
 		}
 
@@ -982,4 +979,14 @@ namespace FallLongDistance
 // {
 // 	uniqueLocker lock(mtx_parryTimer);
 // 	_parryTimer.erase(a_actor);
+// }
+
+// if (OnMeleeHitHook::getrace_VLserana(actor)) {
+// 	if (!actor->IsAttacking() && !OnMeleeHitHook::IsCasting(actor)) {
+// 		actor->NotifyAnimationGraph("InterruptCast");
+// 		actor->InterruptCast(false);
+// 		const auto reset = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSerana_LevitateAIReset_Spell");
+// 		const auto caster = actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
+// 		caster->CastSpellImmediate(reset, true, actor, 1, false, 0.0, actor);
+// 	}
 // }
