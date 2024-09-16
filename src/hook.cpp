@@ -792,6 +792,7 @@ namespace hooks
 		vm->RegisterFunction("BatForm", "VLS_NativeFunctions", BatForm);
 		vm->RegisterFunction("Night_Powers", "VLS_NativeFunctions", Night_Powers);
 		vm->RegisterFunction("Mortal_Powers", "VLS_NativeFunctions", Mortal_Powers);
+		vm->RegisterFunction("LevitateToggle", "VLS_NativeFunctions", LevitateToggle);
 		return true;
 	}
 
