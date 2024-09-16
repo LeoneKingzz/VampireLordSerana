@@ -540,6 +540,8 @@ namespace hooks
 				return RE::BSEventNotifyControl::kContinue;
 			}
 
+			logger::info("recieved dodge event"sv);
+
 			auto a_actor = event->sender->As<RE::Actor>();
 
 			if (!a_actor) {
@@ -556,6 +558,8 @@ namespace hooks
 
 			a_actor->NotifyAnimationGraph("InterruptCast");
 			a_actor->InterruptCast(false);
+
+			logger::info("Checks Clear. Initiating Bat Form"sv);
 
 			OnMeleeHitHook::BatForm(nullptr, 0, nullptr, a_actor);
 			
