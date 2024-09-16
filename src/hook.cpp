@@ -745,7 +745,7 @@ namespace hooks
 
 		case "InitiateStart"_h:
 			if (OnMeleeHitHook::getrace_VLserana(actor)){
-				if(!(IsMoving(actor) && actor->IsAttacking() && OnMeleeHitHook::IsCasting(actor))){
+				if(!(IsMoving(actor) || actor->IsAttacking() || OnMeleeHitHook::IsCasting(actor))){
 					const auto reset = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSerana_LevitateAIReset_Spell");
 					const auto caster = actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 					caster->CastSpellImmediate(reset, true, actor, 1, false, 0.0, actor);
