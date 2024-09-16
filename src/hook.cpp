@@ -754,6 +754,18 @@ namespace hooks
 				}
 			}
 			break;
+		case "InitiateStartRight"_h:
+			if (OnMeleeHitHook::getrace_VLserana(actor)) {
+				if (!actor->IsAttacking() && !OnMeleeHitHook::IsCasting(actor)) {
+					if (IsMoving(actor)) {
+						actor->NotifyAnimationGraph("LevitationToggleMoving");
+
+					} else {
+						actor->NotifyAnimationGraph("LevitationToggle");
+					}
+				}
+			}
+			break;
 		}
 
 		return fn ? (this->*fn)(a_event, src) : RE::BSEventNotifyControl::kContinue;
