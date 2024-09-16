@@ -552,7 +552,9 @@ namespace hooks
 			const auto magicEffect1 = RE::TESForm::LookupByEditorID("VLS_TransformCooldown_VampAb")->As<RE::EffectSetting>();
 			const auto magicEffect2 = RE::TESForm::LookupByEditorID("VLS_VampireLord_Effect_Power_MistForm_Dummy")->As<RE::EffectSetting>();
 			const auto magicEffect3 = RE::TESForm::LookupByEditorID("VLSeranaDLC1BatsEffect")->As<RE::EffectSetting>();
-			if (magicTarget->HasMagicEffect(magicEffect1) || magicTarget->HasMagicEffect(magicEffect2) || magicTarget->HasMagicEffect(magicEffect3)) {
+			const auto magicEffect4 = RE::TESForm::LookupByEditorID("VLSeranaDLC1BatsEffects2")->As<RE::EffectSetting>();
+
+			if (magicTarget->HasMagicEffect(magicEffect1) || magicTarget->HasMagicEffect(magicEffect2) || magicTarget->HasMagicEffect(magicEffect3) || magicTarget->HasMagicEffect(magicEffect4)) {
 				return RE::BSEventNotifyControl::kContinue;
 			}
 
