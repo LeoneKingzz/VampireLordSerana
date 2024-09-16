@@ -733,7 +733,7 @@ namespace hooks
 		eventSourceHolder->AddEventSink<RE::TESCombatEvent>(eventSink);
 		eventSourceHolder->AddEventSink<RE::TESActorLocationChangeEvent>(eventSink);
 		eventSourceHolder->AddEventSink<RE::TESSpellCastEvent>(eventSink);
-		eventSourceHolder->AddEventSink<SKSE::ModCallbackEvent>(eventSink);
+		SKSE::GetModCallbackEventSource()->AddEventSink(eventSink);
 	}
 
 	bool OnMeleeHitHook::BindPapyrusFunctions(VM* vm)
