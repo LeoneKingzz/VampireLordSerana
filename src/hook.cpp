@@ -108,7 +108,7 @@ namespace hooks
 
 	bool OnMeleeHitHook::getrace_VLserana(RE::Actor* a_actor)
 	{
-		bool       result = false;
+		bool result = false;
 		const auto race = a_actor->GetRace();
 		const auto raceEDID = race->formEditorID;
 		if (raceEDID == "DLC1VampireBeastRace") {
