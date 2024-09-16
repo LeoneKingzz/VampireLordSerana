@@ -18,6 +18,9 @@ namespace hooks
 
 	using EventResult = RE::BSEventNotifyControl;
 
+	using tActor_IsMoving = bool (*)(RE::Actor* a_this);
+	static REL::Relocation<tActor_IsMoving> IsMoving{ REL::VariantID(36928, 37953, 0x6116C0) };
+
 	class animEventHandler
 	{
 	private:
@@ -111,9 +114,10 @@ namespace hooks
 		static void Night_Powers(STATIC_ARGS, RE::Actor* a_actor, bool mistform = false, bool sreflexes = false, bool tremor = false);
 		static void Mortal_Powers(STATIC_ARGS, RE::Actor* a_actor, bool transform = false, bool shadow = false, bool scream = false);
 		void PrepareForMelee(RE::Actor *a_actor);
-		bool IsMoving(RE::Actor* actor);
 		void Store_CStyleSettings(RE::Actor *a_actor);
 		void Restore_CStyleSettings(RE::Actor *a_actor);
+		static bool getrace_VLserana(RE::Actor *a_actor);
+		static bool IsCasting(RE::Actor *a_actor);
 		// void update(RE::Actor* a_actor, float a_delta);
 		// void startTiming(RE::Actor *a_actor, float a_delta);
 	    // void finishTiming(RE::Actor *a_actor);

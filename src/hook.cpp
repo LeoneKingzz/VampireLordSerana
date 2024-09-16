@@ -24,13 +24,6 @@ namespace hooks
 		_OnMeleeHit = trampoline.write_call<5>(OnMeleeHitBase.address() + REL::Relocate(0x38B, 0x45A), OnMeleeHit);
 	}
 
-	bool OnMeleeHitHook::IsMoving(RE::Actor* actor)
-	{
-		using func_t = decltype(&OnMeleeHitHook::IsMoving);
-		static REL::Relocation<func_t> func{ RELOCATION_ID(36928, 37953) };
-		return func(this, actor);
-	}
-
 	void OnMeleeHitHook::Set_iFrames(RE::Actor* actor)
 	{
 		actor->SetGraphVariableBool("bIframeActive", true);
@@ -111,6 +104,36 @@ namespace hooks
 			}
 			continue;
 		}
+	}
+
+	bool OnMeleeHitHook::getrace_VLserana(RE::Actor* a_actor)
+	{
+		bool       result = false;
+		const auto race = a_actor->GetRace();
+		const auto raceEDID = race->formEditorID;
+		if (raceEDID == "DLC1VampireBeastRace") {
+			if (a_actor->HasKeywordString("VLS_Serana_Key") || a_actor->HasKeywordString("VLS_Valerica_Key")) {
+				result = true;
+			}
+		}
+		return result;
+	}
+
+	bool OnMeleeHitHook::IsCasting(RE::Actor* a_actor)
+	{
+		bool result = false;
+
+		auto IsCastingRight = false;
+		auto IsCastingLeft = false;
+		auto IsCastingDual = false;
+
+		if ((a_actor->GetGraphVariableBool("IsCastingRight", IsCastingRight) && IsCastingRight) 
+		|| (a_actor->GetGraphVariableBool("IsCastingLeft", IsCastingLeft) && IsCastingLeft) 
+		|| (a_actor->GetGraphVariableBool("IsCastingDual", IsCastingDual) && IsCastingDual)) {
+			result = true;
+		}
+		
+		return result;
 	}
 
 	void OnMeleeHitHook::Store_CStyleSettings(RE::Actor* a_actor)
@@ -716,6 +739,16 @@ namespace hooks
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
 				if (actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))) {
 					actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
+				}
+			}
+			break;
+
+		case "InitiateStart"_h:
+			if (OnMeleeHitHook::getrace_VLserana(actor)){
+				if(!(IsMoving(actor) && actor->IsAttacking() && OnMeleeHitHook::IsCasting(actor))){
+					const auto reset = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSerana_LevitateAIReset_Spell");
+					const auto caster = actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
+					caster->CastSpellImmediate(reset, true, actor, 1, false, 0.0, actor);
 				}
 			}
 			break;
