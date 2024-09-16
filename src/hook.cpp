@@ -556,10 +556,8 @@ namespace hooks
 				return RE::BSEventNotifyControl::kContinue;
 			}
 
-			a_actor->NotifyAnimationGraph("InterruptCast");
-			a_actor->InterruptCast(false);
-
-			logger::info("Checks Clear. Initiating Bat Form"sv);
+			//a_actor->NotifyAnimationGraph("InterruptCast");
+			//a_actor->InterruptCast(false);
 
 			OnMeleeHitHook::BatForm(nullptr, 0, nullptr, a_actor);
 			
