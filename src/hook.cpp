@@ -94,10 +94,10 @@ namespace hooks
 			if (it->first == a_actor) {
 				if (std::find(it->second.begin(), it->second.end(), a_spell) != it->second.end()){
 					RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, a_spell);
-					a_actor->RemoveSpell(a_spell);
+					//a_actor->RemoveSpell(a_spell);
 				}else{
 					RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, a_spell);
-					a_actor->RemoveSpell(a_spell);
+					//a_actor->RemoveSpell(a_spell);
 					it->second.push_back(a_spell);
 				}
 				break;
@@ -733,7 +733,15 @@ namespace hooks
 
 		// case "BeginCastRight"_h:
 
-		// case "LevitateStart"_h:
+		case "LevitateStart"_h:
+			if (OnMeleeHitHook::getrace_VLserana(actor)){
+				auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
+				auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
+				if (!(it.first && it2.first)){
+					OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
+				}
+			}
+			break;
 
 		case "LandStart"_h:
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
@@ -743,7 +751,18 @@ namespace hooks
 			}
 			break;
 
-		// case "GroundStart"_h:
+		case "GroundStart"_h:
+			if (OnMeleeHitHook::getrace_VLserana(actor)) {
+				auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
+				auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
+				if (it.first) {
+					OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it.second);
+				}
+				if (it2.first) {
+					OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it2.second);
+				}
+			}
+			break;
 
 		case "LiftoffStart"_h:
 			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
