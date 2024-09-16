@@ -467,7 +467,8 @@ namespace hooks
 		public RE::BSTEventSink<RE::TESEquipEvent>,
 		public RE::BSTEventSink<RE::TESCombatEvent>,
 		public RE::BSTEventSink<RE::TESActorLocationChangeEvent>,
-		public RE::BSTEventSink<RE::TESSpellCastEvent>
+		public RE::BSTEventSink<RE::TESSpellCastEvent>,
+		public RE::BSTEventSink<SKSE::ModCallbackEvent>
 	{
 		OurEventSink() = default;
 		OurEventSink(const OurEventSink&) = delete;
@@ -528,6 +529,29 @@ namespace hooks
 					RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, ElderScroll);
 				}
 			}
+			return RE::BSEventNotifyControl::kContinue;
+		}
+
+		RE::BSEventNotifyControl ProcessEvent(const SKSE::ModCallbackEvent* event, RE::BSTEventSource<SKSE::ModCallbackEvent>*)
+		{
+			auto Ename = event->eventName;
+
+			if (Ename != "UND_DodgeEvent") {
+				return RE::BSEventNotifyControl::kContinue;
+			}
+
+			auto a_actor = event->sender->As<RE::Actor>();
+
+			auto magicTarget = a_actor->AsMagicTarget();
+			const auto magicEffect1 = RE::TESForm::LookupByEditorID("VLS_TransformCooldown_VampAb")->As<RE::EffectSetting>();
+			const auto magicEffect2 = RE::TESForm::LookupByEditorID("VLS_VampireLord_Effect_Power_MistForm_Dummy")->As<RE::EffectSetting>();
+			const auto magicEffect3 = RE::TESForm::LookupByEditorID("VLSeranaDLC1BatsEffect")->As<RE::EffectSetting>();
+			if (magicTarget->HasMagicEffect(magicEffect1) || magicTarget->HasMagicEffect(magicEffect2) || magicTarget->HasMagicEffect(magicEffect3)) {
+				return RE::BSEventNotifyControl::kContinue;
+			}
+
+			OnMeleeHitHook::BatForm(nullptr, 0, nullptr, a_actor);
+			
 			return RE::BSEventNotifyControl::kContinue;
 		}
 
@@ -702,6 +726,7 @@ namespace hooks
 		eventSourceHolder->AddEventSink<RE::TESCombatEvent>(eventSink);
 		eventSourceHolder->AddEventSink<RE::TESActorLocationChangeEvent>(eventSink);
 		eventSourceHolder->AddEventSink<RE::TESSpellCastEvent>(eventSink);
+		eventSourceHolder->AddEventSink<SKSE::ModCallbackEvent>(eventSink);
 	}
 
 	bool OnMeleeHitHook::BindPapyrusFunctions(VM* vm)
