@@ -665,6 +665,9 @@ namespace hooks
 							if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_Blood_075_Spell_VampiricCloak"))) {
 								a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_Blood_075_Spell_VampiricCloak"));
 							}
+							if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_BloodWardSpell"))) {
+								a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_BloodWardSpell"));
+							}
 						}else{
 							if (a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_MortalForm_ability"))) {
 								a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_MortalForm_ability"));
@@ -683,6 +686,9 @@ namespace hooks
 							}
 							if (a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_Blood_075_Spell_VampiricCloak"))) {
 								a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_Blood_075_Spell_VampiricCloak"));
+							}
+							if (a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_BloodWardSpell"))) {
+								a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_BloodWardSpell"));
 							}
 						}
 
