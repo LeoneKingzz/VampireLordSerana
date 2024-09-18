@@ -786,6 +786,16 @@ namespace hooks
 			}
 			break;
 
+		case "InitiateStart"_h:
+		//case "InitiateStartLeft"_h:
+		//case "InitiateStartRight"_h:
+			if (OnMeleeHitHook::getrace_VLserana(actor)) {
+				auto isLevitating = false;
+				if (actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
+					OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
+				}
+			}	
+			break;
 		}
 
 		return fn ? (this->*fn)(a_event, src) : RE::BSEventNotifyControl::kContinue;
