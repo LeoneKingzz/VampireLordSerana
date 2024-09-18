@@ -242,6 +242,8 @@ namespace hooks
 			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
 			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_VampiricGrip"));
 			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_VampireLord_Spell_Hand_Maelstrom"));
+			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage01"));
+			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage02"));
 			a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage03"));
 
 		}else{
@@ -251,20 +253,23 @@ namespace hooks
 			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
 			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_VampiricGrip"));
 			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_VampireLord_Spell_Hand_Maelstrom"));
+			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage01"));
+			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage02"));
 			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage03"));
 		}
 
+		// auto triss = std::to_string(a_actor->GetLevel());
 
-		// switch (a_actor->GetLevel()) {
-		// case 20:
-		//     if (remove){
+		// switch (hash(triss.c_str(), triss.size())) {
+		// case "20"_h:
+		// 	if (remove){
 		// 		a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
 		// 	}else{
 		// 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
 		// 	}
 		// 	break;
 
-		// case 28:
+		// case "28"_h:
 		// 	if (remove) {
 		// 		a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
 		// 		a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_VampiricGrip"));
@@ -276,7 +281,7 @@ namespace hooks
 		// 	}
 		// 	break;
 
-		// case 38:
+		// case "38"_h:
 		// 	if (remove) {
 		// 		a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
 		// 		a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_VampiricGrip"));
@@ -288,7 +293,7 @@ namespace hooks
 		// 	}
 		// 	break;
 
-		// case 48:
+		// case "48"_h:
 		// 	if (remove) {
 		// 		a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
 		// 		a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_VampiricGrip"));
@@ -640,18 +645,67 @@ namespace hooks
 				}
 			}else{
 				if (getcombatstate == RE::ACTOR_COMBAT_STATE::kCombat || getcombatstate == RE::ACTOR_COMBAT_STATE::kSearching) {
-					if (a_actor->HasKeywordString("VLS_Serana_Key") && a_actor->HasKeywordString("Vampire")) {
-						if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_MortalForm_ability"))) {
-							a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_MortalForm_ability"));
+					if (a_actor->HasKeywordString("VLS_Serana_Key") || a_actor->HasKeywordString("VLS_Valerica_Key")) {
+						if (a_actor->HasKeywordString("Vampire")) {
+							if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_MortalForm_ability"))) {
+								a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_MortalForm_ability"));
+							}
+							if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("crAbVampire"))) {
+								a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("crAbVampire"));
+							}
+							if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_VampiricDrain_Normal"))) {
+								a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_VampiricDrain_Normal"));
+							}
+							if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_Blood_025_Spell_VampiricSeed"))) {
+								a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_Blood_025_Spell_VampiricSeed"));
+							}
+							if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_Blood_050_Spell_VampiricOrb"))) {
+								a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_Blood_050_Spell_VampiricOrb"));
+							}
+							if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_Blood_075_Spell_VampiricCloak"))) {
+								a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_Blood_075_Spell_VampiricCloak"));
+							}
+						}else{
+							if (a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_MortalForm_ability"))) {
+								a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_MortalForm_ability"));
+							}
+							if (a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("crAbVampire"))) {
+								a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("crAbVampire"));
+							}
+							if (a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_VampiricDrain_Normal"))) {
+								a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_VampiricDrain_Normal"));
+							}
+							if (a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_Blood_025_Spell_VampiricSeed"))) {
+								a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_Blood_025_Spell_VampiricSeed"));
+							}
+							if (a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_Blood_050_Spell_VampiricOrb"))) {
+								a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_Blood_050_Spell_VampiricOrb"));
+							}
+							if (a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_Blood_075_Spell_VampiricCloak"))) {
+								a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_Blood_075_Spell_VampiricCloak"));
+							}
 						}
-						if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("crAbVampire"))) {
-							a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("crAbVampire"));
-						}
+
 						if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_IceSpike_Right"))) {
 							a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_IceSpike_Right"));
 						}
-						if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_VampiricDrain_Normal"))) {
-							a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_VampiricDrain_Normal"));
+						if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_Chainlightning_Left"))) {
+							a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_Chainlightning_Left"));
+						}
+						if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_LightningBolt_Right"))) {
+							a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_LightningBolt_Right"));
+						}
+						if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_RaiseZombie_Right"))) {
+							a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_RaiseZombie_Right"));
+						}
+						if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_ReanimateCorpse_Right"))) {
+							a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_ReanimateCorpse_Right"));
+						}
+						if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_Revenant_Right"))) {
+							a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_Revenant_Right"));
+						}
+						if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_IceStormRight"))) {
+							a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_IceStormRight"));
 						}
 					}
 					
