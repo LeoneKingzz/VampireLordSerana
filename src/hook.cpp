@@ -459,12 +459,18 @@ namespace hooks
 		}
 	}
 
-	void OnMeleeHitHook::PrepareForMelee(RE::Actor* a_actor)
-	{
-		if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))) {
-			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
-		}
-	}
+	// float OnMeleeHitHook::GetRelativeHeight(STATIC_ARGS, RE::Actor* a_actor)
+	// {
+	// 	auto CT = a_actor->GetActorRuntimeData().currentCombatTarget.get().get();
+	// 	float VH = a_actor->GetPositionZ();
+	// 	float TH = CT->GetPositionZ();
+	// 	float MH = 0.0;
+	// 	if (VH > TH){
+
+	// 	}else if (VH < TH){
+
+	// 	}
+	// }
 
 	bool OnMeleeHitHook::VLS_RevertVampireLordform(STATIC_ARGS, RE::Actor* a_actor)
 	{
@@ -810,6 +816,7 @@ namespace hooks
 		vm->RegisterFunction("Night_Powers", "VLS_NativeFunctions", Night_Powers);
 		vm->RegisterFunction("Mortal_Powers", "VLS_NativeFunctions", Mortal_Powers);
 		vm->RegisterFunction("LevitateToggle", "VLS_NativeFunctions", LevitateToggle);
+		//vm->RegisterFunction("GetRelativeHeight", "VLS_NativeFunctions", GetRelativeHeight);
 		return true;
 	}
 

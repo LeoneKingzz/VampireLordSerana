@@ -114,7 +114,7 @@ namespace hooks
 		static void Night_Powers(STATIC_ARGS, RE::Actor* a_actor, bool mistform = false, bool sreflexes = false, bool tremor = false);
 		static void Mortal_Powers(STATIC_ARGS, RE::Actor* a_actor, bool transform = false, bool shadow = false, bool scream = false);
 		static void LevitateToggle(STATIC_ARGS, RE::Actor* a_actor);
-		void PrepareForMelee(RE::Actor *a_actor);
+		//static float GetRelativeHeight(STATIC_ARGS, RE::Actor *a_actor);
 		void Store_CStyleSettings(RE::Actor *a_actor);
 		void Restore_CStyleSettings(RE::Actor *a_actor);
 		static bool getrace_VLserana(RE::Actor *a_actor);
