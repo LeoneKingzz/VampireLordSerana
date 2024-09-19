@@ -195,7 +195,7 @@ namespace hooks
 		for (auto it = _SpellList.begin(); it != _SpellList.end(); ++it) {
 			if (it->first == a_actor) {
 				for (auto spell : it->second) {
-					a_actor->AddSpell(spell);
+					RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, spell);
 				}
 				_SpellList.erase(it);
 				break;
@@ -727,19 +727,22 @@ namespace hooks
 			}
 			break;
 
-		// case "BeginCastLeft"_h:
-		// 	if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
-		// 	}
-		// 	break;
-
-		// case "BeginCastRight"_h:
+		case "BeginCastLeft"_h:
+		case "BeginCastRight"_h:
+			if (OnMeleeHitHook::getrace_VLserana(actor)) {
+				auto isLevitating = false;
+				if (actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) {
+					OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
+				}
+			}
+			break;
 
 		case "LevitateStart"_h:
-			if (OnMeleeHitHook::getrace_VLserana(actor)){
+			if (OnMeleeHitHook::getrace_VLserana(actor)) {
 				auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
 				auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
-				if (!(it.first && it2.first)){
-					OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
+				if (!it.first || !it2.first) {
+					OnMeleeHitHook::GetSingleton().Re_EquipAll_LevitateMode(actor);
 				}
 			}
 			break;
