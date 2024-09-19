@@ -629,6 +629,12 @@ namespace hooks
 				return RE::BSEventNotifyControl::kContinue;
 			}
 
+			// if (const auto keywordForm = a_form->As<RE::BGSKeywordForm>(); keywordForm) {
+			// 	return a_index == FORM::kAdd ?
+			// 	           keywordForm->AddKeyword(a_data) :
+			// 	           keywordForm->RemoveKeyword(a_data);
+			// }
+
 			auto getcombatstate = event->newState.get();
 
 			const auto race = a_actor->GetRace();
