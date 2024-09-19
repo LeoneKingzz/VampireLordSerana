@@ -668,6 +668,9 @@ namespace hooks
 							if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_BloodWardSpell"))) {
 								a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_BloodWardSpell"));
 							}
+							if (!a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_VampireHemalurgicSpikeSpell"))) {
+								a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_VampireHemalurgicSpikeSpell"));
+							}
 						}else{
 							if (a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_MortalForm_ability"))) {
 								a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_MortalForm_ability"));
@@ -689,6 +692,9 @@ namespace hooks
 							}
 							if (a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_BloodWardSpell"))) {
 								a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_BloodWardSpell"));
+							}
+							if (a_actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_VampireHemalurgicSpikeSpell"))) {
+								a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_VampireHemalurgicSpikeSpell"));
 							}
 						}
 
