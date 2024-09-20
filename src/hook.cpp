@@ -748,6 +748,14 @@ namespace hooks
 				if (!actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))) {
 					actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
 				}
+				auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
+				auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
+				if (it.first) {
+					OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it.second);
+				}
+				if (it2.first) {
+					OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it2.second);
+				}
 			}
 			break;
 
@@ -767,6 +775,11 @@ namespace hooks
 				actor->SetGraphVariableBool("bVLS_IsLiftingOff", true);
 				if (actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))) {
 					actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
+				}
+				auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
+				auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
+				if (!it.first || !it2.first) {
+					OnMeleeHitHook::GetSingleton().Re_EquipAll_LevitateMode(actor);
 				}
 			}
 			break;
