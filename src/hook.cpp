@@ -795,7 +795,7 @@ namespace hooks
 				auto bVLS_IsLanding = false;
 				if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) && (actor->GetGraphVariableBool("bVLS_IsLanding", bVLS_IsLanding) && !bVLS_IsLanding)) {
 					actor->SetGraphVariableBool("bVLS_WantstoAttack", true);
-					OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
+					// OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
 				}
 			}	
 			break;
