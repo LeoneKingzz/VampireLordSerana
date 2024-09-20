@@ -740,11 +740,11 @@ namespace hooks
 			if (OnMeleeHitHook::getrace_VLserana(actor)) {
 				actor->SetGraphVariableBool("bVLS_IsLiftingOff", false);
 				actor->SetGraphVariableBool("bNoStagger", false);
-				auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
-				auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
-				if (!(it.first && it2.first)) {
-					OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
-				}
+				// auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
+				// auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
+				// if (!(it.first && it2.first)) {
+				// 	OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
+				// }
 			}
 			break;
 
@@ -793,7 +793,7 @@ namespace hooks
 			if (OnMeleeHitHook::getrace_VLserana(actor)) {
 				auto isLevitating = false;
 				auto bVLS_IsLanding = false;
-				if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) && (actor->GetGraphVariableBool("bVLS_IsLanding", bVLS_IsLanding) && !bVLS_IsLanding)) {
+				if (actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability")) && (actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) && (actor->GetGraphVariableBool("bVLS_IsLanding", bVLS_IsLanding) && !bVLS_IsLanding)) {
 					actor->SetGraphVariableBool("bVLS_WantstoAttack", true);
 					OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
 				}
