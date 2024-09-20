@@ -757,7 +757,6 @@ namespace hooks
 				auto bVLS_WantstoAttack = false;
 				if (actor->GetGraphVariableBool("bVLS_WantstoAttack", bVLS_WantstoAttack) && bVLS_WantstoAttack) {
 					actor->SetGraphVariableBool("bVLS_WantstoAttack", false);
-					actor->NotifyAnimationGraph("sprintStart");
 					actor->NotifyAnimationGraph("attackStart");
 				}
 			}
@@ -864,8 +863,8 @@ namespace FallLongDistance
 					if (raceEDID == "DLC1VampireBeastRace"){
 						auto isLevitating = false;
 						if (a_this->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
-							a_this->NotifyAnimationGraph("sprintStart");
-							a_this->AsActorState()->actorState1.sprinting = 1;
+							// a_this->NotifyAnimationGraph("sprintStart");
+							// a_this->AsActorState()->actorState1.sprinting = 1;
 						}
 					}
 				}
