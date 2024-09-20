@@ -793,7 +793,7 @@ namespace hooks
 			if (OnMeleeHitHook::getrace_VLserana(actor)) {
 				auto isLevitating = false;
 				auto bVLS_IsLanding = false;
-				if (actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability")) && (actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) && (actor->GetGraphVariableBool("bVLS_IsLanding", bVLS_IsLanding) && !bVLS_IsLanding)) {
+				if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) && (actor->GetGraphVariableBool("bVLS_IsLanding", bVLS_IsLanding) && !bVLS_IsLanding)) {
 					actor->SetGraphVariableBool("bVLS_WantstoAttack", true);
 					OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
 				}
