@@ -714,15 +714,13 @@ namespace hooks
 		RE::Actor* actor = const_cast<RE::TESObjectREFR*>(a_event.holder)->As<RE::Actor>();
 		switch (hash(a_event.tag.c_str(), a_event.tag.size())) {
 		case "BatSprintOff"_h:
-			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
+			if (OnMeleeHitHook::getrace_VLserana(actor)) {
 				OnMeleeHitHook::GetSingleton().Reset_iFrames(actor);
 			}
 			break;
 
-		// case "BatSprintStop"_h:
-
 		case "BatSprintOn"_h:
-			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
+		    if (OnMeleeHitHook::getrace_VLserana(actor)){
 				OnMeleeHitHook::GetSingleton().Set_iFrames(actor);
 			}
 			break;
@@ -731,7 +729,9 @@ namespace hooks
 		case "BeginCastRight"_h:
 			if (OnMeleeHitHook::getrace_VLserana(actor)) {
 				auto isLevitating = false;
-				if (actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) {
+				auto bVLS_IsLiftingOff = false;
+				if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && !isLevitating) && (actor->GetGraphVariableBool("bVLS_IsLiftingOff", bVLS_IsLiftingOff) && !bVLS_IsLiftingOff)) {
+					actor->SetGraphVariableBool("bVLS_IsLiftingOff", true);
 					OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
 				}
 			}
@@ -739,16 +739,13 @@ namespace hooks
 
 		case "LevitateStart"_h:
 			if (OnMeleeHitHook::getrace_VLserana(actor)) {
-				auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
-				auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
-				if (!it.first || !it2.first) {
-					OnMeleeHitHook::GetSingleton().Re_EquipAll_LevitateMode(actor);
-				}
+				actor->SetGraphVariableBool("bVLS_IsLiftingOff", false);
 			}
 			break;
 
 		case "LandStart"_h:
-			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
+			if (OnMeleeHitHook::getrace_VLserana(actor)) {
+				actor->SetGraphVariableBool("bVLS_IsLanding", true);
 				if (!actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))) {
 					actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
 				}
@@ -757,19 +754,19 @@ namespace hooks
 
 		case "GroundStart"_h:
 			if (OnMeleeHitHook::getrace_VLserana(actor)) {
-				auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
-				auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
-				if (it.first) {
-					OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it.second);
-				}
-				if (it2.first) {
-					OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it2.second);
+				actor->SetGraphVariableBool("bVLS_IsLanding", false);
+				auto bVLS_WantstoAttack = false;
+				if (actor->GetGraphVariableBool("bVLS_WantstoAttack", bVLS_WantstoAttack) && bVLS_WantstoAttack) {
+					actor->SetGraphVariableBool("bVLS_WantstoAttack", false);
+					actor->NotifyAnimationGraph("sprintStart");
+					actor->NotifyAnimationGraph("attackStart");
 				}
 			}
 			break;
 
 		case "LiftoffStart"_h:
-			if (actor->HasKeywordString("VLS_Serana_Key") || actor->HasKeywordString("VLS_Valerica_Key")) {
+			if (OnMeleeHitHook::getrace_VLserana(actor)) {
+				actor->SetGraphVariableBool("bVLS_IsLiftingOff", true);
 				if (actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))) {
 					actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"));
 				}
@@ -777,11 +774,14 @@ namespace hooks
 			break;
 
 		case "InitiateStart"_h:
-		//case "InitiateStartLeft"_h:
-		//case "InitiateStartRight"_h:
+		case "InitiateStartLeft"_h:
+		case "InitiateStartRight"_h:
 			if (OnMeleeHitHook::getrace_VLserana(actor)) {
 				auto isLevitating = false;
-				if (actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) {
+				auto bVLS_IsLanding = false;
+				if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) && (actor->GetGraphVariableBool("bVLS_IsLanding", bVLS_IsLanding) && !bVLS_IsLanding)) {
+					actor->SetGraphVariableBool("bVLS_IsLanding", true);
+					actor->SetGraphVariableBool("bVLS_WantstoAttack", true);
 					OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
 				}
 			}	
@@ -1026,3 +1026,12 @@ namespace FallLongDistance
 // 	}
 
 // 	break;
+
+// auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
+// auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
+// if (it.first) {
+// 	OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it.second);
+// }
+// if (it2.first) {
+// 	OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it2.second);
+// }
