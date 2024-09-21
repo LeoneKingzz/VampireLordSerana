@@ -740,11 +740,11 @@ namespace hooks
 			if (OnMeleeHitHook::getrace_VLserana(actor)) {
 				actor->SetGraphVariableBool("bVLS_IsLiftingOff", false);
 				actor->SetGraphVariableBool("bNoStagger", false);
-				// auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
-				// auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
-				// if (!(it.first && it2.first)) {
-				// 	OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
-				// }
+				auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
+				auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
+				if (!(it.first && it2.first)) {
+					OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
+				}
 			}
 			break;
 
@@ -774,6 +774,7 @@ namespace hooks
 				if (it2.first) {
 					OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it2.second);
 				}
+				actor->NotifyAnimationGraph("weaponDraw");
 			}
 			break;
 
@@ -802,6 +803,14 @@ namespace hooks
 					actor->NotifyAnimationGraph("PitchStop");
 					actor->InterruptCast(false);
 					actor->NotifyAnimationGraph("InterruptCast");
+					auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
+					auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
+					if (it.first) {
+						OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it.second);
+					}
+					if (it2.first) {
+						OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it2.second);
+					}
 					OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
 					actor->NotifyAnimationGraph("InitiateEnd");
 				}
