@@ -152,6 +152,29 @@ namespace hooks
 		a_actor->UpdateCombat();
 	}
 
+	void OnMeleeHitHook::Evaluate_AI(RE::Actor* actor)
+	{
+		auto isLevitating = false;
+		auto bVLS_IsLanding = false;
+		if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) && (actor->GetGraphVariableBool("bVLS_IsLanding", bVLS_IsLanding) && !bVLS_IsLanding) && ((actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka) <= 30.0f) || (actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))))) {
+			if (!IsCasting(actor)){
+				actor->InterruptCast(false);
+				actor->NotifyAnimationGraph("InterruptCast");
+				actor->NotifyAnimationGraph("attackStop");
+				actor->NotifyAnimationGraph("attackStopInstant");
+				actor->NotifyAnimationGraph("staggerStop");
+				actor->AsActorState()->actorState1.knockState = RE::KNOCK_STATE_ENUM::kNormal;
+				actor->NotifyAnimationGraph("GetUpEnd");
+				const auto Reset = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLS_Spell_RestAI_Trigger");
+				const auto caster = actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
+				caster->CastSpellImmediate(Reset, true, actor, 1, false, 0.0, actor);
+				UpdateCombatTarget(actor);
+				actor->NotifyAnimationGraph("InitiateEnd");
+				LevitateToggle(nullptr, 0, nullptr, actor);
+			}
+		}
+	}
+
 	bool OnMeleeHitHook::IsCasting(RE::Actor* a_actor)
 	{
 		bool result = false;
@@ -826,21 +849,7 @@ namespace hooks
 		case "InitiateStartLeft"_h:
 		case "InitiateStartRight"_h:
 			if (OnMeleeHitHook::getrace_VLserana(actor)) {
-				auto isLevitating = false;
-				auto bVLS_IsLanding = false;
-				if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) && (actor->GetGraphVariableBool("bVLS_IsLanding", bVLS_IsLanding) && !bVLS_IsLanding) && ((actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka) <= 30.0f) || (actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))))) {
-					actor->NotifyAnimationGraph("staggerStop");
-					actor->AsActorState()->actorState1.knockState = RE::KNOCK_STATE_ENUM::kNormal;
-					actor->NotifyAnimationGraph("GetUpEnd");
-					OnMeleeHitHook::UpdateCombatTarget(actor);
-					actor->InterruptCast(false);
-					actor->NotifyAnimationGraph("InterruptCast");
-					actor->NotifyAnimationGraph("attackStop");
-					actor->NotifyAnimationGraph("attackStopInstant");
-					actor->AsActorState()->actorState2.forceSneak = 1;
-					actor->NotifyAnimationGraph("InitiateEnd");
-					actor->AsActorState()->actorState2.forceSneak = 0;
-				}
+				OnMeleeHitHook::Evaluate_AI(actor);
 			}	
 			break;
 		}
@@ -886,6 +895,9 @@ namespace hooks
 				const auto caster = hit_causer->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 				caster->CastSpellImmediate(knockdown, true, hit_target, 1, false, 0.0, hit_causer);
 			}
+		}
+		if (OnMeleeHitHook::getrace_VLserana(hit_target)){
+			OnMeleeHitHook::Evaluate_AI(hit_target);
 		}
 		// Call the normal game's code
 		_OnMeleeHit(hit_causer, hit_target, a_int1, a_bool, a_unkptr);
