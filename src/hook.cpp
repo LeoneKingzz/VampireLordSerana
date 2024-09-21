@@ -789,15 +789,16 @@ namespace hooks
 
 		case "InitiateStart"_h:
 		case "staggerStop"_h:
-		// case "InitiateStartLeft"_h:
-		// case "InitiateStartRight"_h:
+		case "InitiateStartLeft"_h:
+		case "InitiateStartRight"_h:
 			if (OnMeleeHitHook::getrace_VLserana(actor)) {
 				auto isLevitating = false;
 				auto bVLS_IsLanding = false;
-				if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) && (actor->GetGraphVariableBool("bVLS_IsLanding", bVLS_IsLanding) && !bVLS_IsLanding)) {
+				if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) && (actor->GetGraphVariableBool("bVLS_IsLanding", bVLS_IsLanding) && !bVLS_IsLanding) && (actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka) <= 20.0f)) {
 					actor->SetGraphVariableBool("bVLS_WantstoAttack", true);
-					// OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
+					actor->InterruptCast(false);
 					actor->NotifyAnimationGraph("InitiateEnd");
+					OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
 				}
 			}	
 			break;
