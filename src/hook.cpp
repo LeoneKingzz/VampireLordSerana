@@ -854,32 +854,17 @@ namespace hooks
 		return true;
 	}
 
-	void OnMeleeHitHook::OnMeleeHit(RE::Actor* hit_causer, RE::Actor* hit_target, std::int64_t a_int1, bool a_bool,
-		void* a_unkptr)
-	{
-		const auto race = hit_causer->GetRace();
-		const auto raceFormID = race->formEditorID;
-
-		if (raceFormID == "WerewolfBeastRace" || raceFormID == "DLC2WerebearBeastRace") {
+	void OnMeleeHitHook::OnMeleeHit(RE::Actor* hit_causer, RE::Actor* hit_target, std::int64_t a_int1, bool a_bool, void* a_unkptr){
+		if (OnMeleeHitHook::getrace_VLserana(hit_causer)) {
 			auto magicTarget = hit_causer->AsMagicTarget();
-			const auto magicEffect = RE::TESForm::LookupByEditorID("zxlice_cooldownEffect")->As<RE::EffectSetting>();
-			magicTarget->HasMagicEffect(magicEffect);
-    
-			int  iState = 0;
-			hit_causer->GetGraphVariableInt("iState", iState);
-			switch (iState) {
-			case 1:
-                /* code */
-                break;
-
-			case 5:
-				/* code */
-				break;
-
-			default:
-                break;
+			const auto magicEffect = RE::TESForm::LookupByEditorID<RE::EffectSetting>("VLS_VampireLord_Effect_Power_SupernaturalReflexes_Cloak");
+			if (magicTarget->HasMagicEffect(magicEffect)){
+				const auto knockdown = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaValericaRevertFormSpell");
+				const auto caster = hit_causer->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
+				caster->CastSpellImmediate(knockdown, true, hit_target, 1, false, 0.0, hit_causer);
 			}
-        }
+			
+		}
 		// Call the normal game's code
 		_OnMeleeHit(hit_causer, hit_target, a_int1, a_bool, a_unkptr);
 	}
@@ -1070,3 +1055,18 @@ namespace FallLongDistance
 // 	OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it2.second);
 // }
 
+// int iState = 0;
+// hit_causer->GetGraphVariableInt("iState", iState);
+// switch (iState) {
+// case 1:
+// 	/* code */
+// 	break;
+
+// case 5:
+// 	/* code */
+// 	break;
+
+// default:
+// 	break;
+// }
+// raceFormID == "WerewolfBeastRace" || raceFormID == "DLC2WerebearBeastRace"
