@@ -883,7 +883,6 @@ namespace hooks
 		// Call the normal game's code
 		_OnMeleeHit(hit_causer, hit_target, a_int1, a_bool, a_unkptr);
 	}
-
 }
 
 namespace FallLongDistance
