@@ -119,6 +119,22 @@ namespace hooks
 		return result;
 	}
 
+	bool OnMeleeHitHook::isPowerAttacking(RE::Actor* a_actor)
+	{
+		auto currentProcess = a_actor->GetActorRuntimeData().currentProcess;
+		if (currentProcess) {
+			auto highProcess = currentProcess->high;
+			if (highProcess) {
+				auto attackData = highProcess->attackData;
+				if (attackData) {
+					auto flags = attackData->data.flags;
+					return flags.any(RE::AttackData::AttackFlag::kPowerAttack);
+				}
+			}
+		}
+		return false;
+	}
+
 	bool OnMeleeHitHook::IsCasting(RE::Actor* a_actor)
 	{
 		bool result = false;
@@ -858,12 +874,11 @@ namespace hooks
 		if (OnMeleeHitHook::getrace_VLserana(hit_causer)) {
 			auto magicTarget = hit_causer->AsMagicTarget();
 			const auto magicEffect = RE::TESForm::LookupByEditorID<RE::EffectSetting>("VLS_VampireLord_Effect_Power_SupernaturalReflexes_Cloak");
-			if (magicTarget->HasMagicEffect(magicEffect)){
-				const auto knockdown = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLSeranaValericaRevertFormSpell");
+			if (magicTarget->HasMagicEffect(magicEffect) && OnMeleeHitHook::isPowerAttacking(hit_causer)){
+				const auto knockdown = RE::TESForm::LookupByEditorID<RE::MagicItem>("VLS_SRflex_Knockdown_TriggerEffect");
 				const auto caster = hit_causer->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 				caster->CastSpellImmediate(knockdown, true, hit_target, 1, false, 0.0, hit_causer);
 			}
-			
 		}
 		// Call the normal game's code
 		_OnMeleeHit(hit_causer, hit_target, a_int1, a_bool, a_unkptr);

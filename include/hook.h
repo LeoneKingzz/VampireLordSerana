@@ -118,6 +118,7 @@ namespace hooks
 		void Store_CStyleSettings(RE::Actor *a_actor);
 		void Restore_CStyleSettings(RE::Actor *a_actor);
 		static bool getrace_VLserana(RE::Actor *a_actor);
+		static bool isPowerAttacking(RE::Actor *a_actor);
 		static bool IsCasting(RE::Actor *a_actor);
 		// void update(RE::Actor* a_actor, float a_delta);
 		// void startTiming(RE::Actor *a_actor, float a_delta);
