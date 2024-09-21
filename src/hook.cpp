@@ -145,6 +145,7 @@ namespace hooks
 						a_actor->GetActorRuntimeData().currentCombatTarget = it->targetHandle.get().get();
 						break;
 					}
+					continue;
 				}
 			}
 		}
@@ -831,7 +832,7 @@ namespace hooks
 					actor->NotifyAnimationGraph("staggerStop");
 					actor->AsActorState()->actorState1.knockState = RE::KNOCK_STATE_ENUM::kNormal;
 					actor->NotifyAnimationGraph("GetUpEnd");
-					actor.
+					OnMeleeHitHook::UpdateCombatTarget(actor);
 					actor->InterruptCast(false);
 					actor->NotifyAnimationGraph("InterruptCast");
 					actor->NotifyAnimationGraph("attackStop");
