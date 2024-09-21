@@ -760,9 +760,7 @@ namespace hooks
 				auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
 				if (!(it.first && it2.first)) {
 					//OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
-					actor->AsActorState()->actorState2.forceSneak = 1;
-					actor->NotifyAnimationGraph("InitiateEnd");
-					actor->AsActorState()->actorState2.forceSneak = 0;
+					actor->NotifyAnimationGraph("LandStart");
 				}
 			}
 			break;
