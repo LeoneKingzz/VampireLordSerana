@@ -135,6 +135,22 @@ namespace hooks
 		return false;
 	}
 
+	void OnMeleeHitHook::UpdateCombatTarget(RE::Actor* a_actor){
+		auto CTarget = a_actor->GetActorRuntimeData().currentCombatTarget.get().get();
+		if (!CTarget) {
+			auto combatGroup = a_actor->GetCombatGroup();
+			if (combatGroup) {
+				for (auto it = combatGroup->targets.begin(); it != combatGroup->targets.end(); ++it) {
+					if (it->targetHandle && it->targetHandle.get().get()) {
+						a_actor->GetActorRuntimeData().currentCombatTarget = it->targetHandle.get().get();
+						break;
+					}
+				}
+			}
+		}
+		a_actor->UpdateCombat();
+	}
+
 	bool OnMeleeHitHook::IsCasting(RE::Actor* a_actor)
 	{
 		bool result = false;
@@ -815,6 +831,7 @@ namespace hooks
 					actor->NotifyAnimationGraph("staggerStop");
 					actor->AsActorState()->actorState1.knockState = RE::KNOCK_STATE_ENUM::kNormal;
 					actor->NotifyAnimationGraph("GetUpEnd");
+					actor.
 					actor->InterruptCast(false);
 					actor->NotifyAnimationGraph("InterruptCast");
 					actor->NotifyAnimationGraph("attackStop");
