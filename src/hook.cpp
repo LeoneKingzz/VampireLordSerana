@@ -743,7 +743,9 @@ namespace hooks
 				auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
 				auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
 				if (!(it.first && it2.first)) {
-					OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
+					//OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
+					actor->NotifyAnimationGraph("InitiateEnd");
+					actor->NotifyAnimationGraph("LandStart");
 				}
 			}
 			break;
@@ -790,17 +792,17 @@ namespace hooks
 
 		case "InitiateStart"_h:
 		case "staggerStop"_h:
-		// case "InitiateStartLeft"_h:
-		// case "InitiateStartRight"_h:
+		case "InitiateStartLeft"_h:
+		case "InitiateStartRight"_h:
 			if (OnMeleeHitHook::getrace_VLserana(actor)) {
 				auto isLevitating = false;
 				auto bVLS_IsLanding = false;
 				if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) && (actor->GetGraphVariableBool("bVLS_IsLanding", bVLS_IsLanding) && !bVLS_IsLanding) && ((actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka) <= 30.0f) || (actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))))) {
 					actor->SetGraphVariableBool("bVLS_WantstoAttack", true);
-					actor->NotifyAnimationGraph("MRh_Equipped_Event");
-					actor->NotifyAnimationGraph("MLh_Equipped_Event");
-					actor->NotifyAnimationGraph("PitchStop");
-					actor->NotifyAnimationGraph("PitchStop");
+					// actor->NotifyAnimationGraph("MRh_Equipped_Event");
+					// actor->NotifyAnimationGraph("MLh_Equipped_Event");
+					// actor->NotifyAnimationGraph("PitchStop");
+					// actor->NotifyAnimationGraph("PitchStop");
 					actor->InterruptCast(false);
 					actor->NotifyAnimationGraph("InterruptCast");
 					auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
@@ -811,8 +813,10 @@ namespace hooks
 					if (it2.first) {
 						OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it2.second);
 					}
-					OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
 					actor->NotifyAnimationGraph("InitiateEnd");
+					actor->NotifyAnimationGraph("LandStart");
+					//OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
+					
 				}
 			}	
 			break;
