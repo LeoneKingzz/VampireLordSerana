@@ -760,8 +760,9 @@ namespace hooks
 				auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
 				if (!(it.first && it2.first)) {
 					//OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
+					actor->AsActorState()->actorState2.forceSneak = 1;
 					actor->NotifyAnimationGraph("InitiateEnd");
-					actor->NotifyAnimationGraph("LandStart");
+					actor->AsActorState()->actorState2.forceSneak = 0;
 				}
 			}
 			break;
@@ -780,10 +781,6 @@ namespace hooks
 			if (OnMeleeHitHook::getrace_VLserana(actor)) {
 				actor->SetGraphVariableBool("bVLS_IsLanding", false);
 				actor->SetGraphVariableBool("bNoStagger", false);
-				auto bVLS_WantstoAttack = false;
-				if (actor->GetGraphVariableBool("bVLS_WantstoAttack", bVLS_WantstoAttack) && bVLS_WantstoAttack) {
-					actor->SetGraphVariableBool("bVLS_WantstoAttack", false);
-				}
 				auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
 				auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
 				if (it.first) {
@@ -806,33 +803,27 @@ namespace hooks
 			}
 			break;
 
+		case "staggerStart"_h:
+		case "MRh_Equipped_Event"_h:
+		case "MLh_Equipped_Event"_h:
+		case "PitchStop"_h:
 		case "InitiateStart"_h:
-		case "staggerStop"_h:
 		case "InitiateStartLeft"_h:
 		case "InitiateStartRight"_h:
 			if (OnMeleeHitHook::getrace_VLserana(actor)) {
 				auto isLevitating = false;
 				auto bVLS_IsLanding = false;
 				if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) && (actor->GetGraphVariableBool("bVLS_IsLanding", bVLS_IsLanding) && !bVLS_IsLanding) && ((actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka) <= 30.0f) || (actor->HasSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_InhibitMagicks_ability"))))) {
-					actor->SetGraphVariableBool("bVLS_WantstoAttack", true);
-					// actor->NotifyAnimationGraph("MRh_Equipped_Event");
-					// actor->NotifyAnimationGraph("MLh_Equipped_Event");
-					// actor->NotifyAnimationGraph("PitchStop");
-					// actor->NotifyAnimationGraph("PitchStop");
+					actor->NotifyAnimationGraph("staggerStop");
+					actor->AsActorState()->actorState1.knockState = RE::KNOCK_STATE_ENUM::kNormal;
+					actor->NotifyAnimationGraph("GetUpEnd");
 					actor->InterruptCast(false);
 					actor->NotifyAnimationGraph("InterruptCast");
-					auto it = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor);
-					auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
-					if (it.first) {
-						OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it.second);
-					}
-					if (it2.first) {
-						OnMeleeHitHook::GetSingleton().Unequip_DescendMode(actor, it2.second);
-					}
+					actor->NotifyAnimationGraph("attackStop");
+					actor->NotifyAnimationGraph("attackStopInstant");
+					actor->AsActorState()->actorState2.forceSneak = 1;
 					actor->NotifyAnimationGraph("InitiateEnd");
-					actor->NotifyAnimationGraph("LandStart");
-					//OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
-					
+					actor->AsActorState()->actorState2.forceSneak = 0;
 				}
 			}	
 			break;
@@ -1084,3 +1075,15 @@ namespace FallLongDistance
 // 	break;
 // }
 // raceFormID == "WerewolfBeastRace" || raceFormID == "DLC2WerebearBeastRace"
+
+// actor->NotifyAnimationGraph("MRh_Equipped_Event");
+// actor->NotifyAnimationGraph("MLh_Equipped_Event");
+// actor->NotifyAnimationGraph("PitchStop");
+// actor->NotifyAnimationGraph("PitchStop");
+
+// auto bVLS_WantstoAttack = false;
+// if (actor->GetGraphVariableBool("bVLS_WantstoAttack", bVLS_WantstoAttack) && bVLS_WantstoAttack) {
+// 	actor->SetGraphVariableBool("bVLS_WantstoAttack", false);
+// }
+
+//OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
