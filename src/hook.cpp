@@ -170,7 +170,7 @@ namespace hooks
 				caster->CastSpellImmediate(Reset, true, actor, 1, false, 0.0, actor);
 				UpdateCombatTarget(actor);
 				actor->NotifyAnimationGraph("InitiateEnd");
-				//LevitateToggle(nullptr, 0, nullptr, actor);
+				LevitateToggle(nullptr, 0, nullptr, actor);
 			}
 		}
 	}
@@ -800,7 +800,7 @@ namespace hooks
 				auto it2 = OnMeleeHitHook::GetSingleton().GetAttackSpell(actor, true);
 				if (!(it.first && it2.first)) {
 					//OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
-					actor->NotifyAnimationGraph("LandStart");
+					//actor->NotifyAnimationGraph("LandStart");
 				}
 			}
 			break;
