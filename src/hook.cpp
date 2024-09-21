@@ -788,6 +788,7 @@ namespace hooks
 			break;
 
 		case "InitiateStart"_h:
+		case "staggerStop"_h:
 		// case "InitiateStartLeft"_h:
 		// case "InitiateStartRight"_h:
 			if (OnMeleeHitHook::getrace_VLserana(actor)) {
