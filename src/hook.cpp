@@ -170,7 +170,7 @@ namespace hooks
 				caster->CastSpellImmediate(Reset, true, actor, 1, false, 0.0, actor);
 				UpdateCombatTarget(actor);
 				actor->NotifyAnimationGraph("InitiateEnd");
-				LevitateToggle(nullptr, 0, nullptr, actor);
+				//LevitateToggle(nullptr, 0, nullptr, actor);
 			}
 		}
 	}
