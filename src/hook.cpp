@@ -794,11 +794,16 @@ namespace hooks
 			if (OnMeleeHitHook::getrace_VLserana(actor)) {
 				auto isLevitating = false;
 				auto bVLS_IsLanding = false;
-				if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) && (actor->GetGraphVariableBool("bVLS_IsLanding", bVLS_IsLanding) && !bVLS_IsLanding) && (actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka) <= 20.0f)) {
+				if ((actor->GetGraphVariableBool("isLevitating", isLevitating) && isLevitating) && (actor->GetGraphVariableBool("bVLS_IsLanding", bVLS_IsLanding) && !bVLS_IsLanding) && (actor->AsActorValueOwner()->GetActorValue(RE::ActorValue::kMagicka) <= 30.0f)) {
 					actor->SetGraphVariableBool("bVLS_WantstoAttack", true);
+					actor->NotifyAnimationGraph("MRh_Equipped_Event");
+					actor->NotifyAnimationGraph("MLh_Equipped_Event");
+					actor->NotifyAnimationGraph("PitchStop");
+					actor->NotifyAnimationGraph("PitchStop");
 					actor->InterruptCast(false);
-					actor->NotifyAnimationGraph("InitiateEnd");
+					actor->NotifyAnimationGraph("InterruptCast");
 					OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
+					actor->NotifyAnimationGraph("InitiateEnd");
 				}
 			}	
 			break;
