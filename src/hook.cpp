@@ -174,7 +174,7 @@ namespace hooks
 			}
 			for (auto it = combatGroup->members.begin(); it != combatGroup->members.end(); ++it){
 				if (it->memberHandle && it->memberHandle.get().get()){
-					auto Teammate = it->memberHandle.get().get();
+					//auto Teammate = it->memberHandle.get().get();
 					MyTeam_total_threat += it->threatValue;
 				}
 				continue;
@@ -186,7 +186,7 @@ namespace hooks
 			if (EnemyGroup) {
 				for (auto it = EnemyGroup->members.begin(); it != EnemyGroup->members.end(); ++it) {
 					if (it->memberHandle && it->memberHandle.get().get()) {
-						auto Teammate = it->memberHandle.get().get();
+						//auto Teammate = it->memberHandle.get().get();
 						EnemyTeam_total_threat += it->threatValue;
 					}
 					continue;
