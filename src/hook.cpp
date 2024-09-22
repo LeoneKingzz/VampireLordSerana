@@ -175,7 +175,7 @@ namespace hooks
 				total_threat += it->threatValue;
 				continue;
 			}
-			if (total_threat <= 0.1875f) {
+			if (total_threat <= 0.3750f) {
 				adequate_threat = true;
 			}
 		}
