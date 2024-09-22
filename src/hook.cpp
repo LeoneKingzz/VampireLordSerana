@@ -156,7 +156,7 @@ namespace hooks
 	{
 		auto tolerant_teammates = true;
 		auto adequate_threat = true;
-		float total_threat = 0.0f;
+		//float total_threat = 0.0f;
 		auto combatGroup = a_actor->GetCombatGroup();
 		if (combatGroup) {
 			for (auto it = combatGroup->members.begin(); it != combatGroup->members.end(); ++it) {
@@ -171,13 +171,16 @@ namespace hooks
 				}
 				continue;
 			}
-			auto it = combatGroup->members.begin();
-			total_threat += it->threatValue;
+			for (auto it = combatGroup->members.begin(); it != combatGroup->members.end(); ++it){
+				logger::info("Name {} ThreatLVL {}"sv, a_actor->GetName(), it->threatValue);
+			}
+			//auto it = combatGroup->members.begin();
+			//total_threat += it->threatValue;
 			// if (total_threat < 1.0f) {
 			// 	adequate_threat = true;
 			// 	logger::info("Name {} ThreatLVL {}"sv, a_actor->GetName(), total_threat);
 			// }
-			logger::info("Name {} ThreatLVL {}"sv, a_actor->GetName(), total_threat);
+			
 		}
 		return tolerant_teammates && adequate_threat;
 	}
