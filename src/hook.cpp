@@ -171,10 +171,10 @@ namespace hooks
 				}
 				continue;
 			}
-			for (auto it = combatGroup->members.begin(); it != combatGroup->members.end(); ++it){
-				logger::info("Name {} ThreatLVL {}"sv, a_actor->GetName(), it->threatValue);
-				continue;
-			}
+			// for (auto it = combatGroup->members.begin(); it != combatGroup->members.end(); ++it){
+			// 	logger::info("Name {} ThreatLVL {}"sv, a_actor->GetName(), it->threatValue);
+			// 	continue;
+			// }
 			//auto it = combatGroup->members.begin();
 			//total_threat += it->threatValue;
 			// if (total_threat < 1.0f) {
@@ -183,6 +183,17 @@ namespace hooks
 			// }
 			
 		}
+		auto CTarget = a_actor->GetActorRuntimeData().currentCombatTarget.get().get();
+		if (CTarget){
+			auto EnemyGroup = CTarget->GetCombatGroup();
+			if (EnemyGroup) {
+				for (auto it = combatGroup->members.begin(); it != combatGroup->members.end(); ++it) {
+					logger::info("Name {} ThreatLVL {}"sv, a_actor->GetName(), it->threatValue);
+					continue;
+				}
+			}
+		}
+		
 		return tolerant_teammates && adequate_threat;
 	}
 
