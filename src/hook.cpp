@@ -171,10 +171,13 @@ namespace hooks
 				}
 				continue;
 			}
-			// for (auto it = combatGroup->members.begin(); it != combatGroup->members.end(); ++it){
-			// 	logger::info("Name {} ThreatLVL {}"sv, a_actor->GetName(), it->threatValue);
-			// 	continue;
-			// }
+			for (auto it = combatGroup->members.begin(); it != combatGroup->members.end(); ++it){
+				if (it->memberHandle && it->memberHandle.get().get()){
+					auto Teammate = it->memberHandle.get().get();
+					logger::info("Name {} ThreatLVL {}"sv, Teammate->GetName(), it->threatValue);
+				}
+				continue;
+			}
 			//auto it = combatGroup->members.begin();
 			//total_threat += it->threatValue;
 			// if (total_threat < 1.0f) {
@@ -188,7 +191,10 @@ namespace hooks
 			auto EnemyGroup = CTarget->GetCombatGroup();
 			if (EnemyGroup) {
 				for (auto it = combatGroup->members.begin(); it != combatGroup->members.end(); ++it) {
-					logger::info("Name {} ThreatLVL {}"sv, a_actor->GetName(), it->threatValue);
+					if (it->memberHandle && it->memberHandle.get().get()) {
+						auto Teammate = it->memberHandle.get().get();
+						logger::info("Name {} ThreatLVL {}"sv, Teammate->GetName(), it->threatValue);
+					}
 					continue;
 				}
 			}
