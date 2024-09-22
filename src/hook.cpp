@@ -333,59 +333,6 @@ namespace hooks
 			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage02"));
 			a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage03"));
 		}
-
-		// auto triss = std::to_string(a_actor->GetLevel());
-
-		// switch (hash(triss.c_str(), triss.size())) {
-		// case "20"_h:
-		// 	if (remove){
-		// 		a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
-		// 	}else{
-		// 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
-		// 	}
-		// 	break;
-
-		// case "28"_h:
-		// 	if (remove) {
-		// 		a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
-		// 		a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_VampiricGrip"));
-		// 		a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage01"));
-		// 	} else {
-		// 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
-		// 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_VampiricGrip"));
-		// 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage01"));
-		// 	}
-		// 	break;
-
-		// case "38"_h:
-		// 	if (remove) {
-		// 		a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
-		// 		a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_VampiricGrip"));
-		// 		a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage02"));
-		// 	} else {
-		// 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
-		// 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_VampiricGrip"));
-		// 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage02"));
-		// 	}
-		// 	break;
-
-		// case "48"_h:
-		// 	if (remove) {
-		// 		a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
-		// 		a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_VampiricGrip"));
-		// 		a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_VampireLord_Spell_Hand_Maelstrom"));
-		// 		a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage03"));
-		// 	} else {
-		// 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_Gutwrench"));
-		// 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSerana_VampiricGrip"));
-		// 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_VampireLord_Spell_Hand_Maelstrom"));
-		// 		a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLSeranaUnarmedDamage03"));
-		// 	}
-		// 	break;
-
-		// default:
-		// 	break;
-		// }
 	}
 
 	std::pair<bool, RE::SpellItem*> OnMeleeHitHook::GetAttackSpell(RE::Actor* actor, bool lefthand)
@@ -416,7 +363,7 @@ namespace hooks
 	{
 		const auto race = a_actor->GetRace();
 		const auto raceEDID = race->formEditorID;
-		if (raceEDID == "DLC1VampireBeastRace") {
+		if ((raceEDID == "DLC1VampireBeastRace") || !Can_Transform(a_actor)) {
 			return false;
 		}
 		a_actor->SetGraphVariableBool("bIsDodging", true);
