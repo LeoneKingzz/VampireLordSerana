@@ -156,7 +156,8 @@ namespace hooks
 	{
 		auto tolerant_teammates = true;
 		auto adequate_threat = true;
-		//float total_threat = 0.0f;
+		float MyTeam_total_threat = 0.0f;
+		float EnemyTeam_total_threat = 0.0f;
 		auto combatGroup = a_actor->GetCombatGroup();
 		if (combatGroup) {
 			for (auto it = combatGroup->members.begin(); it != combatGroup->members.end(); ++it) {
@@ -174,17 +175,10 @@ namespace hooks
 			for (auto it = combatGroup->members.begin(); it != combatGroup->members.end(); ++it){
 				if (it->memberHandle && it->memberHandle.get().get()){
 					auto Teammate = it->memberHandle.get().get();
-					logger::info("Name {} ThreatLVL {}"sv, Teammate->GetName(), it->threatValue);
+					MyTeam_total_threat += it->threatValue;
 				}
 				continue;
 			}
-			//auto it = combatGroup->members.begin();
-			//total_threat += it->threatValue;
-			// if (total_threat < 1.0f) {
-			// 	adequate_threat = true;
-			// 	logger::info("Name {} ThreatLVL {}"sv, a_actor->GetName(), total_threat);
-			// }
-			
 		}
 		auto CTarget = a_actor->GetActorRuntimeData().currentCombatTarget.get().get();
 		if (CTarget){
@@ -193,13 +187,20 @@ namespace hooks
 				for (auto it = EnemyGroup->members.begin(); it != EnemyGroup->members.end(); ++it) {
 					if (it->memberHandle && it->memberHandle.get().get()) {
 						auto Teammate = it->memberHandle.get().get();
-						logger::info("Name {} ThreatLVL {}"sv, Teammate->GetName(), it->threatValue);
+						EnemyTeam_total_threat += it->threatValue;
 					}
 					continue;
 				}
 			}
 		}
-		
+
+		if (MyTeam_total_threat > 0 && EnemyTeam_total_threat > 0) {
+			logger::info("Name {} ThreatLVL {}"sv, a_actor->GetName(), (MyTeam_total_threat / EnemyTeam_total_threat));
+			// if ((MyTeam_total_threat / EnemyTeam_total_threat) <= 0.375f){
+			// 	xxx;
+			// }
+		}
+
 		return tolerant_teammates && adequate_threat;
 	}
 
@@ -1123,3 +1124,4 @@ namespace FallLongDistance
 // }
 
 //OnMeleeHitHook::LevitateToggle(nullptr, 0, nullptr, actor);
+// logger::info("Name {} ThreatLVL {}"sv, Teammate->GetName(), it->threatValue);
