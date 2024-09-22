@@ -122,6 +122,7 @@ namespace hooks
 		static bool IsCasting(RE::Actor *a_actor);
 		static void UpdateCombatTarget(RE::Actor* a_actor);
 		static void Evaluate_AI(RE::Actor* actor);
+		static bool Can_Transform(RE::Actor* a_actor);
 		// void update(RE::Actor* a_actor, float a_delta);
 		// void startTiming(RE::Actor *a_actor, float a_delta);
 	    // void finishTiming(RE::Actor *a_actor);

@@ -152,6 +152,27 @@ namespace hooks
 		a_actor->UpdateCombat();
 	}
 
+	bool OnMeleeHitHook::Can_Transform(RE::Actor* a_actor)
+	{
+		auto result = true;
+		auto combatGroup = a_actor->GetCombatGroup();
+		if (combatGroup) {
+			for (auto it = combatGroup->members.begin(); it != combatGroup->members.end(); ++it) {
+				if (it->memberHandle && it->memberHandle.get().get()) {
+					auto Teammate = it->memberHandle.get().get();
+					if (Teammate->IsGuard() || Teammate->IsInFaction(RE::TESForm::LookupByEditorID<RE::TESFaction>("DLC1DawnguardExteriorGuardFaction")) 
+					|| Teammate->IsInFaction(RE::TESForm::LookupByEditorID<RE::TESFaction>("DLC1DawnguardFaction")) 
+					|| Teammate->IsInFaction(RE::TESForm::LookupByEditorID<RE::TESFaction>("VigilantOfStendarrFaction"))) {
+						result = false;
+					}
+					break;
+				}
+				continue;
+			}
+		}
+		return result;
+	}
+
 	void OnMeleeHitHook::Evaluate_AI(RE::Actor* actor)
 	{
 		auto isLevitating = false;
