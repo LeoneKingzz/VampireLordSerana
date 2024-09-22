@@ -155,7 +155,7 @@ namespace hooks
 	bool OnMeleeHitHook::Can_Transform(RE::Actor* a_actor)
 	{
 		auto tolerant_teammates = true;
-		auto adequate_threat = true;
+		auto adequate_threat = false;
 		float MyTeam_total_threat = 0.0f;
 		float EnemyTeam_total_threat = 0.0f;
 		auto combatGroup = a_actor->GetCombatGroup();
@@ -196,9 +196,9 @@ namespace hooks
 
 		if (MyTeam_total_threat > 0 && EnemyTeam_total_threat > 0) {
 			logger::info("Name {} ThreatLVL {}"sv, a_actor->GetName(), (MyTeam_total_threat / EnemyTeam_total_threat));
-			// if ((MyTeam_total_threat / EnemyTeam_total_threat) <= 0.375f){
-			// 	xxx;
-			// }
+			if ((MyTeam_total_threat / EnemyTeam_total_threat) <= 0.9625f){
+				adequate_threat = true;
+			}
 		}
 
 		return tolerant_teammates && adequate_threat;
@@ -248,7 +248,7 @@ namespace hooks
 		uniqueLocker lock(mtx_CStyledefault);
 		auto itt = _CStyledefault.find(a_actor);
 		if (itt == _CStyledefault.end()) {
-			std::pair<float, float> Hen;
+			std::vector<RE::TESCombatStyle*> Hen;
 			_CStyledefault.insert({ a_actor, Hen });
 		}
 
@@ -257,8 +257,8 @@ namespace hooks
 				if (a_actor->GetActorRuntimeData().combatController) {
 					RE::TESCombatStyle* style = a_actor->GetActorRuntimeData().combatController->combatStyle;
 					if (style) {
-						it->second.first = style->generalData.magicScoreMult;
-						it->second.second = style->generalData.meleeScoreMult;
+						it->second.push_back(style);
+						a_actor->GetActorRuntimeData().combatController->combatStyle = nullptr;
 					}
 				}
 				break;
@@ -278,11 +278,7 @@ namespace hooks
 		for (auto it = _CStyledefault.begin(); it != _CStyledefault.end(); ++it) {
 			if (it->first == a_actor) {
 				if (a_actor->GetActorRuntimeData().combatController) {
-					RE::TESCombatStyle* style = a_actor->GetActorRuntimeData().combatController->combatStyle;
-					if (style) {
-						style->generalData.magicScoreMult = it->second.first;
-						style->generalData.meleeScoreMult = it->second.second;
-					}
+					a_actor->GetActorRuntimeData().combatController->combatStyle = it->second.front();
 				}
 				_CStyledefault.erase(it);
 				break;

@@ -137,7 +137,7 @@ namespace hooks
 		OnMeleeHitHook& operator=(OnMeleeHitHook&&) = delete;
 
 		std::unordered_map<RE::Actor*, float> _parryTimer;
-		std::unordered_map<RE::Actor*, std::pair<float, float>> _CStyledefault;
+		std::unordered_map<RE::Actor*, std::vector<RE::TESCombatStyle*>> _CStyledefault;
 		std::unordered_map<RE::Actor*, std::vector<RE::TESBoundObject*>> _Inventory;
 		std::unordered_map<RE::Actor*, std::vector<RE::SpellItem*>> _SpellList;
 		std::shared_mutex mtx_Inventory;
