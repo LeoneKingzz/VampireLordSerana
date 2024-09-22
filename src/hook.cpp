@@ -173,6 +173,7 @@ namespace hooks
 			}
 			for (auto it = combatGroup->members.begin(); it != combatGroup->members.end(); ++it){
 				logger::info("Name {} ThreatLVL {}"sv, a_actor->GetName(), it->threatValue);
+				continue;
 			}
 			//auto it = combatGroup->members.begin();
 			//total_threat += it->threatValue;
