@@ -171,10 +171,8 @@ namespace hooks
 				}
 				continue;
 			}
-			for (auto it = combatGroup->members.begin(); it != combatGroup->members.end(); ++it) {
-				total_threat += it->threatValue;
-				continue;
-			}
+			auto it = combatGroup->members.begin();
+			total_threat += it->threatValue;
 			// if (total_threat < 1.0f) {
 			// 	adequate_threat = true;
 			// 	logger::info("Name {} ThreatLVL {}"sv, a_actor->GetName(), total_threat);
