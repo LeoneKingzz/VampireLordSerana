@@ -190,7 +190,7 @@ namespace hooks
 		if (CTarget){
 			auto EnemyGroup = CTarget->GetCombatGroup();
 			if (EnemyGroup) {
-				for (auto it = combatGroup->members.begin(); it != combatGroup->members.end(); ++it) {
+				for (auto it = EnemyGroup->members.begin(); it != EnemyGroup->members.end(); ++it) {
 					if (it->memberHandle && it->memberHandle.get().get()) {
 						auto Teammate = it->memberHandle.get().get();
 						logger::info("Name {} ThreatLVL {}"sv, Teammate->GetName(), it->threatValue);
