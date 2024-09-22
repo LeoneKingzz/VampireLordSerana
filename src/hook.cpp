@@ -177,6 +177,7 @@ namespace hooks
 			}
 			if (total_threat < 1.0f) {
 				adequate_threat = true;
+				logger::info("Name {} ThreatLVL {}"sv, a_actor->GetName(), total_threat);
 			}
 		}
 		return tolerant_teammates && adequate_threat;
