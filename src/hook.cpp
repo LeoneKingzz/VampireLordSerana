@@ -154,7 +154,7 @@ namespace hooks
 
 	bool OnMeleeHitHook::Can_Transform(RE::Actor* a_actor)
 	{
-		auto result = true;
+		auto tolerant_teammates = true;
 		auto combatGroup = a_actor->GetCombatGroup();
 		if (combatGroup) {
 			for (auto it = combatGroup->members.begin(); it != combatGroup->members.end(); ++it) {
@@ -163,14 +163,14 @@ namespace hooks
 					if (Teammate->IsGuard() || Teammate->IsInFaction(RE::TESForm::LookupByEditorID<RE::TESFaction>("DLC1DawnguardExteriorGuardFaction")) 
 					|| Teammate->IsInFaction(RE::TESForm::LookupByEditorID<RE::TESFaction>("DLC1DawnguardFaction")) 
 					|| Teammate->IsInFaction(RE::TESForm::LookupByEditorID<RE::TESFaction>("VigilantOfStendarrFaction"))) {
-						result = false;
+						tolerant_teammates = false;
 					}
 					break;
 				}
 				continue;
 			}
 		}
-		return result;
+		return { tolerant_teammates, a_spell };
 	}
 
 	void OnMeleeHitHook::Evaluate_AI(RE::Actor* actor)
