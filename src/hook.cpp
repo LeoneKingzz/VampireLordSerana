@@ -155,7 +155,7 @@ namespace hooks
 	bool OnMeleeHitHook::Can_Transform(RE::Actor* a_actor)
 	{
 		auto tolerant_teammates = true;
-		auto adequate_threat = false;
+		auto adequate_threat = true;
 		float total_threat = 0.0f;
 		auto combatGroup = a_actor->GetCombatGroup();
 		if (combatGroup) {
@@ -175,10 +175,11 @@ namespace hooks
 				total_threat += it->threatValue;
 				continue;
 			}
-			if (total_threat < 1.0f) {
-				adequate_threat = true;
-				logger::info("Name {} ThreatLVL {}"sv, a_actor->GetName(), total_threat);
-			}
+			// if (total_threat < 1.0f) {
+			// 	adequate_threat = true;
+			// 	logger::info("Name {} ThreatLVL {}"sv, a_actor->GetName(), total_threat);
+			// }
+			logger::info("Name {} ThreatLVL {}"sv, a_actor->GetName(), total_threat);
 		}
 		return tolerant_teammates && adequate_threat;
 	}
