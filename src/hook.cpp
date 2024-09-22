@@ -395,7 +395,7 @@ namespace hooks
 		}
 		a_actor->SetGraphVariableBool("bIsDodging", true);
 		logger::info("Began Transformation");
-		GetSingleton().Store_CStyleSettings(a_actor);
+		//GetSingleton().Store_CStyleSettings(a_actor);
 		auto data = RE::TESDataHandler::GetSingleton();
 		util::playSound(a_actor, (data->LookupForm<RE::BGSSoundDescriptorForm>(0x10F564, "Skyrim.esm")));
 		//a_actor->RemoveSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_MortalForm_ability"));
@@ -570,7 +570,7 @@ namespace hooks
 		dispelEffect(Gargoyle, a_actor);
 		//a_actor->AddSpell(RE::TESForm::LookupByEditorID<RE::SpellItem>("VLS_MortalForm_ability"));
 		GetSingleton().Re_EquipAll(a_actor);
-		GetSingleton().Restore_CStyleSettings(a_actor);
+		//GetSingleton().Restore_CStyleSettings(a_actor);
 		a_actor->SetGraphVariableBool("bIsDodging", false);
 	}
 
