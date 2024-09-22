@@ -155,6 +155,8 @@ namespace hooks
 	bool OnMeleeHitHook::Can_Transform(RE::Actor* a_actor)
 	{
 		auto tolerant_teammates = true;
+		auto adequate_threat = false;
+		float total_threat = 0.0f;
 		auto combatGroup = a_actor->GetCombatGroup();
 		if (combatGroup) {
 			for (auto it = combatGroup->members.begin(); it != combatGroup->members.end(); ++it) {
@@ -169,8 +171,15 @@ namespace hooks
 				}
 				continue;
 			}
+			for (auto it = combatGroup->members.begin(); it != combatGroup->members.end(); ++it) {
+				total_threat += it->threatValue;
+				continue;
+			}
+			if (total_threat < 0.3750f){
+				adequate_threat = true;
+			}
 		}
-		return { tolerant_teammates, a_spell };
+		return tolerant_teammates && adequate_threat;
 	}
 
 	void OnMeleeHitHook::Evaluate_AI(RE::Actor* actor)
