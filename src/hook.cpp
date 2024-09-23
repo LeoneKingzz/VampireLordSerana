@@ -196,7 +196,7 @@ namespace hooks
 		}
 
 		if (MyTeam_total_threat > 0 && EnemyTeam_total_threat > 0) {
-			logger::info("Name {} ThreatLVL {}"sv, a_actor->GetName(), (MyTeam_total_threat / EnemyTeam_total_threat));
+			logger::info("Name {} TeamThreatLVL {}"sv, CTarget->GetName(), (MyTeam_total_threat / EnemyTeam_total_threat));
 			if ((MyTeam_total_threat / EnemyTeam_total_threat) <= 0.625f) {
 				adequate_threat = true;
 			}
